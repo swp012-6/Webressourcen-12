@@ -1,0 +1,86 @@
+html,input,textarea {
+  font-family: Arial, Helvetica, sans-serif; font-size: 100.01%;
+}
+ 
+hr {
+  border: none; border-top: 1px dotted; border-color: rgb(159, 202, 135);
+}
+ 
+h1 {
+  font-size: 1.3em; margin: 0em; padding: 0em;
+}
+ 
+h2 {
+  font-size: 1.1em; margin: 0em; padding: 0.2em;
+  background-color: rgb(205, 102, 205);
+}
+ 
+legend {
+  font-weight: bold; border: 1px solid; padding: 0.2em 0.4em;
+  background-color: rgb(205, 100, 205);
+}
+ 
+table {
+  width: 100%;
+}
+ 
+input,textarea {
+  width: 100%;
+}
+ 
+th,td {
+  vertical-align: top;
+}
+ 
+#page {
+  width: 95%; margin: auto;
+}
+ 
+#header {
+  margin-bottom: 1em; border: 1px solid; padding: 1em;
+  background-color: rgb(155, 002, 155);
+  text-align: center;
+}
+ 
+#main {
+  border-right: 1px solid; border-left: 1px solid; padding-left: 1em;
+  padding-right: 1em;
+}
+ 
+#navi {
+  width: 10em; float: left;
+}
+ 
+#content {
+  border-left: 1px dotted rgb(159, 202, 135);; padding-left: 1em;
+  margin-left: 11em;
+}
+ 
+#footer {
+  clear: both; font-size: 0.8em; text-align: center; font-style: italic;
+  margin-top: 1em; padding: 0.4em; border: 1px solid; font-size: 0.8em;
+  background-color: rgb(205, 102, 205); margin-top: 1em;
+}
+ 
+#navi ul {
+  margin: 0; padding: 0;
+}
+ 
+#navi li {
+  list-style: none; margin: 0; padding: 0.2em; display: block;
+  margin-bottom: 0.4em; background-color: rgb(205, 102, 205);
+  border: 1px solid rgb(105, 002, 105);
+}
+ 
+#navi li a {
+  text-decoration: none; color: #000000;
+}
+ 
+.button {
+  width: auto;
+}
+ 
+.error {
+  background-color: rgb(244, 225, 225); border: 1px solid rgb(204, 0, 0);
+  padding: 0.2em; color: rgb(204, 0, 0);
+}
