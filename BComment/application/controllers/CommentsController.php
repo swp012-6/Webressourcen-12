@@ -38,7 +38,7 @@ class CommentsController extends Zend_Controller_Action
      */
     public function validateAction()
     {
-        if ($this->getRequest()->isPost())			//avoids direct access without having an ID pass
+        if ($this->getRequest()->isPost())			//avoids direct access without having information pass
         {
             $data = array();
             // --- read informations from create-form ---

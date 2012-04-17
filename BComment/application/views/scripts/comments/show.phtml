@@ -1,15 +1,18 @@
+<!-- content of the topic view -->
 <h2>
+	<!-- head of the topic -->
 	<?php echo $this->escape($this->topics->topicName) ?>
 </h2>
 <p>
+	<!-- topic content (the picture) -->
 	<img src="<?php echo $this->escape($this->topics->topicContent) ?>" width="100%" height="100%" alt="<?php echo $this->escape($this->topics->topicName) ?>">
 </p>
 <hr/>
 
 <?php
-foreach ($this->comments as $a)
+foreach ($this->comments as $a)		//for each obtained comment
 {
-	echo '<fieldset>';
+	echo '<fieldset>';		//give all information about the comment
 		echo '<legend>'. $this->escape($a->userName) .' - '. $this->escape($a->commentDate) .'</legend>';
 		echo '<p>'. $this->escape($a->commentText) .'</p>';
 	echo '</fieldset>';
@@ -18,6 +21,8 @@ foreach ($this->comments as $a)
 <table>
 	<tr>
 		<td>
+			<!-- formular which navigates to create after pressing the submit button -->
+			<!-- with hidden information about topicID and topicName -->
 			<form action="<?php echo $this->url(array('controller'=>'Comments', 'action'=>'create'), null, true) ?>" method="post">
 				<input type="hidden" id="topicID" name="topicID" value="<?php echo $this->escape($this->topics->topicID) ?>" />
 				<input type="hidden" id="topicName" name="topicName" value="<?php echo $this->escape($this->topics->topicName) ?>" />
@@ -25,7 +30,8 @@ foreach ($this->comments as $a)
 			</form>
 		</td>
 		<td align="right">
-			<form action="http://localhost/BComment/public/comments/cshow/id/<?php echo $this->escape($this->topics->topicID) ?>" method="post">
+			<!-- formular which navigates to cshow after pressing the submit button -->
+			<form action="<?php echo $this->url(array('controller'=>'Comments', 'action'=>'cshow'), null, true) ?>/id/<?php echo $this->escape($this->topics->topicID) ?>" method="post">
 				<input type="submit" name="button_allcom" value="alle Kommentare anschauen" class="button" />
 			</form>
 		</td>

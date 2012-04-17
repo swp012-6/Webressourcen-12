@@ -1,12 +1,15 @@
+<!-- content for create a comment -->
+<!-- formular which navigates to validate after pressing the submit button -->
 <form action="validate" method="post">
 	<input type="hidden" id="topicID" name="topicID" value="<?php echo $this->topicID; ?>" />
 	<fieldset>
-		<legend>Kommentar zu <?php echo $this->topicName; ?></legend>
+		<legend>Kommentar zu <?php echo $this->topicName; ?></legend> <!-- head -->
 		<table>
 			<colgroup>
+				<!-- size of the first column -->
 				<col width="80">
 			</colgroup>
-			<tr>
+			<tr>				<!-- username textfield -->
 				<td>
 					<label for="userName">Nickname</label>
 				</td>
@@ -14,7 +17,7 @@
 					<input type="text" id="userName" name="userName" maxlength="20" value="" />
 				</td>
 			</tr>
-			<tr>
+			<tr>				<!-- comment textfield -->
 				<td>
 					<label for="commentText">Kommentar</label>
 				</td>
@@ -23,10 +26,10 @@
 				</td>
 			</tr>
 			<tr>
-				<td>
+				<td>			<!-- button to go back -->
 					<input type="button" name="button_goback" value="zurück" onClick="history.back()">
 				</td>
-				<td>
+				<td>			<!-- submit button to send the comment -->
 					<input type="submit" name="button_save" value="Kommentar senden" class="button" />
 				</td>
 			</tr>
