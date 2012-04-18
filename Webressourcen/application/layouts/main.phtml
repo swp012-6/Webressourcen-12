@@ -1,0 +1,39 @@
+<?php 
+	// the doctype is from Bootstrapp
+	echo $this->doctype(); 
+?>
+ 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+<head>
+ 
+<?php
+	
+	echo $this->headTitle();
+	echo $this->headMeta();
+	echo $this->headStyle();
+	echo $this->headLink();
+	echo $this->headScript();
+?>
+ 
+</head>
+<body>
+	<div id = "main_page">
+		<div id = "main_head">
+			
+		</div>
+		
+		<div id = "main_menue">
+			
+			
+		</div>
+		
+		<div id = "main_main">
+			<?php
+				//-- import Mainpage
+				echo $this->layout()->content;
+			?>
+		</div>
+		
+	</div>
+</body>
+</html>
