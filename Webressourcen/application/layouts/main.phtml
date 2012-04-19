@@ -8,26 +8,32 @@
  
 <?php
 	
+	// in the Bootstrapp declared
 	echo $this->headTitle();
 	echo $this->headMeta();
-	echo $this->headStyle();
 	echo $this->headLink();
-	echo $this->headScript();
+	
 ?>
  
 </head>
 <body>
-	<div id = "main_page">
-		<div id = "main_head">
-			
+
+	<!-- in main_page are all pressentation components how main_head, main_menue and main_main-->
+	<div id = "main_Page">
+		
+		<!-- in main_head are the project title-->
+		<div id = "main_Head">
+			<h1> hir ist der titel, überschrifft </h1>
 		</div>
 		
-		<div id = "main_menue">
+		<!-- in main_menue are the topictitle to select-->
+		<div id = "main_Menue">
 			
-			
+			<h3> hir ist das menue </h3>
 		</div>
 		
-		<div id = "main_main">
+		<!-- in main_main are the active action methode -->
+		<div id = "main_Main">
 			<?php
 				//-- import Mainpage
 				echo $this->layout()->content;

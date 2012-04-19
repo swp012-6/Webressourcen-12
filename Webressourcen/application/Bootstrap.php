@@ -9,6 +9,7 @@
  */
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
+	
 	/**
 	 * loads key data for database and layout
 	 * @param string $layout the layout
@@ -17,9 +18,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * @param string $db the database from $params
 	 * @author Peter Kornowski
 	 */
+	 
 	function _initViewHelpers()
 	{
-	
+		
 		$this->bootstrap('layout');
 		$layout = $this->getResource('layout');
 		$view = $layout->getView();
@@ -30,7 +32,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$view->headMeta()->appendName('keywords','Webressourcen');
 		
 		//-- are the style sheet----------------------------------------------------------------------------------
-		$view->headLink()->appendStylesheet('http://localhost/Webressourcen/public/_files/css/mainstyles.css');
+		$view->headLink()->appendStylesheet('http://localhost/Webressourcen/public/_files/css/styles.css');
 		
 		//-- are the title name-----------------------------------------------------------------------------------
 		$view->headTitle()->setSeparator(' - ');
@@ -61,25 +63,30 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                  'dbname'   => 'database:webresource');
 
  
-	
+		
 		$db = Zend_Db::factory('PDO_MYSQL', $params);
-
+		//is the standart database adapter
 		Zend_Db_Table::setDefaultAdapter($db);
 		
 		//--include the model
-		require_once '../application/models/TopicModel.php';
-		require_once '../application/models/CommentModel.php';
+		require_once '../application/models/topicModel.php';
+		require_once '../application/models/commentModel.php';
+		require_once '../application/models/user_topicModel.php';
+		require_once '../application/models/userModel.php';
+		require_once '../application/models/friendModel.php';
+		require_once '../application/models/masterModel.php';
 		
 		
-		
+		//--FrontController-----------------------------------------------------------------------------------------
 		//-- Setup Controller
 
 		$frontController = Zend_Controller_Front::getInstance();
-
+		
+		//path to the Controller
 		$frontController->setControllerDirectory('../application/controllers');
 		
 		
 	}
-
+ 
 }
 
