@@ -1,6 +1,6 @@
 <?php
 
-class IndexController extends Zend_Controller_Action
+class UserController extends Zend_Controller_Action
 {
 
     public function init()
@@ -13,37 +13,28 @@ class IndexController extends Zend_Controller_Action
         // action body
     }
 
-    public function preloginAction()
+    public function validateAction()
     {
         // action body
     }
 
-    public function loginAction()
+    public function createAction()
     {
         // action body
     }
 
-    public function logoutAction()
+    public function showtopicAction()
     {
         // action body
     }
 
-    public function updatefromAction()
-    {
-        // action body
-    }
-
-    public function updateAction()
+    public function showcommentAction()
     {
         // action body
     }
 
 
 }
-
-
-
-
 
 
 
