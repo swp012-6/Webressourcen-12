@@ -31,8 +31,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$view->headMeta()->appendHttpEquiv('Content-Type','text/html;charset=utf-8');
 		$view->headMeta()->appendName('keywords','Webressourcen');
 		
-		//-- are the style sheet ----
-		$view->headLink()->appendStylesheet('http://localhost/Webressourcen/public/_files/css/styles.css');
+
+		//-- are the style sheet------
+		$view->headLink()->appendStylesheet('../public/_files/css/styles.css');
+
 		
 		//-- are the title name ----
 		$view->headTitle()->setSeparator(' - ');
@@ -54,12 +56,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		
 		
 		//-- database ----
-		require_once 'Zend/Db.php';
-		require_once 'Zend/Debug.php';
-	       
-		require_once 'Zend/Db/Table.php';
-		//is the standart database adapter
-		Zend_Db_Table::setDefaultAdapter($db);
+
 		
 		//--include the model
 		require_once '../application/models/topicModel.php';
