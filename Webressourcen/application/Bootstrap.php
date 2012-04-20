@@ -26,20 +26,22 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$layout = $this->getResource('layout');
 		$view = $layout->getView();
 		
-		//--is the doctype and there are the text type -----------------------------------------------------------
+		//-- is the doctype and there are the text type ----
 		$view->doctype('XHTML1_STRICT');
 		$view->headMeta()->appendHttpEquiv('Content-Type','text/html;charset=utf-8');
 		$view->headMeta()->appendName('keywords','Webressourcen');
 		
-		//-- are the style sheet----------------------------------------------------------------------------------
+
+		//-- are the style sheet------
 		$view->headLink()->appendStylesheet('../public/_files/css/styles.css');
+
 		
-		//-- are the title name-----------------------------------------------------------------------------------
+		//-- are the title name ----
 		$view->headTitle()->setSeparator(' - ');
 		$view->headTitle('Webressourcen');
 		
 		
-		//-- Loader---------------------------------------------------------------------------------------------
+		//-- Loader ----
 		
 		//-- include automatically important files
 		require_once "Zend/Loader.php";
@@ -53,20 +55,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 						get_include_path());
 		
 		
-		//-- database---------------------------------------------------------------------------------------------
-		$params = array ('host'=> '127.0.0.1',
+		//-- database ----
 
-                 'username' => 'root',
-
-                 'password' => '',
-
-                 'dbname'   => 'database:webresource');
-
- 
-		
-		$db = Zend_Db::factory('PDO_MYSQL', $params);
-		//is the standart database adapter
-		Zend_Db_Table::setDefaultAdapter($db);
 		
 		//--include the model
 		require_once '../application/models/topicModel.php';
@@ -77,7 +67,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		require_once '../application/models/masterModel.php';
 		
 		
-		//--FrontController-----------------------------------------------------------------------------------------
+		//--FrontController ----
 		//-- Setup Controller
 
 		$frontController = Zend_Controller_Front::getInstance();
