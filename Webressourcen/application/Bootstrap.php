@@ -32,7 +32,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$view->headMeta()->appendName('keywords','Webressourcen');
 		
 		//-- are the style sheet----------------------------------------------------------------------------------
-		$view->headLink()->appendStylesheet('http://localhost/Webressourcen/public/_files/css/styles.css');
+		$view->headLink()->appendStylesheet('../public/_files/css/styles.css');
 		
 		//-- are the title name-----------------------------------------------------------------------------------
 		$view->headTitle()->setSeparator(' - ');
