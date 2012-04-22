@@ -1,5 +1,12 @@
 <?php
+/**
+ * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
+ * @license http://opensource.org/licenses/gpl-license.php GNU General Public License(GPL)
+ */
 
+/**
+ * gets the main page
+ */
 class IndexController extends Zend_Controller_Action
 {
 
@@ -8,19 +15,29 @@ class IndexController extends Zend_Controller_Action
         /* Initialize action controller here */
     }
 
+    /**
+     * This function changes the title of the header and calls up the view.
+     * @param string $titel - Additive for the title in the header of the Main.phtml
+     * @author Peter Kornowski
+     */
     public function indexAction()
     {
-        // action body
+        $this->view->title = ' - Hauptseite';
     }
 
+    /**
+     * This function changes the title of the header and calls up the view.
+     * @param string $titel - Additive for the title in the header of the Main.phtml
+     * @author Peter Kornowski
+     */
     public function preloginAction()
     {
-        // action body
+        $this->view->title = ' - Administrator';
     }
 
     public function loginAction()
     {
-        // action body
+        $this->view->title = ' - Administrator';
     }
 
     public function logoutAction()
@@ -30,7 +47,7 @@ class IndexController extends Zend_Controller_Action
 
     public function updatefromAction()
     {
-        // action body
+        $this->view->title = ' - Administrator';
     }
 
     public function updateAction()
