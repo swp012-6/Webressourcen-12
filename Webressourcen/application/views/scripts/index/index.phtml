@@ -12,9 +12,10 @@ else						//if not logged in
 }
 ?>
 <?php 
-	if(Zend_Auth::getInstance()->getIdentity())
+	if($this->masterOnline == 1)
 	{
 	?>
+		<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'updateform'), null, true); ?>">Update</a>
 		<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'logout'), null, true); ?>">Logout</a>
 	<?php 
 	} 
