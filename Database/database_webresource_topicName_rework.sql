@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 22. Apr 2012 um 18:39
+-- Erstellungszeit: 22. Apr 2012 um 20:47
 -- Server Version: 5.5.16
 -- PHP-Version: 5.3.8
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Datenbank: `webressourcen`
+-- Datenbank: `webressource`
 --
 
 -- --------------------------------------------------------
@@ -78,17 +78,6 @@ CREATE TABLE IF NOT EXISTS `topic` (
   PRIMARY KEY (`topicID`,`topicVersion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Daten für Tabelle `topic`
---
-
-INSERT INTO `topic` (`topicID`, `topicContent`, `topicVersion`, `topicSource`, `creationDate`) VALUES
-(10, 'Hallo, ich bin der Klaus!<br />\r\n<br />\r\nmfg<br />\r\nKlaus', 1, 'klÃ¤uschen', '2012-04-21 17:16:48'),
-(10, 'Hallo, ich bin der Klaus!', 2, 'klÃ¤uschen', '2012-04-21 17:56:17'),
-(11, 'Kot Kot Kot', 1, 'after', '2012-04-21 17:58:43'),
-(11, 'Kot Kot Kot Kot Kot 5', 3, 'after', '2012-04-21 18:23:56'),
-(11, 'Kot Kot Kot Kot Kot 4. Version mÃ¼sste das jetzt sein', 4, '4. version test', '2012-04-21 18:26:11');
-
 -- --------------------------------------------------------
 
 --
@@ -101,14 +90,6 @@ CREATE TABLE IF NOT EXISTS `topicname` (
   PRIMARY KEY (`topicID`),
   UNIQUE KEY `topicName` (`topicName`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
-
---
--- Daten für Tabelle `topicname`
---
-
-INSERT INTO `topicname` (`topicID`, `topicName`) VALUES
-(11, 'Kot'),
-(10, 'Text');
 
 -- --------------------------------------------------------
 
