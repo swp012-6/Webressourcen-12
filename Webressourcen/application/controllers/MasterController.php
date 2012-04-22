@@ -10,17 +10,79 @@ class MasterController extends Zend_Controller_Action
 
     public function indexAction()
     {
+        Zend_Layout::getMvcInstance()->setLayout('master');
         // action body
     }
 
     public function importAction()
     {
-        // action body
+        Zend_Layout::getMvcInstance()->setLayout('master');
+        //session_start(); .............
+        if ( isset($_GET['error'])) 
+        {
+            switch ($_GET['error'])
+            {
+                case 1: $this->view->errorMsg = 'Themen-Name bereits vergeben!'; 
+                        break;
+                
+                case 2: $this->view->errorMsg = 'Bitte alle Felder füllen!';
+                        break;
+                default: 
+            }
+        }
+        $topicForm = new Application_Form_CreateTopic();
+		$this->view->topicForm = $topicForm;
     }
 
     public function validateAction()
     {
-        // action body
+        Zend_Layout::getMvcInstance()->setLayout('master');
+        //session_start(); ............
+		
+        /* save content of posted variables */
+        $topicName = $_POST['topicName'];
+		$contentType = $_POST['contentType'];
+		$topicContent = nl2br($_POST['topicContent']);
+		$topicSource = $_POST['topicSource'];
+		
+        /* if the form-textfields where filled */
+		if ( (!empty( $topicName)) && (!empty( $topicContent)))
+		{	
+            /* HTTP-Request to get body of spezified page ................*/
+			if ($contentType == 'link')
+			{
+				$topicSource = $topicContent;
+                $client = new Zend_Http_Client($topicContent);
+                $response = $client->request();
+                $body = $response->getBody();
+                list( $firstPart, $bodyTextArea) = explode('<body>', $body);
+                list( $bodyTextArea, $secondPart) = explode('</body>', $body);
+                //$topicContent = strip_tags($bodyTextArea, '<img>');
+                $topicContent = $bodyTextArea;
+			}
+		
+			/* insert data in the datebase */
+            $topicNameModel = new topicNameModel();
+            try
+            {
+                $topicNameModel->insert( array( 'topicName' => $topicName));
+            }
+            catch (Exception $e)
+            {
+                $error = 'Themen-Name bereits vergeben!';
+                $this->_redirect('master/import?error=1');
+            }
+            
+            //insert topic-content in table topic
+            $topicIDRow = $topicNameModel->fetchRow( $topicNameModel->select()->where( 'topicName = ?' , $topicName));
+            $topicID = $topicIDRow['topicID'];
+            
+            $topicModel = new topicModel();
+            $topicModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+            $this->_redirect( 'master/import');
+            
+		}
+		else $this->_redirect('master/import?error=2');
     }
 
     public function showfriendAction()
@@ -30,7 +92,47 @@ class MasterController extends Zend_Controller_Action
 
     public function showtopicsAction()
     {
-        // action body
+        Zend_Layout::getMvcInstance()->setLayout('master');
+		$topicModel = new topicModel();
+        $topicNameModel = new topicNameModel();
+		$allTopicsRowSet = $topicNameModel->fetchAll();
+		$this->view->allTopicsRowSet = $allTopicsRowSet;
+        
+        if ( isset( $_GET['id']))
+        {
+            if (!isset( $_GET['ver']))
+            {
+                $selectedTopicVersion = 1;
+            }
+            else $selectedTopicVersion = $_GET['ver'];
+            $this->view->selectedTopicVersion = $selectedTopicVersion;
+            
+            $topicID = $_GET['id'];
+            $topicRow = $topicModel->fetchRow( $topicModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $selectedTopicVersion));
+            $topicNameRow = $topicNameModel->fetchRow( $topicNameModel->select()->where( 'topicID = ?', $topicID));
+            $versionNumbersRow = $topicModel->fetchAll( $topicModel->select()->where( 'topicID = ?', $topicID));
+            $this->view->versionNumbersRow = $versionNumbersRow;
+            
+            if ( !empty( $topicRow))
+            {
+                $topicSource = $topicRow['topicSource'];
+                $topicContent = $topicRow['topicContent'];
+                
+                if ( empty( $topicSource))
+                {
+                    $topicSource = 'nicht angegeben/bekannt';
+                }
+                $this->view->topicName = $topicNameRow['topicName'];
+                $topicContent = 'Version: ' . $selectedTopicVersion . '<p>Inhalt:<br>' . $topicContent . '<p>Quelle: ' . $topicSource;
+                $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
+                $topicContent .= 'Inhalt überarbeiten</a>';
+                $this->view->topicContent = $topicContent;
+            }
+            else 
+            {
+                $this->view->topicContent = '<h1>Kein Thema vorhanden!</h1>';
+            }
+        }
     }
 
     public function lockfriendAction()
@@ -53,8 +155,85 @@ class MasterController extends Zend_Controller_Action
         // action body
     }
 
+    public function edittopicAction()
+    {
+        Zend_Layout::getMvcInstance()->setLayout('master');
+        
+        //session_start(); ..........
+        
+        if ( isset( $_GET['id']))
+        {
+            $topicID = $_GET['id'];
+            /* set topicVersion to default if necessary */
+            if ( !isset( $_GET['ver']))
+            {
+                $topicVersion = 1;
+            }
+            else $topicVersion = $_GET['ver'];
+            $this->view->topicVersion = $topicVersion;
+            
+            $topicNameModel = new topicNameModel();
+            $topicModel = new topicModel();
+            
+            $topicNameRow = $topicNameModel->fetchRow( 'topicID =' . $topicID);    //get topicName if available
+            
+            /* topics with spezified topicID are available */
+            if ( !empty( $topicNameRow)) 
+            {
+                if ( $_GET['error'] == 1)
+                {
+                    $this->view->msg = 'Bitte alle Felder füllen!';
+                }
+                $this->view->topicName = $topicNameRow['topicName'];
+                
+                $topicRow = $topicModel-> fetchRow( $topicModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $topicVersion));
+                /* in link spezified version is available for this topic */
+                if ( !empty( $topicRow))
+                {
+                    $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+                    $this->view->topicSource = $topicRow['topicSource'];
+                }
+                else $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
+            }
+            else $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
+        }
+        else $this->view->msg = 'Keine Themen-ID angegeben!';
+    }
+
+    public function validateeditAction()
+    {
+        Zend_Layout::getMvcInstance()->setLayout('master');
+        
+        $topicID = $_POST['topicID'];
+        $topicVersion = $_POST['topicVersion'];
+        $topicContent = $_POST['topicContent'];
+        $topicSource = $_POST['topicSource'];
+        
+        if ( (!empty( $topicID)) && (!empty( $topicVersion)) && (!empty( $topicContent)) && (!empty( $topicSource)))
+        {
+            $topicModel = new topicModel();
+            $maxVersion = $topicModel->fetchRow( $topicModel->select()  ->from( $topicModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
+                                                                        ->where( 'topicID = ?', $topicID));
+            $maxVersion = $maxVersion['maxVersion'];
+            
+            $topicModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+            $this->view->msg = 'Neue Version wurde erstellt!';
+        }
+        else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
+    }
+
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
