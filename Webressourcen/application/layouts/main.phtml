@@ -1,0 +1,44 @@
+<?php 
+	// the doctype is from Bootstrap
+	echo $this->doctype(); 
+?>
+ 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+<head>
+ 
+<?php
+	// declared in the Bootstrap
+	echo $this->headTitle();
+	echo $this->headMeta();
+	echo $this->headLink();
+	
+?>
+ 
+</head>
+<body>
+
+	<!-- in main_page are all presentation components how main_head, main_menue and main_main-->
+	<div id = "main_Page">
+		
+		<!-- in main_head are the project title-->
+		<div id = "main_Head">
+			<h1> hier ist der Titel</h1>
+		</div>
+		
+		<!-- in main_menue are the topictitle to select-->
+		<div id = "main_Menue">
+			
+			<h3> hier ist das Menü </h3>
+		</div>
+		
+		<!-- in main_main are the active action methode -->
+		<div id = "main_Main">
+			<?php
+				//-- import Mainpage
+				echo $this->layout()->content;
+			?>
+		</div>
+		
+	</div>
+</body>
+</html>

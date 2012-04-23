@@ -1,0 +1,29 @@
+<!-- content of the mainpage -->
+<h1>Willkommen</h1>
+<?php 
+if(Zend_Auth::getInstance()->getIdentity())	//if logged in
+{
+	echo '<p>Sie sind als Administrator eingeloggt</p>';
+	echo '<p>Momentan sind die Administratorfunktionen in Bearbeitung</p>';
+} 
+else						//if not logged in
+{
+	echo '<p>Diese Seite befindet sich im Aufbau</p>';
+}
+?>
+<?php 
+	if($this->masterOnline == 1)
+	{
+	?>
+		<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'updateform'), null, true); ?>">Update</a>
+		<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'logout'), null, true); ?>">Logout</a>
+	<?php 
+	} 
+	else
+	{
+	?>
+		<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'prelogin'), null, true); ?>">Adminlogin</a>
+	<?php 
+	}
+?>
+
