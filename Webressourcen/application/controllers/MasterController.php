@@ -55,32 +55,38 @@ class MasterController extends Zend_Controller_Action
                 $client = new Zend_Http_Client($topicContent);
                 $response = $client->request();
                 $body = $response->getBody();
-                list( $firstPart, $bodyTextArea) = explode('<body>', $body);
-                list( $bodyTextArea, $secondPart) = explode('</body>', $body);
-                //$topicContent = strip_tags($bodyTextArea, '<img>');
-                $topicContent = $bodyTextArea;
-			}
-		
-			/* insert data in the datebase */
-            $topicNameModel = new topicNameModel();
-            try
-            {
-                $topicNameModel->insert( array( 'topicName' => $topicName));
+                //list( $firstPart, $bodyTextArea) = explode('<body>', $body);
+                //list( $bodyTextArea, $secondPart) = explode('</body>', $body);
+                $topicContent = strip_tags($body, '<img><p><br><ul><il>');
+                //$topicContent = $bodyTextArea;
+                //$topicContent = $body;
             }
-            catch (Exception $e)
-            {
-                $error = 'Themen-Name bereits vergeben!';
-                $this->_redirect('master/import?error=1');
-            }
-            
-            //insert topic-content in table topic
-            $topicIDRow = $topicNameModel->fetchRow( $topicNameModel->select()->where( 'topicName = ?' , $topicName));
-            $topicID = $topicIDRow['topicID'];
             
             $topicModel = new topicModel();
-            $topicModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
-            $this->_redirect( 'master/import');
+            $topicNameModel = new topicNameModel();
             
+            /* begin of the transaction */
+            $topicModel->getAdapter()->beginTransaction();
+            try
+            {
+                /* insert new topicName into table topicName */
+                $topicNameModel->insert( array( 'topicName' => $topicName));
+                
+                /* get auto-created topicID and insert topicData + topicID in table topic */
+                $topicIDRow = $topicNameModel->fetchRow( $topicNameModel->select()->where( 'topicName = ?' , $topicName));
+                $topicID = $topicIDRow['topicID'];
+                $topicModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+ 
+                /* commit transaction */
+                $query = $topicModel->getAdapter()->commit();
+            }
+            catch(Exception $e) //transaction failed, rollback
+            {
+                $topicModel->getAdapter()->rollBack();
+                $this->_redirect( 'master/import?error=1');
+            }
+            
+            $this->_redirect( 'master/import');
 		}
 		else $this->_redirect('master/import?error=2');
     }
