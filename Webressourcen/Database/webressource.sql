@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 23. Apr 2012 um 18:35
+-- Erstellungszeit: 23. Apr 2012 um 19:55
 -- Server Version: 5.5.16
 -- PHP-Version: 5.3.8
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Datenbank: `webressourcen`
+-- Datenbank: `webressource`
 --
 
 -- --------------------------------------------------------
