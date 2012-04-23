@@ -33,7 +33,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		
 
 		//-- are the style sheet------
-		$view->headLink()->appendStylesheet('../public/_files/css/styles.css');
+		$view->headLink()->appendStylesheet('http://localhost/Webressourcen/public/_files/css/styles.css');
+		//$view->headLink()->appendStylesheet('../public/_files/css/styles.css');
 
 		
 		//-- are the title name ----
@@ -59,12 +60,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
 		
 		//--include the model
-		require_once '../application/models/topicModel.php';
-		require_once '../application/models/commentModel.php';
-		require_once '../application/models/user_topicModel.php';
-		require_once '../application/models/userModel.php';
-		require_once '../application/models/friendModel.php';
-		require_once '../application/models/masterModel.php';
+		require_once '../application/models/TopicModel.php';
+		require_once '../application/models/CommentModel.php';
+		require_once '../application/models/UserTopicModel.php';
+		require_once '../application/models/UserModel.php';
+		require_once '../application/models/TopicAdditiveModel.php';
+		require_once '../application/models/MasterModel.php';
 		
 		
 		//--FrontController ----
@@ -74,6 +75,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		
 		//path to the Controller
 		$frontController->setControllerDirectory('../application/controllers');
+		
+		
+		
 		
 		
 	}

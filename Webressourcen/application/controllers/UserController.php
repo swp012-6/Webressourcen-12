@@ -22,10 +22,17 @@ class UserController extends Zend_Controller_Action
     {
         // action body
     }
-
+	
+	/**
+		show the Topic and show some comments.
+		
+	*/
     public function showtopicAction()
     {
-        // action body
+        //Title
+		$view = $this->initView();
+		$view->headTitle('ThemenName');
+		
     }
 
     public function showcommentAction()
