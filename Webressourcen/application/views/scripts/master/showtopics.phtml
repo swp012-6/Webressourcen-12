@@ -45,6 +45,18 @@
         }        
         echo '</ul>';
         echo $this->topicContent;
+        
+        if ( !empty( $this->userCommentRowSet))
+        {
+            echo '<table border = "1">';
+            foreach( $this->userCommentRowSet as $userCommentRow)
+            {
+                echo '<tr><td>' . $userCommentRow['commentDate'] . '</td>';
+                echo '<td>' . $userCommentRow['userName'] . '</td>';
+                echo '<td>' . $userCommentRow['commentText'] . '</td></tr>';
+            }
+            echo '</table>';
+        }
     }
 ?>
 </div>
