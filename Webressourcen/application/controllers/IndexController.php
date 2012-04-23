@@ -18,6 +18,7 @@ class IndexController extends Zend_Controller_Action
     /**
      * This function changes the title of the header and calls up the view.
      * @param string $titel - Additive for the title in the header of the Main.phtml
+     * @param string $masterOnline - boolean: 1 -> Master is logged in; 0 -> Master isn't logged in
      * @author Peter Kornowski
      */
     public function indexAction()
@@ -41,6 +42,7 @@ class IndexController extends Zend_Controller_Action
     /**
      * This function changes the title of the header and leads through the login.
      * @param string $titel - Additive for the title in the header of the Main.phtml
+     * @param string $error - error message
      * @author Peter Kornowski
      */
     public function loginAction()
@@ -117,6 +119,7 @@ class IndexController extends Zend_Controller_Action
     /**
      * This function changes the title of the header and leads through the update.
      * @param string $titel - Additive for the title in the header of the Main.phtml
+     * @param string $error - error message
      * @author Peter Kornowski
      */
     public function updateAction()
