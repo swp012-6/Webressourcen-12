@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 23. Apr 2012 um 12:38
+-- Erstellungszeit: 23. Apr 2012 um 18:35
 -- Server Version: 5.5.16
 -- PHP-Version: 5.3.8
 
@@ -85,7 +85,7 @@ INSERT INTO `topic` (`topicID`, `topicName`) VALUES
 CREATE TABLE IF NOT EXISTS `topicadditive` (
   `topicID` int(11) NOT NULL,
   `topicVersion` int(11) NOT NULL,
-  `topicContent` varchar(100) NOT NULL,
+  `topicContent` longtext NOT NULL,
   `topicSource` varchar(100) NOT NULL,
   `topicRating` double NOT NULL,
   `topicRatingMax` int(11) NOT NULL,
@@ -123,21 +123,20 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 CREATE TABLE IF NOT EXISTS `usertopic` (
-  `userTopicID` int(11) NOT NULL AUTO_INCREMENT,
   `userID` int(11) NOT NULL,
   `topicID` int(11) NOT NULL,
   `userName` varchar(20) NOT NULL,
   `hash` char(32) NOT NULL,
-  PRIMARY KEY (`userTopicID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+  PRIMARY KEY (`userID`,`topicID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Daten für Tabelle `usertopic`
 --
 
-INSERT INTO `usertopic` (`userTopicID`, `userID`, `topicID`, `userName`, `hash`) VALUES
-(1, 1, 1, 'master', 'blablabla'),
-(2, 2, 1, 'der 1. freund', 'asjdnoasndoasndo');
+INSERT INTO `usertopic` (`userID`, `topicID`, `userName`, `hash`) VALUES
+(1, 1, 'master', 'blablabla'),
+(2, 1, 'der 1. freund', 'asjdnoasndoasndo');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
