@@ -1,4 +1,4 @@
-<div id = "navi">
+﻿<div id = "navi">
 <ul>
 <?php
     foreach( $this->allTopicsRowSet as $topicRow)
@@ -56,7 +56,12 @@
                 echo '<td>' . $userCommentRow['commentText'] . '</td></tr>';
             }
             echo '</table>';
+            
+            echo '<form action = "showtopics?id=' . $_GET['id'] . '&ver=' . $this->selectedTopicVersion . '&exp=' . $this->exp .'" method = "post">';
+                echo '<input type = "submit" value = "' . $this->expButtonValue . '" />';
+            echo '</form>';
         }
+        echo '<p>' . $this->createCommentForm;
     }
 ?>
 </div>
