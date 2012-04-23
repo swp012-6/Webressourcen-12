@@ -1,1 +1,50 @@
-<br /><br /><center>View script for controller <b>Master</b> and script/action name <b>showtopics</b></center>
+<div id = "navi">
+<ul>
+<?php
+    foreach( $this->allTopicsRowSet as $topicRow)
+	{
+        if ( isset( $_GET['id']))
+        {
+            if ( $_GET['id'] == $topicRow['topicID'])
+            {
+                echo '<li>aktuelles Thema</li>';
+            }
+            else 
+            {
+                echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topicRow['topicID'] . '&ver=1">';
+                echo $topicRow['topicName'].'</a></li>';
+            }
+        }
+        else 
+        {
+            echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topicRow['topicID'] . '&ver=1">';
+            echo $topicRow['topicName'].'</a></li>';
+        }
+    }
+?>
+</ul>
+</div>
+<div id = "content">
+<?php
+    if ( !empty( $this->topicContent))
+    {
+        echo '<center><h1>';
+        echo $this->topicName;
+        echo '</h1></center><ul>';
+        foreach( $this->versionNumbersRow as $versionNumber)
+        {
+            if ( $this->selectedTopicVersion == $versionNumber['topicVersion'])
+            {
+                echo '<li>' . $versionNumber['topicVersion'] . '</li>';
+            }
+            else
+            {
+                echo '<li><a href = "http://localhost/Webressourcen/public/master/showtopics?id=' . $_GET['id'] . '&ver=' . $versionNumber['topicVersion'] . '">';
+                echo $versionNumber['topicVersion'] . '</a></li>';
+            }
+        }        
+        echo '</ul>';
+        echo $this->topicContent;
+    }
+?>
+</div>
