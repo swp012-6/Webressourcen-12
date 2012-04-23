@@ -131,7 +131,7 @@ class MasterController extends Zend_Controller_Action
             $versionNumbersRow = $topicAdditiveModel->fetchAll( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID));
             $this->view->versionNumbersRow = $versionNumbersRow;
             
-            /* there exists a topic with the spezified topicID and topicVersion */
+            /* there exists a topic with the specified topicID and topicVersion */
             if ( !empty( $topicRow))
             {
                 $topicSource = $topicRow['topicSource'];
@@ -149,8 +149,34 @@ class MasterController extends Zend_Controller_Action
                 $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
                 $topicContent .= 'Inhalt überarbeiten</a>';
                 $this->view->topicContent = $topicContent;
+                
+                //-----show comments-------------
+                
+                $comment = new CommentModel;
+                $userTopic = new UserTopicModel;
+                
+                /* get all comments for the selected topic, as rowSet */
+                $commentRowSet = $comment->fetchAll( 'topicID = "' . $topicID . '" AND topicVersion = "' . $selectedTopicVersion.'"');
+                
+                if ( !empty( $commentRowSet))
+                {
+                    /* insert a new column userName in the commentRowSet */
+                    foreach( $commentRowSet as $commentRow)
+                    {
+                        $userRow = $userTopic->fetchRow( 'userID = "' . $commentRow['userID'] . '" AND topicID = "' . $commentRow['topicID'] . '"');
+                        $userCommentRow['userName'] = $userRow['userName'];
+                        $userCommentRow['commentDate'] = $commentRow['commentDate'];
+                        $userCommentRow['commentText'] = $commentRow['commentText'];
+                        $userCommentRowSet[] = $userCommentRow;
+                    }
+                    
+                    /* send the rowSet with user-comments to the view */
+                    $this->view->userCommentRowSet = $userCommentRowSet;
+                }
+                
+                
             }
-            else // no topic for the spezified topicID + topicVersion
+            else // no topic for the specified topicID + topicVersion
             {
                 $this->view->topicContent = '<h1>Kein Thema vorhanden!</h1>';
             }
