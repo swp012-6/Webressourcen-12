@@ -7,9 +7,20 @@
 /**
  * loades the database table topic
  */
-class topicModel extends Zend_Db_Table_Abstract
+class TopicModel extends Zend_Db_Table_Abstract
 {
     protected $_name = 'topic';
-	protected $_primary = 'topicID';
+	
+	/**
+		search the Name from the Topic with the topicID
+		@param $topicID is the primer-key
+		@return is the Name from the topic
+	*/
+	public function getTopicName($topicID)
+	{
+		$rowset = $this->fetchALl('topicID = "'.$topicID.'"');
+		$row = $rowset->current();
+		return $row->topicName;
+	}
 }
 ?>

@@ -7,7 +7,7 @@
 /**
  * loades the database table master
  */
-class masterModel extends Zend_Db_Table_Abstract
+class MasterModel extends Zend_Db_Table_Abstract
 {
     protected $_name = 'master';
 }

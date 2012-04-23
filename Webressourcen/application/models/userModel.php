@@ -7,7 +7,7 @@
 /**
  * loades the database table user
  */
-class userModel extends Zend_Db_Table_Abstract
+class UserModel extends Zend_Db_Table_Abstract
 {
     protected $_name = 'user';
 }

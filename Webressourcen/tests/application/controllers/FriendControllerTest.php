@@ -2,7 +2,7 @@
 
 require_once 'PHPUnit/Framework/TestCase.php';
 
-class UserControllerTest extends PHPUnit_Framework_TestCase
+class FriendControllerTest extends PHPUnit_Framework_TestCase
 {
 
     public function setUp()

@@ -1,0 +1,62 @@
+<?php
+
+	//Title---------------------------------------------------
+	echo "<div id = \"FriendShowTopicTitel\" >";
+	echo $this->escape($this->friendTopicTitel);
+	echo "</div>";
+	//Topic---------------------------------------------------
+	
+	
+	//Comment--------------------------------------------------
+	echo "<table id = \"FriendShowTopicCommentTable\" border = \"1\" >";
+	
+	//Table tiltel
+	echo "<tr>";
+		echo "<th>";
+		echo	"<form action =\"showcomment\" method = \"post\">
+					<input type=\"submit\" class=\"FriendButtonTableHeadLink\" value = \"All Comment\" />
+				</form>";
+				
+		echo	"<form action =\"create\" method = \"post\">
+					<input type=\"submit\" class=\"FriendButtonTableHeadCreate\" value = \"Add Comment\" />
+				</form>";
+		echo "</th>";
+	echo "</tr>";
+	//Table body
+	
+	$counter = 0;
+	foreach($this->friendComment as $row)
+	{
+		//view the last two Comments
+		if($counter >= 2)
+		{
+			break;
+		}
+		echo "<tr>";
+			echo "<td>"; // comment Titel: username, userdate , delete
+				echo "<div id = \"FriendShowTopicTableUserName\">".$this->escape($row["userName"])."</div>"; //view the UserName
+				echo "<div id = \"FriendShowTopicTableCommentDate\">".$this->escape($row["commentDate"])."</div>"; //view the commentDate
+				
+				//Delete
+				echo 	"<form action =\"showtopic\" method = \"post\">
+							<input type =\"hidden\" name = \"CommentID\" value = \"".$this->escape($row["commentID"])."\" />
+							<input type=\"submit\" class=\"FriendButtonDelete\" value = \"Delete\" />
+						</form>";
+			echo "</td>";
+		echo "</tr>";
+	
+		echo "<tr>";	//the Comment
+			echo "<td>";
+				echo "<div id = \"FriendShowTopicTableCommentDate\">".$this->escape($row["commentText"])."</div>";
+			echo "</td>";
+		echo "</tr>";
+	
+		
+	}
+	
+	echo "</table>";
+	
+	
+		
+	
+?>
