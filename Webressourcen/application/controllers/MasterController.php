@@ -62,27 +62,27 @@ class MasterController extends Zend_Controller_Action
                 //$topicContent = $body;
             }
             
+            $topicAdditiveModel = new topicAdditiveModel();
             $topicModel = new topicModel();
-            $topicNameModel = new topicNameModel();
             
             /* begin of the transaction */
-            $topicModel->getAdapter()->beginTransaction();
+            $topicAdditiveModel->getAdapter()->beginTransaction();
             try
             {
                 /* insert new topicName into table topicName */
-                $topicNameModel->insert( array( 'topicName' => $topicName));
+                $topicModel->insert( array( 'topicName' => $topicName));
                 
                 /* get auto-created topicID and insert topicData + topicID in table topic */
-                $topicIDRow = $topicNameModel->fetchRow( $topicNameModel->select()->where( 'topicName = ?' , $topicName));
+                $topicIDRow = $topicModel->fetchRow( $topicModel->select()->where( 'topicName = ?' , $topicName));
                 $topicID = $topicIDRow['topicID'];
-                $topicModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+                $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
  
                 /* commit transaction */
-                $query = $topicModel->getAdapter()->commit();
+                $query = $topicAdditiveModel->getAdapter()->commit();
             }
             catch(Exception $e) //transaction failed, rollback
             {
-                $topicModel->getAdapter()->rollBack();
+                $topicAdditiveModel->getAdapter()->rollBack();
                 $this->_redirect( 'master/import?error=1');
             }
             
@@ -99,42 +99,58 @@ class MasterController extends Zend_Controller_Action
     public function showtopicsAction()
     {
         Zend_Layout::getMvcInstance()->setLayout('master');
-		$topicModel = new topicModel();
-        $topicNameModel = new topicNameModel();
-		$allTopicsRowSet = $topicNameModel->fetchAll();
+		$topicAdditiveModel = new topicAdditiveModel();
+        $topicModel = new topicModel();
+        
+        /* get all topics as rowSet and sent it to the view */
+		$allTopicsRowSet = $topicModel->fetchAll();
 		$this->view->allTopicsRowSet = $allTopicsRowSet;
         
+        /* topic was already selectet to show */
         if ( isset( $_GET['id']))
         {
+            /* set version to standard if not available */
             if (!isset( $_GET['ver']))
             {
                 $selectedTopicVersion = 1;
             }
-            else $selectedTopicVersion = $_GET['ver'];
+            else // use the postet version number 
+            $selectedTopicVersion = $_GET['ver'];
+            
+            /* sent the version number to the view */
             $this->view->selectedTopicVersion = $selectedTopicVersion;
             
+            /* use the topicID to get row with the content of the selected topic */
             $topicID = $_GET['id'];
-            $topicRow = $topicModel->fetchRow( $topicModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $selectedTopicVersion));
-            $topicNameRow = $topicNameModel->fetchRow( $topicNameModel->select()->where( 'topicID = ?', $topicID));
-            $versionNumbersRow = $topicModel->fetchAll( $topicModel->select()->where( 'topicID = ?', $topicID));
+            $topicRow = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $selectedTopicVersion));
+            
+            /* get the topicName by topicID */
+            $topicNameRow = $topicModel->fetchRow( $topicModel->select()->where( 'topicID = ?', $topicID));
+            
+            /* select all versionnumbers and send them to the view as rowSet */
+            $versionNumbersRow = $topicAdditiveModel->fetchAll( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID));
             $this->view->versionNumbersRow = $versionNumbersRow;
             
+            /* there exists a topic with the spezified topicID and topicVersion */
             if ( !empty( $topicRow))
             {
                 $topicSource = $topicRow['topicSource'];
                 $topicContent = $topicRow['topicContent'];
                 
+                /* set the topicSource if empty */
                 if ( empty( $topicSource))
                 {
                     $topicSource = 'nicht angegeben/bekannt';
                 }
+                
+                /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicNameRow['topicName'];
                 $topicContent = 'Version: ' . $selectedTopicVersion . '<p>Inhalt:<br>' . $topicContent . '<p>Quelle: ' . $topicSource;
                 $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
                 $topicContent .= 'Inhalt überarbeiten</a>';
                 $this->view->topicContent = $topicContent;
             }
-            else 
+            else // no topic for the spezified topicID + topicVersion
             {
                 $this->view->topicContent = '<h1>Kein Thema vorhanden!</h1>';
             }
@@ -170,7 +186,8 @@ class MasterController extends Zend_Controller_Action
         if ( isset( $_GET['id']))
         {
             $topicID = $_GET['id'];
-            /* set topicVersion to default if necessary */
+            
+            /* set topicVersion to default if necessary and send it to the view */
             if ( !isset( $_GET['ver']))
             {
                 $topicVersion = 1;
@@ -178,10 +195,10 @@ class MasterController extends Zend_Controller_Action
             else $topicVersion = $_GET['ver'];
             $this->view->topicVersion = $topicVersion;
             
-            $topicNameModel = new topicNameModel();
             $topicModel = new topicModel();
+            $topicAdditiveModel = new topicAdditiveModel();
             
-            $topicNameRow = $topicNameModel->fetchRow( 'topicID =' . $topicID);    //get topicName if available
+            $topicNameRow = $topicModel->fetchRow( 'topicID =' . $topicID);    //get topicName if available
             
             /* topics with spezified topicID are available */
             if ( !empty( $topicNameRow)) 
@@ -192,7 +209,7 @@ class MasterController extends Zend_Controller_Action
                 }
                 $this->view->topicName = $topicNameRow['topicName'];
                 
-                $topicRow = $topicModel-> fetchRow( $topicModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $topicVersion));
+                $topicRow = $topicAdditiveModel-> fetchRow( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $topicVersion));
                 /* in link spezified version is available for this topic */
                 if ( !empty( $topicRow))
                 {
@@ -217,12 +234,12 @@ class MasterController extends Zend_Controller_Action
         
         if ( (!empty( $topicID)) && (!empty( $topicVersion)) && (!empty( $topicContent)) && (!empty( $topicSource)))
         {
-            $topicModel = new topicModel();
-            $maxVersion = $topicModel->fetchRow( $topicModel->select()  ->from( $topicModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
+            $topicAdditiveModel = new topicAdditiveModel();
+            $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
                                                                         ->where( 'topicID = ?', $topicID));
             $maxVersion = $maxVersion['maxVersion'];
             
-            $topicModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
             $this->view->msg = 'Neue Version wurde erstellt!';
         }
         else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
