@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 
 class MasterController extends Zend_Controller_Action
 {
@@ -25,7 +25,7 @@ class MasterController extends Zend_Controller_Action
                 case 1: $this->view->errorMsg = 'Themen-Name bereits vergeben!'; 
                         break;
                 
-                case 2: $this->view->errorMsg = 'Bitte alle Felder füllen!';
+                case 2: $this->view->errorMsg = 'Bitte alle Felder fÃ¼llen!';
                         break;
                 default: 
             }
@@ -102,6 +102,13 @@ class MasterController extends Zend_Controller_Action
 		$topicAdditiveModel = new topicAdditiveModel();
         $topicModel = new topicModel();
         
+        switch ( $_GET['error'])
+        {
+            case 1: echo 'Bitte fÃ¼llen Sie das Feld Kommentar!';
+            // .........................
+        }
+        
+        
         /* get all topics as rowSet and sent it to the view */
 		$allTopicsRowSet = $topicModel->fetchAll();
 		$this->view->allTopicsRowSet = $allTopicsRowSet;
@@ -147,7 +154,7 @@ class MasterController extends Zend_Controller_Action
                 $this->view->topicName = $topicNameRow['topicName'];
                 $topicContent = 'Version: ' . $selectedTopicVersion . '<p>Inhalt:<br>' . $topicContent . '<p>Quelle: ' . $topicSource;
                 $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
-                $topicContent .= 'Inhalt überarbeiten</a>';
+                $topicContent .= 'Inhalt Ã¼berarbeiten</a>';
                 $this->view->topicContent = $topicContent;
                 
                 //-----show comments-------------
@@ -156,24 +163,52 @@ class MasterController extends Zend_Controller_Action
                 $userTopic = new UserTopicModel;
                 
                 /* get all comments for the selected topic, as rowSet */
-                $commentRowSet = $comment->fetchAll( 'topicID = "' . $topicID . '" AND topicVersion = "' . $selectedTopicVersion.'"');
+                $commentRowSet = $comment->fetchAll( 'topicID = "' . $topicID . '" AND topicVersion = "' . $selectedTopicVersion.'"', 'commentDate DESC');
                 
                 if ( !empty( $commentRowSet))
                 {
+                    
                     /* insert a new column userName in the commentRowSet */
+                    $commentCounter = 0;
                     foreach( $commentRowSet as $commentRow)
                     {
+                        /* if exp is not included in the url, just show 3 comments */
+                        if ( ( $commentCounter == 3 ) && ( !$_GET['exp']) )
+                        {
+                            break;
+                        }
+                        $commentCounter++;
+                        
+                        /* get the userName of current userID */
                         $userRow = $userTopic->fetchRow( 'userID = "' . $commentRow['userID'] . '" AND topicID = "' . $commentRow['topicID'] . '"');
+                        
                         $userCommentRow['userName'] = $userRow['userName'];
                         $userCommentRow['commentDate'] = $commentRow['commentDate'];
                         $userCommentRow['commentText'] = $commentRow['commentText'];
                         $userCommentRowSet[] = $userCommentRow;
                     }
                     
-                    /* send the rowSet with user-comments to the view */
+                    /* configure the variables exp and expButtonValue to manage the expansion-button */
+                    if ( $_GET['exp']) 
+                    {
+                        $this->view->exp = 0;
+                        $this->view->expButtonValue = 'kÃ¼rzen';
+                    }
+                    else 
+                    {
+                        $this->view->exp = 1;
+                        $this->view->expButtonValue = 'erweitern';
+                    }
+                    
+                    
+                    /* send the rowSet with user-comments and names to the view */
                     $this->view->userCommentRowSet = $userCommentRowSet;
                 }
-                
+                $userID = 1;
+                /* send a generated comment-creation-form to the view */
+                $createCommentForm = new Application_Form_CreateComment();
+                $createCommentForm->setIDs( $topicID, $userID, $selectedTopicVersion);
+                $this->view->createCommentForm = $createCommentForm;
                 
             }
             else // no topic for the specified topicID + topicVersion
@@ -231,7 +266,7 @@ class MasterController extends Zend_Controller_Action
             {
                 if ( $_GET['error'] == 1)
                 {
-                    $this->view->msg = 'Bitte alle Felder füllen!';
+                    $this->view->msg = 'Bitte alle Felder fÃ¼llen!';
                 }
                 $this->view->topicName = $topicNameRow['topicName'];
                 
@@ -242,7 +277,7 @@ class MasterController extends Zend_Controller_Action
                     $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
                     $this->view->topicSource = $topicRow['topicSource'];
                 }
-                else $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
+                else $this->view->msg = 'Angegebende Version existiert fÃ¼r dieses Thema nicht!';
             }
             else $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
         }
@@ -271,8 +306,41 @@ class MasterController extends Zend_Controller_Action
         else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
     }
 
+    public function validatecommentAction()
+    {
+        /* save posts in vairables */
+        $commentText = $_POST['commentText'];
+        $userID = $_POST['userID'];
+        $topicID = $_POST['topicID'];
+        $topicVersion = $_POST['topicVersion'];
+        
+        if ( (empty( $userID)) || (empty( $topicID)) || (empty( $topicVersion)))
+        {
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
+        }
+        if ( empty( $commentText))
+        {
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
+        }
+        
+        $commentModel = new CommentModel();
+        
+        try
+        {
+            $commentModel->insert( array( 'commentText' => $commentText, 'userID' => $userID, 'topicID' => $topicID, 'topicVersion' => $topicVersion));
+        }
+        catch (Exception $e)
+        {
+            //.........................................
+        }
+        
+        $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
+    }
+
 
 }
+
+
 
 
 
