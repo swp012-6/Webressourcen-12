@@ -62,31 +62,14 @@ class MasterController extends Zend_Controller_Action
                 //$topicContent = $body;
             }
             
-            $topicAdditiveModel = new topicAdditiveModel();
             $topicModel = new topicModel();
+            $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource);
             
-            /* begin of the transaction */
-            $topicAdditiveModel->getAdapter()->beginTransaction();
-            try
+            if ( $result == 1)
             {
-                /* insert new topicName into table topicName */
-                $topicModel->insert( array( 'topicName' => $topicName));
-                
-                /* get auto-created topicID and insert topicData + topicID in table topic */
-                $topicIDRow = $topicModel->fetchRow( $topicModel->select()->where( 'topicName = ?' , $topicName));
-                $topicID = $topicIDRow['topicID'];
-                $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
- 
-                /* commit transaction */
-                $query = $topicAdditiveModel->getAdapter()->commit();
+                $this->_redirect( 'master/import');
             }
-            catch(Exception $e) //transaction failed, rollback
-            {
-                $topicAdditiveModel->getAdapter()->rollBack();
-                $this->_redirect( 'master/import?error=1');
-            }
-            
-            $this->_redirect( 'master/import');
+            else $this->_redirect( 'master/import?error=1');
 		}
 		else $this->_redirect('master/import?error=2');
     }
@@ -99,7 +82,6 @@ class MasterController extends Zend_Controller_Action
     public function showtopicsAction()
     {
         Zend_Layout::getMvcInstance()->setLayout('master');
-		$topicAdditiveModel = new topicAdditiveModel();
         $topicModel = new topicModel();
         
         switch ( $_GET['error'])
@@ -110,8 +92,8 @@ class MasterController extends Zend_Controller_Action
         
         
         /* get all topics as rowSet and sent it to the view */
-		$allTopicsRowSet = $topicModel->fetchAll();
-		$this->view->allTopicsRowSet = $allTopicsRowSet;
+		$topicList = $topicModel->getTopicList();
+		$this->view->topicList = $topicList;
         
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
@@ -185,7 +167,7 @@ class MasterController extends Zend_Controller_Action
                     
                     
                     /* send the rowSet with user-comments and names to the view */
-                    $this->view->userCommentRowSet = $commentRowSet;
+                    $this->view->CommentRowSet = $commentRowSet;
                 }
                 
                 $userID = 1; //test-purpose
