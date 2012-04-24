@@ -1,24 +1,24 @@
 ﻿<div id = "navi">
 <ul>
 <?php
-    foreach( $this->allTopicsRowSet as $topicRow)
+    foreach( $this->topicList as $topic)
 	{
         if ( isset( $_GET['id']))
         {
-            if ( $_GET['id'] == $topicRow['topicID'])
+            if ( $_GET['id'] == $topic['topicID'])
             {
                 echo '<li>aktuelles Thema</li>';
             }
             else 
             {
-                echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topicRow['topicID'] . '&ver=1">';
-                echo $topicRow['topicName'].'</a></li>';
+                echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
+                echo $topic['topicName'].'</a></li>';
             }
         }
         else 
         {
-            echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topicRow['topicID'] . '&ver=1">';
-            echo $topicRow['topicName'].'</a></li>';
+            echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
+            echo $topic['topicName'].'</a></li>';
         }
     }
 ?>
@@ -46,14 +46,14 @@
         echo '</ul>';
         echo $this->topicContent;
         
-        if ( !empty( $this->userCommentRowSet))
+        if ( !empty( $this->CommentRowSet))
         {
             echo '<table border = "1">';
-            foreach( $this->userCommentRowSet as $userCommentRow)
+            foreach( $this->CommentRowSet as $CommentRow)
             {
-                echo '<tr><td>' . $userCommentRow['commentDate'] . '</td>';
-                echo '<td>' . $userCommentRow['userName'] . '</td>';
-                echo '<td>' . $userCommentRow['commentText'] . '</td></tr>';
+                echo '<tr><td>' . $CommentRow['commentDate'] . '</td>';
+                echo '<td>' . $CommentRow['userName'] . '</td>';
+                echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
             }
             echo '</table>';
             
