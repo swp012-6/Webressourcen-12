@@ -98,5 +98,30 @@ class TopicModel extends Zend_Db_Table_Abstract
         }
         return 1;
     }
+    
+    /** This function creates a new version to an existing topic.
+      * The new versionnumber is the increment of the currently highest.
+      * @param $topicID ID of the existing topic
+      * @param $topicContent content of the new version
+      * @param $topicSource new version's source
+      * @return 1 if success, null if failed
+      */
+    public function createNewTopicVersion( $topicID, $topicContent, $topicSource)
+    {
+        $topicAdditiveModel = new TopicAdditiveModel();
+        try
+        {
+            $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
+                                                                                        ->where( 'topicID = ?', $topicID));
+            $maxVersion = $maxVersion['maxVersion'];
+            
+            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+        }
+        catch ( Exception $e)
+        {
+            return null;
+        }
+        return 1;
+    }
 }
 ?>
