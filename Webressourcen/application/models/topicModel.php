@@ -94,7 +94,7 @@ class TopicModel extends Zend_Db_Table_Abstract
         catch(Exception $e) //transaction failed, rollback
         {
             $topicAdditiveModel->getAdapter()->rollBack();
-            $return;
+            return null;
         }
         return 1;
     }
