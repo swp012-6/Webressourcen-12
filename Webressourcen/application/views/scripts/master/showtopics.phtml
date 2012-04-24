@@ -31,16 +31,16 @@
         echo '<center><h1>';
         echo $this->topicName;
         echo '</h1></center><ul>';
-        foreach( $this->versionNumbersRow as $versionNumber)
+        foreach( $this->topicVersionArray as $topicVersion)
         {
-            if ( $this->selectedTopicVersion == $versionNumber['topicVersion'])
+            if ( $this->selectedTopicVersion == $topicVersion)
             {
-                echo '<li>' . $versionNumber['topicVersion'] . '</li>';
+                echo '<li>' . $topicVersion . '</li>';
             }
             else
             {
-                echo '<li><a href = "http://localhost/Webressourcen/public/master/showtopics?id=' . $_GET['id'] . '&ver=' . $versionNumber['topicVersion'] . '">';
-                echo $versionNumber['topicVersion'] . '</a></li>';
+                echo '<li><a href = "http://localhost/Webressourcen/public/master/showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">';
+                echo $topicVersion . '</a></li>';
             }
         }        
         echo '</ul>';
