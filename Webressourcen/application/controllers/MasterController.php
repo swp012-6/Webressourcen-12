@@ -65,7 +65,7 @@ class MasterController extends Zend_Controller_Action
             $topicModel = new topicModel();
             $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource);
             
-            if ( $result == 1)
+            if ( $result)
             {
                 $this->_redirect( 'master/import');
             }
@@ -225,19 +225,23 @@ class MasterController extends Zend_Controller_Action
             $topicModel = new topicModel();
             $topicAdditiveModel = new topicAdditiveModel();
             
-            $topicNameRow = $topicModel->fetchRow( 'topicID =' . $topicID);    //get topicName if available
+            $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
             
             /* topics with spezified topicID are available */
-            if ( !empty( $topicNameRow)) 
+            if ( !empty( $topicName)) 
             {
-                if ( $_GET['error'] == 1)
+                switch ( $_GET['error'])
                 {
-                    $this->view->msg = 'Bitte alle Felder füllen!';
+                    case 1: $this->view->msg = 'Bitte alle Felder füllen!';
+                            break;
+                    case 2: $this->view->msg = 'Fehler bei der Versionserstellung! Bitte wenden SIe sich an den Administrator.';
+                            break;
                 }
-                $this->view->topicName = $topicNameRow['topicName'];
+                $this->view->topicName = $topicName;
                 
-                $topicRow = $topicAdditiveModel-> fetchRow( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $topicVersion));
-                /* in link spezified version is available for this topic */
+                $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
+                
+                /* if link specified version is available for this topic */
                 if ( !empty( $topicRow))
                 {
                     $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
@@ -253,23 +257,23 @@ class MasterController extends Zend_Controller_Action
     public function validateeditAction()
     {
         Zend_Layout::getMvcInstance()->setLayout('master');
+        $topicModel = new TopicModel();
         
         $topicID = $_POST['topicID'];
         $topicVersion = $_POST['topicVersion'];
         $topicContent = $_POST['topicContent'];
         $topicSource = $_POST['topicSource'];
         
-        if ( (!empty( $topicID)) && (!empty( $topicVersion)) && (!empty( $topicContent)) && (!empty( $topicSource)))
+        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))
         {
-            $topicAdditiveModel = new topicAdditiveModel();
-            $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
-                                                                        ->where( 'topicID = ?', $topicID));
-            $maxVersion = $maxVersion['maxVersion'];
-            
-            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
-            $this->view->msg = 'Neue Version wurde erstellt!';
+            $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
         }
-        else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
+        
+        if ( $topicModel->createNewTopicVersion( $topicID, $topicContent, $topicSource))
+        {           
+                $this->view->msg = 'Neue Version wurde erstellt!';
+        }
+        else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=2');
     }
 
     public function validatecommentAction()
