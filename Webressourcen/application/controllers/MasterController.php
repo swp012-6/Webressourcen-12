@@ -127,16 +127,16 @@ class MasterController extends Zend_Controller_Action
             /* sent the version number to the view */
             $this->view->selectedTopicVersion = $selectedTopicVersion;
             
-            /* use the topicID to get row with the content of the selected topic */
+            /* use the topicID and selectedTopicVersion to get row with the content of the selected topic */
             $topicID = $_GET['id'];
-            $topicRow = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $selectedTopicVersion));
+            $topicRow = $topicModel->getTopic( $topicID, $selectedTopicVersion);
             
             /* get the topicName by topicID */
-            $topicNameRow = $topicModel->fetchRow( $topicModel->select()->where( 'topicID = ?', $topicID));
+            $topicName = $topicModel->getTopicName( $topicID);
             
             /* select all versionnumbers and send them to the view as rowSet */
-            $versionNumbersRow = $topicAdditiveModel->fetchAll( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID));
-            $this->view->versionNumbersRow = $versionNumbersRow;
+            $topicVersionArray = $topicModel->getVersionNumbers( $topicID);
+            $this->view->topicVersionArray = $topicVersionArray;
             
             /* there exists a topic with the specified topicID and topicVersion */
             if ( !empty( $topicRow))
@@ -151,43 +151,26 @@ class MasterController extends Zend_Controller_Action
                 }
                 
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
-                $this->view->topicName = $topicNameRow['topicName'];
+                $this->view->topicName = $topicName;
                 $topicContent = 'Version: ' . $selectedTopicVersion . '<p>Inhalt:<br>' . $topicContent . '<p>Quelle: ' . $topicSource;
                 $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
                 $topicContent .= 'Inhalt überarbeiten</a>';
                 $this->view->topicContent = $topicContent;
                 
-                //-----show comments-------------
                 
+                
+                
+                //-----------------show comments-----------------------
                 $comment = new CommentModel;
-                $userTopic = new UserTopicModel;
                 
-                /* get all comments for the selected topic, as rowSet */
-                $commentRowSet = $comment->fetchAll( 'topicID = "' . $topicID . '" AND topicVersion = "' . $selectedTopicVersion.'"', 'commentDate DESC');
+                /* get all comments of the selected topic, as rowSet */
+                $commentRowSet = $comment->getComment( array(   'topicID' => $topicID,
+                                                                'topicVersion' => $selectedTopicVersion,    
+                                                                'orderup' => 0,
+                                                                'exp' => $_GET['exp']));
                 
                 if ( !empty( $commentRowSet))
                 {
-                    
-                    /* insert a new column userName in the commentRowSet */
-                    $commentCounter = 0;
-                    foreach( $commentRowSet as $commentRow)
-                    {
-                        /* if exp is not included in the url, just show 3 comments */
-                        if ( ( $commentCounter == 3 ) && ( !$_GET['exp']) )
-                        {
-                            break;
-                        }
-                        $commentCounter++;
-                        
-                        /* get the userName of current userID */
-                        $userRow = $userTopic->fetchRow( 'userID = "' . $commentRow['userID'] . '" AND topicID = "' . $commentRow['topicID'] . '"');
-                        
-                        $userCommentRow['userName'] = $userRow['userName'];
-                        $userCommentRow['commentDate'] = $commentRow['commentDate'];
-                        $userCommentRow['commentText'] = $commentRow['commentText'];
-                        $userCommentRowSet[] = $userCommentRow;
-                    }
-                    
                     /* configure the variables exp and expButtonValue to manage the expansion-button */
                     if ( $_GET['exp']) 
                     {
@@ -202,9 +185,10 @@ class MasterController extends Zend_Controller_Action
                     
                     
                     /* send the rowSet with user-comments and names to the view */
-                    $this->view->userCommentRowSet = $userCommentRowSet;
+                    $this->view->userCommentRowSet = $commentRowSet;
                 }
-                $userID = 1;
+                
+                $userID = 1; //test-purpose
                 /* send a generated comment-creation-form to the view */
                 $createCommentForm = new Application_Form_CreateComment();
                 $createCommentForm->setIDs( $topicID, $userID, $selectedTopicVersion);
