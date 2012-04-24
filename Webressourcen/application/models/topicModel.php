@@ -50,5 +50,53 @@ class TopicModel extends Zend_Db_Table_Abstract
         $topicAdditiveModel = new TopicAdditiveModel();
         return $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID)->where( 'topicVersion = ?', $topicVersion));
     }
+    
+    /** returns array with topicIDs and topicNames to list all available topics ................hier muss noch die userID rein,bleibt aus testzwecken erstmal weg
+      * @param $userID ID of the logged in user
+      * @return 2-dimensional array with topicID and topicName
+      */
+    public function getTopicList()
+    {
+        $allTopicsRowSet = $this->fetchAll( $this->select()->from( $this, 'topicID'));
+        
+        foreach ( $allTopicsRowSet as $allTopicsRow)
+        {
+            $topicList[] = array('topicID' => $allTopicsRow['topicID'], 'topicName' => $this->getTopicName( $allTopicsRow['topicID']));
+        }
+        return $topicList;
+    }
+    
+    /** creates a new topic with an unique topicID
+      * @param $topicName name of the new topic
+      * @param $topicContent content of the new topic
+      * @param $topicSource source
+      * @return returns 0 if transaction failed, else 1
+      */
+    public function createTopic( $topicName, $topicContent, $topicSource) 
+    {
+        $topicAdditiveModel = new TopicAdditiveModel();
+        
+        /* begin of the transaction */
+        $topicAdditiveModel->getAdapter()->beginTransaction();
+        try
+        {
+            /* insert new topicName into table topicName */
+            $this->insert( array( 'topicName' => $topicName));
+ 
+            /* get auto-created topicID and insert topicData + topicID in table topic */
+            $topicIDRow = $this->fetchRow( $this->select()->where( 'topicName = ?' , $topicName));
+            $topicID = $topicIDRow['topicID'];
+            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+ 
+            /* commit transaction */
+            $query = $topicAdditiveModel->getAdapter()->commit();
+        }
+        catch(Exception $e) //transaction failed, rollback
+        {
+            $topicAdditiveModel->getAdapter()->rollBack();
+            $return;
+        }
+        return 1;
+    }
 }
 ?>
