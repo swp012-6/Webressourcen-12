@@ -32,13 +32,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		require_once 'Zend/Db.php';
 		require_once 'Zend/Debug.php';
 	       
-		$params = array ('host'     => '127.0.0.1',
-		                 'username' => 'root',
-		                 'password' => '',
-		                 'dbname'   => 'comments');
-	       
-		$db = Zend_Db::factory('PDO_MYSQL', $params);
-	       
 		require_once 'Zend/Db/Table.php';
 		Zend_Db_Table::setDefaultAdapter($db);
 	       
