@@ -1,1 +1,47 @@
-<br /><br /><center>View script for controller <b>Master</b> and script/action name <b>invite</b></center>
+<!-- content of the invite overview -->
+<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'send'), null, true) ?>" method="post">
+	<table>
+		<tr>				<!--tablehead-->
+			<td>
+				Vorname
+			</td>
+			<td>
+				Nachname
+			</td>
+			<td>
+				E-Mail-Adresse
+			</td>
+			<td>
+				Beruf
+			</td>
+			<td>
+				einladen
+			</td>
+		</tr>
+	<?php
+	foreach ($this->friends as $a)		//for each friend
+	{
+	?>
+		<tr>
+			<td>
+				<?php echo $this->escape($a->first_name) ?>
+			</td>
+			<td>
+				<?php echo $this->escape($a->last_name) ?>
+			</td>
+			<td>
+				<?php echo $this->escape($a->email) ?>
+			</td>
+			<td>
+				<?php echo $this->escape($a->job) ?>
+			</td>
+			<td>
+				<input type="checkbox" name="<?php echo $this->escape($a->userID) ?>" value="<?php echo $this->escape($a->email) ?>">
+			</td>
+		</tr>
+	<?php
+	}
+	?>
+	</table>
+	<input type="submit" name="button_send" value="ausgewählte Freunde informieren" class="button" />
+</form>

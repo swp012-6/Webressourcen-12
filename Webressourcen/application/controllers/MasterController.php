@@ -6,17 +6,16 @@ class MasterController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
+        Zend_Layout::getMvcInstance()->setLayout('master');
     }
 
     public function indexAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         // action body
     }
 
     public function importAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         //session_start(); .............
         if ( isset($_GET['error'])) 
         {
@@ -36,7 +35,6 @@ class MasterController extends Zend_Controller_Action
 
     public function validateAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         //session_start(); ............
 		
         /* save content of posted variables */
@@ -81,7 +79,6 @@ class MasterController extends Zend_Controller_Action
 
     public function showtopicsAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         $topicModel = new topicModel();
         
         switch ( $_GET['error'])
@@ -199,15 +196,55 @@ class MasterController extends Zend_Controller_Action
         // action body
     }
 
+    /**
+     * This function sends all user to the view
+     * 
+     * @param string $friends all information in the table 'user' of 'webressource'
+     * @author Peter Kornowski
+     */
     public function inviteAction()
     {
-        // action body
+        $userModel = new userModel();
+	$this->view->friends = $userModel->fetchAll();
+    }
+
+    /**
+     * This function sends emails to the friends
+     * 
+     * @param string $_POST[$i] particular emailaddress of the user whit the userID $i
+     * @author Peter Kornowski
+     */
+    public function sendAction()
+    {
+        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
+        {
+            $config = array('auth' => 'login',	//login mail-server
+                'username' => 'swp12-6@gmx.de',
+                'password' => 'BKLRswp12');
+ 
+            $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
+
+            $mail = new Zend_Mail();		//create mail
+            $mail->setBodyText('Einladung zu ');
+            $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
+            for($i=1; $i<=10; $i++)		//send to all 
+            {
+                if(isset($_POST[$i]))		//who are checked
+                {
+                    $mail->addTo($_POST[$i]);
+                }
+            }
+            $mail->setSubject('Einladung');
+            $mail->send($transport);
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to mainpage
+        }
     }
 
     public function edittopicAction()
-    {
-        Zend_Layout::getMvcInstance()->setLayout('master');
-        
+    {        
         //session_start(); ..........
         
         if ( isset( $_GET['id']))
@@ -256,7 +293,6 @@ class MasterController extends Zend_Controller_Action
 
     public function validateeditAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         $topicModel = new TopicModel();
         
         $topicID = $_POST['topicID'];
