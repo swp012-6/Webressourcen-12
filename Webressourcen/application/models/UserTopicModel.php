@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License(GPL)
@@ -21,6 +21,12 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	{
 		$rowset = $this->fetchAll('userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
 		$row = $rowset->current();
+        
+        if ( empty( $row))
+        {
+            return 'gelöschter Nutzer';
+        }
+        
 		return $row->userName;
 	}
 

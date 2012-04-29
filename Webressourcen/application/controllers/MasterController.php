@@ -13,6 +13,9 @@ class MasterController extends Zend_Controller_Action
         // action body
     }
 
+    /** This function shows a form where the master can insert topic-parameters like content or source.
+      * If an error occurred in validateAction, this page will show an errormessage.
+      */      
     public function importAction()
     {
         //session_start(); .............
@@ -32,6 +35,7 @@ class MasterController extends Zend_Controller_Action
 		$this->view->topicForm = $topicForm;
     }
 
+    /* This function inserts topic-parameters in the database */
     public function validateAction()
     {
         //session_start(); ............
@@ -73,6 +77,10 @@ class MasterController extends Zend_Controller_Action
         // action body
     }
 
+    /** This function shows a list of all available topics on the left side of the page.
+      * If a topic is selected, his content will get shown in a iframe.
+      * The master is also able to access other functions like edittopic, invite, showcomments from this page.
+      */
     public function showtopicsAction()
     {
         $topicModel = new topicModel();
@@ -257,6 +265,7 @@ class MasterController extends Zend_Controller_Action
         }
     }
 
+    /* sends the topicContent to the view, so the master is able to edit it in a textarea */
     public function edittopicAction()
     {        
         //session_start(); ..........
@@ -304,6 +313,7 @@ class MasterController extends Zend_Controller_Action
         else $this->view->msg = 'Keine Themen-ID angegeben!';
     }
 
+    /* This function creates a new topicVersion with the posted topicContent and topicSource */
     public function validateeditAction()
     {
         $topicModel = new TopicModel();
@@ -325,9 +335,10 @@ class MasterController extends Zend_Controller_Action
         else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=2');
     }
 
+    /* inserts a comment in the database */
     public function validatecommentAction()
     {
-        /* save posts in vairables */
+        /* save posts in variables */
         $commentText = $_POST['commentText'];
         $userID = $_POST['userID'];
         $topicID = $_POST['topicID'];
@@ -355,7 +366,10 @@ class MasterController extends Zend_Controller_Action
         
         $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
     }
-
+    
+    /** Controller of the page which contains the topicContent.
+      * This page is the target of a iframe in showtopic.
+      */
     public function topicviewAction()
     {
         $this->_helper->layout()->disableLayout();
@@ -373,6 +387,7 @@ class MasterController extends Zend_Controller_Action
         }
     }
 
+    /* Shows comments on extra pages with 10 comments per page. */
     public function showcommentsAction()
     {
         //.....session, ausnahmen.............
