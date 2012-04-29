@@ -196,24 +196,15 @@ class MasterController extends Zend_Controller_Action
      */
     public function inviteAction()
     {
-<<<<<<< HEAD
         if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
-            $userModel = new userModel();
+            $userModel = new UserModel();
             $this->view->friends = $userModel->getAllUser();
         }
         else
         {
             $this->_redirect('/master');	//goes to master mainpage
         }
-=======
-        if ( isset( $_POST['topicID']))
-        {
-            $userModel = new userModel();
-            $this->view->friends = $userModel->fetchAll();
-        }
-        else $this->_redirect( 'index');
->>>>>>> 17f21294dfe0b5710eef48a4ec68017222f3b5f2
     }
 
     /**
@@ -224,41 +215,24 @@ class MasterController extends Zend_Controller_Action
      */
     public function sendAction()
     {
-        if ( ($this->getRequest()->isPost()) && (isset( $_POST['topicID'])))	//avoids direct access without having information passed
+        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
-<<<<<<< HEAD
-            $userTopicModel = new userTopicModel;
-            $userModel = new userModel();
-
-=======
+            $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
-            $topicModel = new TopicModel();
-            $usertopicModel = new UsertopicModel();
-            
-            $topicID = $_POST['topicID'];   //topic exists??!
-            
->>>>>>> 17f21294dfe0b5710eef48a4ec68017222f3b5f2
+
             $config = array('auth' => 'login',	//login mail-server
-                            'username' => 'swp12-6@gmx.de',
-                            'password' => 'BKLRswp12');
+                'username' => 'swp12-6@gmx.de',
+                'password' => 'BKLRswp12');
  
             $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
 
-            $userNumber = $userModel->countUser();
+            $max = $userModel->getMaxUserID();
 
             $mail = new Zend_Mail();		//create mail
-<<<<<<< HEAD
             $mail->setBodyText('Einladung zu '. $_POST['topicName']);
             $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
             $mail->setSubject('Einladung zu '. $_POST['topicName']);
-            for($i=1; $i<=userNumber; $i++)		//send to all 
-=======
-            $mail->setBodyText( 'Sie wurden zu dem Thema "' . $topicModel->getTopicName( $topicID) . '" eingeladen.
-                                Bitte nutzen Sie folgenden Link um auf das Thema zugreifen zu können: 
-                                ' . $this->getRequest()->getScheme() . '://' . $this->getRequest()->getHttpHost() . $this->getRequest()->getBaseUrl());
-            $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
-            for( $i = 1; $i <= $userModel->getMaxUserID(); $i++)		//send to all 
->>>>>>> 17f21294dfe0b5710eef48a4ec68017222f3b5f2
+            for($i=1; $i<=$max; $i++)		//send to all 
             {
                 if(isset($_POST[$i]))		//who are checked
                 {
@@ -425,3 +399,4 @@ class MasterController extends Zend_Controller_Action
         }
     }
 }
+?>
