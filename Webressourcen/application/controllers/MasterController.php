@@ -114,7 +114,8 @@ class MasterController extends Zend_Controller_Action
             $topicName = $topicModel->getTopicName( $topicID);
             
             /* select all versionnumbers and send them to the view as rowSet */
-            $topicVersionArray = $topicModel->getVersionNumbers( $topicID);
+			$option = array("topicID" => $topicID);
+            $topicVersionArray = $topicModel->getVersionNumbers( $option);
             $this->view->topicVersionArray = $topicVersionArray;
             
             /* there exists a topic with the specified topicID and topicVersion */

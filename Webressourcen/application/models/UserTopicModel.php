@@ -11,6 +11,11 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 {
     protected $_name = 'userTopic';
 	
+	/**
+		get the UserName about the UserID and TopicID
+		@param $userTopic, "userID","topicID"
+		@return userName
+	*/
 	public function getUserName($userTopic)
 	{
 		$rowset = $this->fetchALl('userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
