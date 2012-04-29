@@ -149,7 +149,7 @@ class MasterController extends Zend_Controller_Action
                 $commentRowSet = $comment->getComment( array(   'topicID' => $topicID,
                                                                 'topicVersion' => $selectedTopicVersion,    
                                                                 'orderup' => 0,
-                                                                'from' => 0,
+                                                                'page' => 1,
                                                                 'number' => 3));
                 
                 if ( !empty( $commentRowSet))
@@ -366,12 +366,11 @@ class MasterController extends Zend_Controller_Action
         if ( $commentNumber)
         {
             $this->view->pageNumber = ceil( $commentNumber / 10);
-            $from = ( $page - 1) * 10;
         
             $commentRowSet = $commentModel->getComment( array(  'topicID' => $topicID,
                                                                 'topicVersion' => $topicVersion,    
                                                                 'orderup' => 0,
-                                                                'from' => $from,
+                                                                'page' => $page,
                                                                 'number' => 10));
                 
             if ( !empty( $commentRowSet))
