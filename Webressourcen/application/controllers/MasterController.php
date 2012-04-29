@@ -5,7 +5,6 @@ class MasterController extends Zend_Controller_Action
 
     public function init()
     {
-        /* Initialize action controller here */
         Zend_Layout::getMvcInstance()->setLayout('master');
     }
 
@@ -53,11 +52,8 @@ class MasterController extends Zend_Controller_Action
                 $client = new Zend_Http_Client($topicContent);
                 $response = $client->request();
                 $body = $response->getBody();
-                //list( $firstPart, $bodyTextArea) = explode('<body>', $body);
-                //list( $bodyTextArea, $secondPart) = explode('</body>', $body);
-                $topicContent = strip_tags($body, '<img><p><br><ul><il>');
-                //$topicContent = $bodyTextArea;
-                //$topicContent = $body;
+                $body = preg_replace('/<a[^>]+>/i', '', $body);
+                $topicContent = $body;
             }
             
             $topicModel = new topicModel();
@@ -90,7 +86,13 @@ class MasterController extends Zend_Controller_Action
         
         /* get all topics as rowSet and sent it to the view */
 		$topicList = $topicModel->getTopicList();
-		$this->view->topicList = $topicList;
+		
+        foreach( $topicList as $topic)
+        {
+            $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
+            $navi .= $topic['topicName'].'</a></li>';
+        }
+        $this->view->placeholder( 'navi')->append( '<div id = "main_Menue"><ul>' . $navi . '</ul></div>');
         
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
@@ -132,7 +134,7 @@ class MasterController extends Zend_Controller_Action
                 
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicName;
-                $topicContent = 'Version: ' . $selectedTopicVersion . '<p>Inhalt:<br>' . $topicContent . '<p>Quelle: ' . $topicSource;
+                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"/><p>Quelle: ' . $topicSource;                
                 $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
                 $topicContent .= 'Inhalt überarbeiten</a>';
                 $this->view->topicContent = $topicContent;
@@ -147,23 +149,11 @@ class MasterController extends Zend_Controller_Action
                 $commentRowSet = $comment->getComment( array(   'topicID' => $topicID,
                                                                 'topicVersion' => $selectedTopicVersion,    
                                                                 'orderup' => 0,
-                                                                'exp' => $_GET['exp']));
+                                                                'from' => 0,
+                                                                'number' => 3));
                 
                 if ( !empty( $commentRowSet))
                 {
-                    /* configure the variables exp and expButtonValue to manage the expansion-button */
-                    if ( $_GET['exp']) 
-                    {
-                        $this->view->exp = 0;
-                        $this->view->expButtonValue = 'kürzen';
-                    }
-                    else 
-                    {
-                        $this->view->exp = 1;
-                        $this->view->expButtonValue = 'erweitern';
-                    }
-                    
-                    
                     /* send the rowSet with user-comments and names to the view */
                     $this->view->CommentRowSet = $commentRowSet;
                 }
@@ -190,6 +180,8 @@ class MasterController extends Zend_Controller_Action
     public function closetopicAction()
     {
         // action body
+        
+        
     }
 
     public function closeAction()
@@ -206,7 +198,7 @@ class MasterController extends Zend_Controller_Action
     public function inviteAction()
     {
         $userModel = new userModel();
-	$this->view->friends = $userModel->fetchAll();
+        $this->view->friends = $userModel->fetchAll();
     }
 
     /**
@@ -261,7 +253,6 @@ class MasterController extends Zend_Controller_Action
             $this->view->topicVersion = $topicVersion;
             
             $topicModel = new topicModel();
-            $topicAdditiveModel = new topicAdditiveModel();
             
             $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
             
@@ -344,7 +335,52 @@ class MasterController extends Zend_Controller_Action
         $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
     }
 
+    public function topicviewAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        
+        //validation ...............
+        
+        $topicModel = new TopicModel();
+        
+        $topicRow = $topicModel->getTopic( $_GET['id'], $_GET['ver']);
+                
+        /* if link specified version is available for this topic */
+        if ( !empty( $topicRow))
+        {
+            $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+        }
+    }
 
+    public function showcommentsAction()
+    {
+        //.....session, ausnahmen.............
+        $topicID = $_GET['id'];
+        $topicVersion = $_GET['ver'];
+        $page = $_GET['page'];
+        
+        $commentModel = new CommentModel();
+        
+        $commentNumber = $commentModel->countComments( $topicID, $topicVersion);
+        
+        if ( $commentNumber)
+        {
+            $this->view->pageNumber = ceil( $commentNumber / 10);
+            $from = ( $page - 1) * 10;
+        
+            $commentRowSet = $commentModel->getComment( array(  'topicID' => $topicID,
+                                                                'topicVersion' => $topicVersion,    
+                                                                'orderup' => 0,
+                                                                'from' => $from,
+                                                                'number' => 10));
+                
+            if ( !empty( $commentRowSet))
+            {    
+                /* send the rowSet with user-comments and names to the view */
+                $this->view->CommentRowSet = $commentRowSet;
+            }
+        }
+    }
 }
 
 
