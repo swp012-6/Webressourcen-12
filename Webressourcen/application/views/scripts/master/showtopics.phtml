@@ -23,9 +23,16 @@
                 echo '<option value = "' . $topicVersion . '">' . $topicVersion;
             }
         }        
-        echo '  </select><input type = "hidden" name = "id" value = "' . $_GET['id'] . '"><input type=submit value="go"></form>';
-        echo $this->topicContent;
+        echo '</select><input type = "hidden" name = "id" value = "' . $_GET['id'] . '"><input type=submit value="go"></form>';
+        
         echo '<form action = "closetopic" method = "post"><input type = "submit" value = "schließen" onsubmit = "return confirm("Text")"></form>';
+        
+        echo '<form action = "invite" method = "post">';
+            echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
+            echo '<input type = "submit" value = "Einladungen versenden" />';
+        echo '</form>';
+        
+        echo $this->topicContent;
         echo '</div>';
         echo '<div id = "comment">';
         

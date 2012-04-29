@@ -196,8 +196,12 @@ class MasterController extends Zend_Controller_Action
      */
     public function inviteAction()
     {
-        $userModel = new userModel();
-        $this->view->friends = $userModel->fetchAll();
+        if ( isset( $_POST['topicID']))
+        {
+            $userModel = new userModel();
+            $this->view->friends = $userModel->fetchAll();
+        }
+        else $this->_redirect( 'index');
     }
 
     /**
@@ -208,18 +212,26 @@ class MasterController extends Zend_Controller_Action
      */
     public function sendAction()
     {
-        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
+        if ( ($this->getRequest()->isPost()) && (isset( $_POST['topicID'])))	//avoids direct access without having information passed
         {
+            $userModel = new UserModel();
+            $topicModel = new TopicModel();
+            $usertopicModel = new UsertopicModel();
+            
+            $topicID = $_POST['topicID'];   //topic exists??!
+            
             $config = array('auth' => 'login',	//login mail-server
-                'username' => 'swp12-6@gmx.de',
-                'password' => 'BKLRswp12');
+                            'username' => 'swp12-6@gmx.de',
+                            'password' => 'BKLRswp12');
  
             $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
 
             $mail = new Zend_Mail();		//create mail
-            $mail->setBodyText('Einladung zu ');
+            $mail->setBodyText( 'Sie wurden zu dem Thema "' . $topicModel->getTopicName( $topicID) . '" eingeladen.
+                                Bitte nutzen Sie folgenden Link um auf das Thema zugreifen zu können: 
+                                ' . $this->getRequest()->getScheme() . '://' . $this->getRequest()->getHttpHost() . $this->getRequest()->getBaseUrl());
             $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
-            for($i=1; $i<=10; $i++)		//send to all 
+            for( $i = 1; $i <= $userModel->getMaxUserID(); $i++)		//send to all 
             {
                 if(isset($_POST[$i]))		//who are checked
                 {
@@ -380,32 +392,3 @@ class MasterController extends Zend_Controller_Action
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
