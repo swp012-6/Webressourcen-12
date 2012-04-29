@@ -219,6 +219,9 @@ class MasterController extends Zend_Controller_Action
         {
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
+            $topicModel = new TopicModel();
+            
+            $topicName = $topicModel->getTopicName( $_POST['topicID']);
 
             $config = array('auth' => 'login',	//login mail-server
                 'username' => 'swp12-6@gmx.de',
@@ -229,9 +232,9 @@ class MasterController extends Zend_Controller_Action
             $max = $userModel->getMaxUserID();
 
             $mail = new Zend_Mail();		//create mail
-            $mail->setBodyText('Einladung zu '. $_POST['topicName']);
+            $mail->setBodyText('Einladung zu '. $topicName);
             $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
-            $mail->setSubject('Einladung zu '. $_POST['topicName']);
+            $mail->setSubject('Einladung zu '. $topicName);
             for($i=1; $i<=$max; $i++)		//send to all 
             {
                 if(isset($_POST[$i]))		//who are checked
@@ -307,7 +310,7 @@ class MasterController extends Zend_Controller_Action
         
         $topicID = $_POST['topicID'];
         $topicVersion = $_POST['topicVersion'];
-        $topicContent = $_POST['topicContent'];
+        $topicContent = nl2br( $_POST['topicContent']);
         $topicSource = $_POST['topicSource'];
         
         if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))

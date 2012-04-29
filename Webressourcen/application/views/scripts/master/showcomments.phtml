@@ -10,11 +10,11 @@
             echo '<td>' . $CommentRow['userName'] . '</td>';
             echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
         }
-        echo '</table>';
+        echo '</table>Seite: ';
         
-        for( $i = 0; $i < $this->pageNumber; $i++)
+        for( $i = 1; $i <= $this->pageNumber; $i++)
         {
-            echo '<a href="' . $this->url(array('controller'=>'master', 'action'=>'showcomments'), null, true) . '?id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $i'">' . ($i + 1) . '</a>';
+            echo ' <a href="' . $this->url(array('controller'=>'master', 'action'=>'showcomments'), null, true) . '?id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $i . '">' . $i . '</a>';
         }
         
     }
