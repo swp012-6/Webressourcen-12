@@ -16,11 +16,10 @@ class TopicModel extends Zend_Db_Table_Abstract
 		@param $topicID is the primer-key
 		@return is the Name from the topic
 	*/
-	public function getTopicName($topicID)
+	public function getTopicName( $topicID)
 	{
-		$rowset = $this->fetchALl('topicID = "'.$topicID.'"');
-		$row = $rowset->current();
-		return $row->topicName;
+		$topicNameRow = $this->fetchRow('topicID = "'.$topicID.'"');
+		return $topicNameRow['topicName'];
 	}
     
     
