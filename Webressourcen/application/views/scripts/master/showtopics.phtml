@@ -1,50 +1,33 @@
-﻿<div id = "navi">
-<ul>
-<?php
-    foreach( $this->topicList as $topic)
-	{
-        if ( isset( $_GET['id']))
-        {
-            if ( $_GET['id'] == $topic['topicID'])
-            {
-                echo '<li>aktuelles Thema</li>';
-            }
-            else 
-            {
-                echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
-                echo $topic['topicName'].'</a></li>';
-            }
-        }
-        else 
-        {
-            echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
-            echo $topic['topicName'].'</a></li>';
-        }
-    }
-?>
-</ul>
-</div>
-<div id = "content">
+﻿<script language = "javascript">
+ function Abfrage()
+ {
+ return confirm('bla bla');
+ }
+ </script>
 <?php
     if ( !empty( $this->topicContent))
     {
-        echo '<center><h1>';
+        echo '<div id = "content"><center><h1>';
         echo $this->topicName;
-        echo '</h1></center><ul>';
+        echo '</h1></center>Version: ';
+        echo '<form action="showtopics" method="get"><select name="ver">';
+    
         foreach( $this->topicVersionArray as $topicVersion)
         {
             if ( $this->selectedTopicVersion == $topicVersion)
             {
-                echo '<li>' . $topicVersion . '</li>';
+                echo '<option value = "' . $topicVersion . '" selected = "selected">' . $topicVersion;
             }
             else
             {
-                echo '<li><a href = "http://localhost/Webressourcen/public/master/showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">';
-                echo $topicVersion . '</a></li>';
+                echo '<option value = "' . $topicVersion . '">' . $topicVersion;
             }
         }        
-        echo '</ul>';
+        echo '  </select><input type = "hidden" name = "id" value = "' . $_GET['id'] . '"><input type=submit value="go"></form>';
         echo $this->topicContent;
+        echo '<form action = "closetopic" method = "post"><input type = "submit" value = "schließen" onsubmit = "return confirm("Text")"></form>';
+        echo '</div>';
+        echo '<div id = "comment">';
         
         if ( !empty( $this->CommentRowSet))
         {
@@ -57,11 +40,11 @@
             }
             echo '</table>';
             
-            echo '<form action = "showtopics?id=' . $_GET['id'] . '&ver=' . $this->selectedTopicVersion . '&exp=' . $this->exp .'" method = "post">';
-                echo '<input type = "submit" value = "' . $this->expButtonValue . '" />';
+            echo '<form action = "showcomments?id=' . $_GET['id'] . '&ver=' . $this->selectedTopicVersion . '&page=1" method = "post">';
+                echo '<input type = "submit" value = "zeige alle" />';
             echo '</form>';
         }
         echo '<p>' . $this->createCommentForm;
+        echo '</div>';
     }
 ?>
-</div>
