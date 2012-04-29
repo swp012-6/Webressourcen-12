@@ -133,7 +133,7 @@ class MasterController extends Zend_Controller_Action
                 
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicName;
-                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"/><p>Quelle: ' . $topicSource;                
+                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>Quelle: ' . $topicSource;                
                 $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
                 $topicContent .= 'Inhalt überarbeiten</a>';
                 $this->view->topicContent = $topicContent;
@@ -196,12 +196,19 @@ class MasterController extends Zend_Controller_Action
      */
     public function inviteAction()
     {
-        $userModel = new userModel();
-        $this->view->friends = $userModel->fetchAll();
+        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
+        {
+            $userModel = new userModel();
+            $this->view->friends = $userModel->getAllUser();
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
+        }
     }
 
     /**
-     * This function sends emails to the friends
+     * This function sends emails to the friends and saves the connection in userTopic
      * 
      * @param string $_POST[$i] particular emailaddress of the user whit the userID $i
      * @author Peter Kornowski
@@ -210,28 +217,40 @@ class MasterController extends Zend_Controller_Action
     {
         if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
+            $userTopicModel = new userTopicModel;
+            $userModel = new userModel();
+
             $config = array('auth' => 'login',	//login mail-server
                 'username' => 'swp12-6@gmx.de',
                 'password' => 'BKLRswp12');
  
             $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
 
+            $userNumber = $userModel->countUser();
+
             $mail = new Zend_Mail();		//create mail
-            $mail->setBodyText('Einladung zu ');
+            $mail->setBodyText('Einladung zu '. $_POST['topicName']);
             $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
-            for($i=1; $i<=10; $i++)		//send to all 
+            $mail->setSubject('Einladung zu '. $_POST['topicName']);
+            for($i=1; $i<=userNumber; $i++)		//send to all 
             {
                 if(isset($_POST[$i]))		//who are checked
                 {
                     $mail->addTo($_POST[$i]);
+                // --- also save the connection in userTopic ---
+                    $hash = md5("U". $i ."T". $_POST['topicID']); //the hashcode
+                    $userTopic = array('userID'  => $i,
+                                       'topicID' => $_POST['topicID'],
+                                       'hash'    => $hash);
+                    $userTopicModel->addUserName($userTopic);
                 }
             }
-            $mail->setSubject('Einladung');
+            //finily sends the mail
             $mail->send($transport);
         }
         else
         {
-            $this->_redirect('/master');	//goes to mainpage
+            $this->_redirect('/master');	//goes to master mainpage
         }
     }
 
