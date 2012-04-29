@@ -89,7 +89,7 @@ class MasterController extends Zend_Controller_Action
 		
         foreach( $topicList as $topic)
         {
-            $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
+            $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
             $navi .= $topic['topicName'].'</a></li>';
         }
         $this->view->placeholder( 'navi')->append( '<div id = "main_Menue"><ul>' . $navi . '</ul></div>');
@@ -97,10 +97,11 @@ class MasterController extends Zend_Controller_Action
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
         {
+            $topicID = $_GET['id'];
             /* set version to standard if not available */
             if (!isset( $_GET['ver']))
             {
-                $selectedTopicVersion = 1;
+                $selectedTopicVersion = $topicModel->getMaxTopicVersion( $topicID);
             }
             else // use the postet version number 
             $selectedTopicVersion = $_GET['ver'];
@@ -109,7 +110,6 @@ class MasterController extends Zend_Controller_Action
             $this->view->selectedTopicVersion = $selectedTopicVersion;
             
             /* use the topicID and selectedTopicVersion to get row with the content of the selected topic */
-            $topicID = $_GET['id'];
             $topicRow = $topicModel->getTopic( $topicID, $selectedTopicVersion);
             
             /* get the topicName by topicID */
@@ -124,7 +124,6 @@ class MasterController extends Zend_Controller_Action
             if ( !empty( $topicRow))
             {
                 $topicSource = $topicRow['topicSource'];
-                $topicContent = $topicRow['topicContent'];
                 
                 /* set the topicSource if empty */
                 if ( empty( $topicSource))
@@ -348,7 +347,7 @@ class MasterController extends Zend_Controller_Action
         /* if link specified version is available for this topic */
         if ( !empty( $topicRow))
         {
-            $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+            $this->view->topicContent = $topicRow['topicContent'];
         }
     }
 

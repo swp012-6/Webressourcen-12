@@ -140,10 +140,7 @@ class TopicModel extends Zend_Db_Table_Abstract
         $topicAdditiveModel = new TopicAdditiveModel();
         try
         {
-            $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
-                                                                                        ->where( 'topicID = ?', $topicID));
-            $maxVersion = $maxVersion['maxVersion'];
-            
+            $maxVersion = $this->getMaxTopicVersion( $topicID);
             $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
         }
         catch ( Exception $e)
@@ -151,6 +148,19 @@ class TopicModel extends Zend_Db_Table_Abstract
             return null;
         }
         return 1;
+    }
+    
+    /** This function returns the highest value of topicVersion for a given topicID.
+      * @param topicID given topicID
+      * @return highest value of topicVersion
+      */
+    public function getMaxTopicVersion( $topicID)
+    {
+        $topicAdditiveModel = new TopicAdditiveModel();
+        
+        $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
+                                                                                    ->where( 'topicID = ?', $topicID));
+        return $maxVersion['maxVersion'];
     }
 }
 ?>
