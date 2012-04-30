@@ -110,7 +110,7 @@ class FriendController extends Zend_Controller_Action
 		
 		//version
 		//if the latest version
-		$option = array("topicID" => $topicID, "number" =>1,"page" => 0);
+		$option = array("topicID" => $topicID, "number" =>1,"page" => 1);
 		$version = $dbTopic->getVersionNumbers($option);
 		foreach($version as $v)
 		{
@@ -170,7 +170,7 @@ class FriendController extends Zend_Controller_Action
 		//topic view----------------------------------------
 		
 		//comment view--------------------------------------
-		$commentOption = array("topicID" => $topicID,"topicVersion"=>$topicVersion, "orderup"=>false,"number" => 3,"page" => 0);
+		$commentOption = array("topicID" => $topicID,"topicVersion"=>$topicVersion, "orderup"=>false,"number" => 3,"page" => 1);
 		$view->friendComment = $dbComment->getComment($commentOption);
 			
     }
@@ -200,7 +200,7 @@ class FriendController extends Zend_Controller_Action
 			$view->Page = $page;
 			//comment
 			//Select Page
-			if(($request->isGet("Page"))&&(0 <= ($request->getQuery("Page"))))
+			if(($request->isGet("Page"))&&(0 < ($request->getQuery("Page"))))
 			{
 				$page = $request->getQuery("Page");
 				$view->Page =$page;

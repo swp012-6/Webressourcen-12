@@ -14,7 +14,12 @@
         
         for( $i = 1; $i <= $this->pageNumber; $i++)
         {
-            echo ' <a href="' . $this->url(array('controller'=>'master', 'action'=>'showcomments'), null, true) . '?id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $i . '">' . $i . '</a>';
+            if ( $i == $_GET['page'])
+            {       
+                echo ' ' . $i;
+            }
+            else
+                echo ' <a href="' . $this->url(array('controller'=>'master', 'action'=>'showcomments'), null, true) . '?id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $i . '">' . $i . '</a>';
         }
         
     }
