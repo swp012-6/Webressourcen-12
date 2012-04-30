@@ -3,7 +3,7 @@ Anleitung:
 Bitte befolgen Sie folgende Schritte:
 - 'webressourceBeispiel.sql' in Ihre Datenbank importieren
 - in '..\Webressourcen\application\configs\application.ini' die Datenbankangaben anpassen
-- in '--\Webressourcen\application\Bootstrap.php' die CSS anpassen
+- in '..\Webressourcen\application\Bootstrap.php' die CSS anpassen
 
 Masterlogin:
 Username: admin
