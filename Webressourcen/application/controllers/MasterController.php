@@ -186,9 +186,11 @@ class MasterController extends Zend_Controller_Action
 
     public function closetopicAction()
     {
-        // action body
+        $topicModel = new TopicModel();
         
+        $topicModel->delete( 'topicID = ' . $_POST['topicID']);    //auf erfolg testen?
         
+        $this->view->msg = 'Thema wurde erfolgreich gelöscht!';
     }
 
     public function closeAction()
@@ -343,6 +345,7 @@ class MasterController extends Zend_Controller_Action
         $userID = $_POST['userID'];
         $topicID = $_POST['topicID'];
         $topicVersion = $_POST['topicVersion'];
+        $anonymous = $_POST['anonymous'];
         
         if ( (empty( $userID)) || (empty( $topicID)) || (empty( $topicVersion)))
         {
@@ -357,7 +360,7 @@ class MasterController extends Zend_Controller_Action
         
         try
         {
-            $commentModel->insert( array( 'commentText' => $commentText, 'userID' => $userID, 'topicID' => $topicID, 'topicVersion' => $topicVersion));
+            $commentModel->insert( array( 'commentText' => $commentText, 'userID' => $userID, 'topicID' => $topicID, 'topicVersion' => $topicVersion, 'anonymous' => $anonymous));
         }
         catch (Exception $e)
         {
