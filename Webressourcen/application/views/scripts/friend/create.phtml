@@ -1,1 +1,17 @@
-<br /><br /><center>View script for controller <b>Friend</b> and script/action name <b>create</b></center>
+<?php
+
+	//Title---------------------------------------------------
+	echo "<div id = \"Titel\" >";
+	echo $this->escape($this->friendTopicTitel);
+	echo "</div>";
+	
+	// is the complete Formular
+	echo $this->form;
+	// is the message to the user, to save in the database
+	echo $this->escape($this->message);
+	
+	echo 	"<form action =\"showtopic\" method = \"get\">
+							<input type=\"submit\" class=\"backbutton\" value = \"Back\" />
+			</form>";
+
+?>

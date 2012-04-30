@@ -24,26 +24,18 @@
 		<!-- in main_head are the project title-->
 		<div id = "main_Head">
 			<h1> Webressourcen - Verwaltung </h1>
+            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Hauptseite</a>
+            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>">Thema erstellen</a>
+            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a>
 		</div>
-		
-		<!-- in main_menue are the topictitle to select-->
-		<div id = "main_Menue">
-			<div id = "navi">
-                <ul>
-                    <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Hauptseite</a></li>
-                    <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>">Thema erstellen</a></li>
-                    <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a></li>
-                </ul>
-		</div>
-		
 		<!-- in main_main are the active action methode -->
-		<div id = "main_Main">
+            <?php echo $this->placeholder('navi') ?>
+        <div id = "main_Main">
 			<?php
 				//-- import Mainpage
 				echo $this->layout()->content;
 			?>
 		</div>
-		
 	</div>
 </body>
 </html>

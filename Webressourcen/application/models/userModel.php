@@ -9,6 +9,26 @@
  */
 class UserModel extends Zend_Db_Table_Abstract
 {
-    protected $_name = 'user';
+	protected $_name = 'user';
+
+	/** This function returns the highest value of userID.
+	  * @return highest vakue of userID
+	  */
+	public function getMaxUserID()
+	{
+		$maxUserID = $this->fetchRow( $this->select() ->from( $this, array(new Zend_Db_Expr('max( userID) as maxUserID'))));
+		return $maxUserID['maxUserID'];
+	}
+
+	/**
+	 * gets all user
+	 *
+	 * @return $user all user
+	 */
+	public function getAllUser()
+	{
+		$user = $this->fetchAll();
+		return $user;
+	}
 }
 ?>

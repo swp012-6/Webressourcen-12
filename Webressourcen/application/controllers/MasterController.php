@@ -5,18 +5,19 @@ class MasterController extends Zend_Controller_Action
 
     public function init()
     {
-        /* Initialize action controller here */
+        Zend_Layout::getMvcInstance()->setLayout('master');
     }
 
     public function indexAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         // action body
     }
 
+    /** This function shows a form where the master can insert topic-parameters like content or source.
+      * If an error occurred in validateAction, this page will show an errormessage.
+      */      
     public function importAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         //session_start(); .............
         if ( isset($_GET['error'])) 
         {
@@ -34,9 +35,9 @@ class MasterController extends Zend_Controller_Action
 		$this->view->topicForm = $topicForm;
     }
 
+    /* This function inserts topic-parameters in the database */
     public function validateAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         //session_start(); ............
 		
         /* save content of posted variables */
@@ -55,11 +56,8 @@ class MasterController extends Zend_Controller_Action
                 $client = new Zend_Http_Client($topicContent);
                 $response = $client->request();
                 $body = $response->getBody();
-                //list( $firstPart, $bodyTextArea) = explode('<body>', $body);
-                //list( $bodyTextArea, $secondPart) = explode('</body>', $body);
-                $topicContent = strip_tags($body, '<img><p><br><ul><il>');
-                //$topicContent = $bodyTextArea;
-                //$topicContent = $body;
+                $body = preg_replace('/<a[^>]+>/i', '', $body);
+                $topicContent = $body;
             }
             
             $topicModel = new topicModel();
@@ -79,9 +77,12 @@ class MasterController extends Zend_Controller_Action
         // action body
     }
 
+    /** This function shows a list of all available topics on the left side of the page.
+      * If a topic is selected, his content will get shown in a iframe.
+      * The master is also able to access other functions like edittopic, invite, showcomments from this page.
+      */
     public function showtopicsAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         $topicModel = new topicModel();
         
         switch ( $_GET['error'])
@@ -93,15 +94,22 @@ class MasterController extends Zend_Controller_Action
         
         /* get all topics as rowSet and sent it to the view */
 		$topicList = $topicModel->getTopicList();
-		$this->view->topicList = $topicList;
+		
+        foreach( $topicList as $topic)
+        {
+            $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
+            $navi .= $topic['topicName'].'</a></li>';
+        }
+        $this->view->placeholder( 'navi')->append( '<div id = "main_Menue"><ul>' . $navi . '</ul></div>');
         
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
         {
+            $topicID = $_GET['id'];
             /* set version to standard if not available */
             if (!isset( $_GET['ver']))
             {
-                $selectedTopicVersion = 1;
+                $selectedTopicVersion = $topicModel->getMaxTopicVersion( $topicID);
             }
             else // use the postet version number 
             $selectedTopicVersion = $_GET['ver'];
@@ -110,21 +118,20 @@ class MasterController extends Zend_Controller_Action
             $this->view->selectedTopicVersion = $selectedTopicVersion;
             
             /* use the topicID and selectedTopicVersion to get row with the content of the selected topic */
-            $topicID = $_GET['id'];
             $topicRow = $topicModel->getTopic( $topicID, $selectedTopicVersion);
             
             /* get the topicName by topicID */
             $topicName = $topicModel->getTopicName( $topicID);
             
             /* select all versionnumbers and send them to the view as rowSet */
-            $topicVersionArray = $topicModel->getVersionNumbers( $topicID);
+			$option = array("topicID" => $topicID);
+            $topicVersionArray = $topicModel->getVersionNumbers( $option);
             $this->view->topicVersionArray = $topicVersionArray;
             
             /* there exists a topic with the specified topicID and topicVersion */
             if ( !empty( $topicRow))
             {
                 $topicSource = $topicRow['topicSource'];
-                $topicContent = $topicRow['topicContent'];
                 
                 /* set the topicSource if empty */
                 if ( empty( $topicSource))
@@ -134,7 +141,7 @@ class MasterController extends Zend_Controller_Action
                 
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicName;
-                $topicContent = 'Version: ' . $selectedTopicVersion . '<p>Inhalt:<br>' . $topicContent . '<p>Quelle: ' . $topicSource;
+                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>Quelle: ' . $topicSource;                
                 $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
                 $topicContent .= 'Inhalt überarbeiten</a>';
                 $this->view->topicContent = $topicContent;
@@ -149,23 +156,11 @@ class MasterController extends Zend_Controller_Action
                 $commentRowSet = $comment->getComment( array(   'topicID' => $topicID,
                                                                 'topicVersion' => $selectedTopicVersion,    
                                                                 'orderup' => 0,
-                                                                'exp' => $_GET['exp']));
+                                                                'page' => 1,
+                                                                'number' => 3));
                 
                 if ( !empty( $commentRowSet))
                 {
-                    /* configure the variables exp and expButtonValue to manage the expansion-button */
-                    if ( $_GET['exp']) 
-                    {
-                        $this->view->exp = 0;
-                        $this->view->expButtonValue = 'kürzen';
-                    }
-                    else 
-                    {
-                        $this->view->exp = 1;
-                        $this->view->expButtonValue = 'erweitern';
-                    }
-                    
-                    
                     /* send the rowSet with user-comments and names to the view */
                     $this->view->CommentRowSet = $commentRowSet;
                 }
@@ -192,6 +187,8 @@ class MasterController extends Zend_Controller_Action
     public function closetopicAction()
     {
         // action body
+        
+        
     }
 
     public function closeAction()
@@ -199,15 +196,78 @@ class MasterController extends Zend_Controller_Action
         // action body
     }
 
+    /**
+     * This function sends all user to the view
+     * 
+     * @param string $friends all information in the table 'user' of 'webressource'
+     * @author Peter Kornowski
+     */
     public function inviteAction()
     {
-        // action body
+        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
+        {
+            $userModel = new UserModel();
+            $this->view->friends = $userModel->getAllUser();
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
+        }
     }
 
-    public function edittopicAction()
+    /**
+     * This function sends emails to the friends and saves the connection in userTopic
+     * 
+     * @param string $_POST[$i] particular emailaddress of the user whit the userID $i
+     * @author Peter Kornowski
+     */
+    public function sendAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
-        
+        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
+        {
+            $userTopicModel = new UserTopicModel;
+            $userModel = new UserModel();
+            $topicModel = new TopicModel();
+            
+            $topicName = $topicModel->getTopicName( $_POST['topicID']);
+
+            $config = array('auth' => 'login',	//login mail-server
+                'username' => 'swp12-6@gmx.de',
+                'password' => 'BKLRswp12');
+ 
+            $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
+
+            $max = $userModel->getMaxUserID();
+
+            $mail = new Zend_Mail();		//create mail
+            $mail->setBodyText('Einladung zu '. $topicName);
+            $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
+            $mail->setSubject('Einladung zu '. $topicName);
+            for($i=1; $i<=$max; $i++)		//send to all 
+            {
+                if(isset($_POST[$i]))		//who are checked
+                {
+                    $mail->addTo($_POST[$i]);
+                // --- also save the connection in userTopic ---
+                    $hash = md5("U". $i ."T". $_POST['topicID']); //the hashcode
+                    $userTopic = array('userID'  => $i,
+                                       'topicID' => $_POST['topicID'],
+                                       'hash'    => $hash);
+                    $userTopicModel->addUserName($userTopic);
+                }
+            }
+            //finily sends the mail
+            $mail->send($transport);
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
+        }
+    }
+
+    /* sends the topicContent to the view, so the master is able to edit it in a textarea */
+    public function edittopicAction()
+    {        
         //session_start(); ..........
         
         if ( isset( $_GET['id']))
@@ -223,7 +283,6 @@ class MasterController extends Zend_Controller_Action
             $this->view->topicVersion = $topicVersion;
             
             $topicModel = new topicModel();
-            $topicAdditiveModel = new topicAdditiveModel();
             
             $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
             
@@ -254,14 +313,14 @@ class MasterController extends Zend_Controller_Action
         else $this->view->msg = 'Keine Themen-ID angegeben!';
     }
 
+    /* This function creates a new topicVersion with the posted topicContent and topicSource */
     public function validateeditAction()
     {
-        Zend_Layout::getMvcInstance()->setLayout('master');
         $topicModel = new TopicModel();
         
         $topicID = $_POST['topicID'];
         $topicVersion = $_POST['topicVersion'];
-        $topicContent = $_POST['topicContent'];
+        $topicContent = nl2br( $_POST['topicContent']);
         $topicSource = $_POST['topicSource'];
         
         if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))
@@ -276,9 +335,10 @@ class MasterController extends Zend_Controller_Action
         else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=2');
     }
 
+    /* inserts a comment in the database */
     public function validatecommentAction()
     {
-        /* save posts in vairables */
+        /* save posts in variables */
         $commentText = $_POST['commentText'];
         $userID = $_POST['userID'];
         $topicID = $_POST['topicID'];
@@ -306,35 +366,55 @@ class MasterController extends Zend_Controller_Action
         
         $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
     }
+    
+    /** Controller of the page which contains the topicContent.
+      * This page is the target of a iframe in showtopic.
+      */
+    public function topicviewAction()
+    {
+        $this->_helper->layout()->disableLayout();
+        
+        //validation ...............
+        
+        $topicModel = new TopicModel();
+        
+        $topicRow = $topicModel->getTopic( $_GET['id'], $_GET['ver']);
+                
+        /* if link specified version is available for this topic */
+        if ( !empty( $topicRow))
+        {
+            $this->view->topicContent = $topicRow['topicContent'];
+        }
+    }
 
-
+    /* Shows comments on extra pages with 10 comments per page. */
+    public function showcommentsAction()
+    {
+        //.....session, ausnahmen.............
+        $topicID = $_GET['id'];
+        $topicVersion = $_GET['ver'];
+        $page = $_GET['page'];
+        
+        $commentModel = new CommentModel();
+        
+        $commentNumber = $commentModel->countComments( $topicID, $topicVersion);
+        
+        if ( $commentNumber)
+        {
+            $this->view->pageNumber = ceil( $commentNumber / 10);
+        
+            $commentRowSet = $commentModel->getComment( array(  'topicID' => $topicID,
+                                                                'topicVersion' => $topicVersion,    
+                                                                'orderup' => 0,
+                                                                'page' => $page,
+                                                                'number' => 10));
+                
+            if ( !empty( $commentRowSet))
+            {    
+                /* send the rowSet with user-comments and names to the view */
+                $this->view->CommentRowSet = $commentRowSet;
+            }
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+?>

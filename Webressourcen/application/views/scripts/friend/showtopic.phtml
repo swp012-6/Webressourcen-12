@@ -6,6 +6,49 @@
 	echo "</div>";
 	//Topic---------------------------------------------------
 	
+	//select TopicVersion--------------------------------------
+	echo "<table id = \"FriendShowTopicVersionTable\" border = \"1\" >";
+		echo "<tr>";
+		
+		//leftoperator----------
+		
+		if($this->escape($this->currentPageNavigator) > 0)
+		{
+			echo "<td>";
+				echo 	"<form action =\"showtopic\" method = \"get\">
+							<input type =\"hidden\" name = \"PageNavigator\" value = \"".($this->escape($this->currentPageNavigator)+1-1)."\" />
+							<input type=\"submit\" class=\"FriendPageButton\" value = \"<-\" />
+						</form>";
+			echo "</td>";
+		}
+		
+		//selector Page
+		foreach($this->version as $v)
+		{
+			echo "<td>";
+				echo 	"<form action =\"showtopic\" method = \"get\">
+							<input type =\"hidden\" name = \"Page\" value = \"".($this->escape($v))."\" />
+							<input type=\"submit\" class=\"FriendPageButton\" value = \"".($this->escape($v))."\" />
+						</form>";
+			echo "</td>";
+		}
+		
+		//rightoperator----------
+		
+		if($this->escape($this->currentPageNavigator) < $this->escape($this->numberPageNavigator))
+		{
+			echo "<td>";
+				echo 	"<form action =\"showtopic\" method = \"get\">
+							<input type =\"hidden\" name = \"PageNavigator\" value = \"".($this->escape($this->currentPageNavigator)+1+1)."\" />
+							<input type=\"submit\" class=\"FriendPageButton\" value = \"->\" />
+						</form>";
+			echo "</td>";
+		}
+
+		
+	
+		echo "</tr>";
+	echo "</table>";
 	
 	//Comment--------------------------------------------------
 	echo "<table id = \"FriendShowTopicCommentTable\" border = \"1\" >";
@@ -13,11 +56,11 @@
 	//Table tiltel
 	echo "<tr>";
 		echo "<th>";
-		echo	"<form action =\"showcomment\" method = \"post\">
+		echo	"<form action =\"showcomment\" method = \"get\">
 					<input type=\"submit\" class=\"FriendButtonTableHeadLink\" value = \"All Comment\" />
 				</form>";
 				
-		echo	"<form action =\"create\" method = \"post\">
+		echo	"<form action =\"create\" method = \"get\">
 					<input type=\"submit\" class=\"FriendButtonTableHeadCreate\" value = \"Add Comment\" />
 				</form>";
 		echo "</th>";
@@ -34,14 +77,29 @@
 		}
 		echo "<tr>";
 			echo "<td>"; // comment Titel: username, userdate , delete
-				echo "<div id = \"FriendShowTopicTableUserName\">".$this->escape($row["userName"])."</div>"; //view the UserName
+			
+				//view the UserName
+				//the user can be anonymous
+				if(false == $this->escape($row["anonymous"]))
+				{
+					echo "<div id = \"FriendShowTopicTableUserName\">".$this->escape($row["userName"])."</div>"; 
+				}
+				else
+				{
+					echo "<div id = \"FriendShowTopicTableUserName\">anonymous</div>"; 
+				}
+
 				echo "<div id = \"FriendShowTopicTableCommentDate\">".$this->escape($row["commentDate"])."</div>"; //view the commentDate
 				
 				//Delete
-				echo 	"<form action =\"showtopic\" method = \"post\">
-							<input type =\"hidden\" name = \"CommentID\" value = \"".$this->escape($row["commentID"])."\" />
-							<input type=\"submit\" class=\"FriendButtonDelete\" value = \"Delete\" />
-						</form>";
+				//the user can his own comment delete
+				if( $this->escape($row["userID"]) == $this->escape($this->userID))
+				{
+					echo 	"<form action =\"showtopic\" method = \"post\">
+								<input type =\"hidden\" name = \"CommentID\" value = \"".$this->escape($row["commentID"])."\" />
+								<input type=\"submit\" class=\"FriendButtonDelete\" value = \"Delete\" />
+							</form>";
+				}
 			echo "</td>";
 		echo "</tr>";
 	
@@ -56,7 +114,17 @@
 	
 	echo "</table>";
 	
-	
+	/*
+		css name:	FriendShowTopicTitel : is the title of the topic
+					FriendShowTopicCommentTable : is the Tabel from the Coment
+					FriendButtonTableHeadLink : is the Button go to All Comments
+					FriendButtonTableHeadCreate : is the Button go to Add Comment
+					FriendShowTopicTableUserName : is the user name in the Comment table
+					FriendShowTopicTableCommentDate: is the user datetime in the Comment table
+					FriendButtonDelete : is the Delete Button from a Comment
+					
+		
+	*/
 		
 	
 ?>

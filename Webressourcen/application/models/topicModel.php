@@ -16,22 +16,25 @@ class TopicModel extends Zend_Db_Table_Abstract
 		@param $topicID is the primer-key
 		@return is the Name from the topic
 	*/
-	public function getTopicName($topicID)
+	public function getTopicName( $topicID)
 	{
-		$rowset = $this->fetchALl('topicID = "'.$topicID.'"');
-		$row = $rowset->current();
-		return $row->topicName;
+		$topicNameRow = $this->fetchRow('topicID = "'.$topicID.'"');
+		return $topicNameRow['topicName'];
 	}
     
     
     /** returns all versionnumbers for the specified topicID
-      * @param $topicID ID of the specified topic
+      * @param $option "topicID" ID of the specified topic, "number" number VersionsID, "page" pageoperator
       * @return array with all versionnumbers
       */
-    public function getVersionNumbers( $topicID)
+    public function getVersionNumbers( $option)
     {
         $topicAdditiveModel = new TopicAdditiveModel();
-        $topicVersionRowSet = $topicAdditiveModel->fetchAll( $topicAdditiveModel->select()->where( 'topicID = ?', $topicID));
+		$where =  'topicID = "'.$option['topicID'].'"';
+		$number = $option["number"]; 									// number of Comments
+		$offset = ($option["number"]* $option["page"]); 				//startpoint when return Comment
+		$sort = 'topicVersion DESC';
+        $topicVersionRowSet = $topicAdditiveModel->fetchAll( $where,$sort,$number,$offset);
         
         foreach( $topicVersionRowSet as $topicVersionRow)
         {
@@ -39,7 +42,32 @@ class TopicModel extends Zend_Db_Table_Abstract
         }
         return $topicVersionArray;
     }
-    
+	
+	/**
+		return number of Version
+		@param $topicID ID of the specified topic
+		@return a int with the number if Version
+	*/
+	public function getNumberVersion($topicID)
+	{
+		$topicAdditiveModel = new TopicAdditiveModel();
+        $topicVersionRowSet = $topicAdditiveModel->fetchAll();
+		return count($topicVersionRowSet);
+	}
+    /**
+		give the number of one Version in the Database
+		@param $option: "topicID", "topicVersion"
+		@return the number from this Version
+	*/
+	public function getTheNumberFromVersion($option)
+	{
+		$topicAdditiveModel = new TopicAdditiveModel();
+		
+		$where =  'topicID = "'.$option['topicID'].'" AND topicVersion <= "'.$option['topicVersion'].'"';
+		$sort = 'topicVersion DESC';
+        $topicVersionRowSet = $topicAdditiveModel->fetchAll($where,$sort);
+		return count($topicVersionRowSet);
+	}
     /** returns the content of a topic-version ...............................evtl sollte hier die userID mit gefordert werden, wegen Zugriff!
       * @param $topicVersion version of the topic
       * @param $topicID ID of the topic
@@ -111,10 +139,7 @@ class TopicModel extends Zend_Db_Table_Abstract
         $topicAdditiveModel = new TopicAdditiveModel();
         try
         {
-            $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
-                                                                                        ->where( 'topicID = ?', $topicID));
-            $maxVersion = $maxVersion['maxVersion'];
-            
+            $maxVersion = $this->getMaxTopicVersion( $topicID);
             $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
         }
         catch ( Exception $e)
@@ -122,6 +147,19 @@ class TopicModel extends Zend_Db_Table_Abstract
             return null;
         }
         return 1;
+    }
+    
+    /** This function returns the highest value of topicVersion for a given topicID.
+      * @param topicID given topicID
+      * @return highest value of topicVersion
+      */
+    public function getMaxTopicVersion( $topicID)
+    {
+        $topicAdditiveModel = new TopicAdditiveModel();
+        
+        $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
+                                                                                    ->where( 'topicID = ?', $topicID));
+        return $maxVersion['maxVersion'];
     }
 }
 ?>

@@ -1,0 +1,21 @@
+﻿<?php 
+
+    if ( !empty( $this->CommentRowSet))
+    {
+           
+        echo '<table border = "1">';
+        foreach( $this->CommentRowSet as $CommentRow)
+        {
+            echo '<tr><td>' . $CommentRow['commentDate'] . '</td>';
+            echo '<td>' . $CommentRow['userName'] . '</td>';
+            echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
+        }
+        echo '</table>Seite: ';
+        
+        for( $i = 1; $i <= $this->pageNumber; $i++)
+        {
+            echo ' <a href="' . $this->url(array('controller'=>'master', 'action'=>'showcomments'), null, true) . '?id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $i . '">' . $i . '</a>';
+        }
+        
+    }
+    
