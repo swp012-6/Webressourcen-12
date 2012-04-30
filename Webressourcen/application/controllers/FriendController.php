@@ -196,7 +196,7 @@ class FriendController extends Zend_Controller_Action
 		$userID = 2;
 		$view->userID = $userID;
 		
-		$page = 0;
+		$page = 1;
 			$view->Page = $page;
 			//comment
 			//Select Page
@@ -239,7 +239,7 @@ class FriendController extends Zend_Controller_Action
 		//determine number of Pages
 		$view->maxPageNavigator = $maxPageNavigator;
 		
-		$numberPage = floor($dbComment->getnumberComment() / $maxComment); //MAX Page number
+		$numberPage = floor($dbComment->countComments($topicID,$topicVersion) / $maxComment); //MAX Page number
 
 		$numberPageNavigator = floor($numberPage / $maxPageNavigator);	   //MAX PageNavigator Number
 		$view->numberPageNavigator = $numberPageNavigator;

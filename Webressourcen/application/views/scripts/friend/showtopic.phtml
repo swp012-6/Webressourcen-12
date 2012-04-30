@@ -67,14 +67,10 @@
 	echo "</tr>";
 	//Table body
 	
-	$counter = 0;
+
 	foreach($this->friendComment as $row)
 	{
-		//view the last two Comments
-		if($counter >= 2)
-		{
-			break;
-		}
+    
 		echo "<tr>";
 			echo "<td>"; // comment Titel: username, userdate , delete
 			
