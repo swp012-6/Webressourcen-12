@@ -1,26 +1,35 @@
 ﻿<?php 
 
-    if ( !empty( $this->CommentRowSet))
+    if ( empty( $this->CommentRowSet))
     {
-           
-        echo '<table border = "1">';
-        foreach( $this->CommentRowSet as $CommentRow)
-        {
-            echo '<tr><td>' . $CommentRow['commentDate'] . '</td>';
-            echo '<td>' . $CommentRow['userName'] . '</td>';
-            echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
-        }
-        echo '</table>Seite: ';
-        
-        for( $i = 1; $i <= $this->pageNumber; $i++)
-        {
-            if ( $i == $_GET['page'])
-            {       
-                echo ' ' . $i;
-            }
-            else
-                echo ' <a href="' . $this->url(array('controller'=>'master', 'action'=>'showcomments'), null, true) . '?id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $i . '">' . $i . '</a>';
-        }
-        
+        $this->_redirect('showtopics?id=' . $_GET['id'] . '&ver=' . $_GET['ver']);
     }
+    
+    echo '<table border = "1">';
+    foreach( $this->CommentRowSet as $CommentRow)
+    {
+        echo '<tr><td>' . $CommentRow['commentDate'] . '</td>';
+        echo '<td>' . $CommentRow['userName'] . '</td>';
+        echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
+    }
+    echo '</table>Seite: ';
+    
+    for( $i = 1; $i <= $this->pageNumber; $i++)
+    {
+        if ( $i == $_GET['page'])
+        {       
+            echo ' ' . $i;
+        }
+        else
+            echo ' <a href="' . $this->url(array('controller'=>'master', 'action'=>'showcomments'), null, true) . '?id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $i . '">' . $i . '</a>';
+    }
+?>
+
+<form action = "showtopics" method = "get">
+    <input type = "hidden" name = "id" value = "<?php echo $_GET['id'] ?>" />
+    <input type = "hidden" name = "ver" value = "<?php echo $_GET['ver'] ?>" />
+    <input type = "submit" value = "zurück" />
+</form>
+    
+    
     

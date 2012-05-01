@@ -1,1 +1,12 @@
-<br /><br /><center>View script for controller <b>Master</b> and script/action name <b>validate</b></center>
+<center>
+    <b> Ihr Thema wurde erfolgreich erstellt. </b>
+</center>
+
+<form action = "showtopics" method = "get">
+    <input type = "submit" value = "Zur Themenauswahl" />
+</form>
+<form action = "invite" method = "post">
+    <input type = "hidden" name = "id" value = "<?php echo $_GET['id'] ?>" />
+    <input type = "submit" value = "Einladungen versenden" />
+</form>
+

@@ -47,29 +47,29 @@ class MasterController extends Zend_Controller_Action
 		$topicSource = $_POST['topicSource'];
 		
         /* if the form-textfields where filled */
-		if ( (!empty( $topicName)) && (!empty( $topicContent)))
+		if ( (empty( $topicName)) || (empty( $topicContent)))
 		{	
-            /* HTTP-Request to get body of spezified page ................*/
-			if ($contentType == 'link')
-			{
-				$topicSource = $topicContent;
-                $client = new Zend_Http_Client($topicContent);
-                $response = $client->request();
-                $body = $response->getBody();
-                $body = preg_replace('/<a[^>]+>/i', '', $body);
-                $topicContent = $body;
-            }
+            $this->_redirect('master/import?error=2');
+        }
+        
+        /* HTTP-Request to get body of spezified page */
+		if ($contentType == 'link')
+		{
+			$topicSource = $topicContent;
+            $client = new Zend_Http_Client($topicContent);
+            $response = $client->request();
+            $body = $response->getBody();
+            $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
+            $topicContent = $body;
+        }
             
-            $topicModel = new topicModel();
-            $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource);
+        $topicModel = new topicModel();
+        $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource);
             
-            if ( $result)
-            {
-                $this->_redirect( 'master/import');
-            }
-            else $this->_redirect( 'master/import?error=1');
-		}
-		else $this->_redirect('master/import?error=2');
+        if ( !$result)
+        {
+            $this->_redirect( 'master/import?error=1');
+        }
     }
 
     public function showfriendAction()
@@ -87,7 +87,7 @@ class MasterController extends Zend_Controller_Action
         
         switch ( $_GET['error'])
         {
-            case 1: echo 'Bitte füllen Sie das Feld Kommentar!';
+            case 1: $this->view->msg = 'Bitte füllen Sie das Feld Kommentar!';
             // .........................
         }
         
@@ -210,6 +210,9 @@ class MasterController extends Zend_Controller_Action
         {
             $userModel = new UserModel();
             $this->view->friends = $userModel->getAllUser();
+            $createFriendForm = new Application_Form_CreateFriend();
+            $createFriendForm->setTopicID( $_POST['id']);
+            $this->view->createFriendForm = $createFriendForm;
         }
         else
         {
@@ -419,5 +422,35 @@ class MasterController extends Zend_Controller_Action
             }
         }
     }
+    
+    /** .inserts a new friend in the database and redirects to the send page,
+      * to invite the new created friend. 
+      */
+    public function createfriendAction()
+    {
+        $firstName = $_POST['firstName'];
+        $lastName = $_POST['lastName'];
+        $email = $_POST['email'];
+        $job = $_POST['job'];
+        $adresse = $_POST['adresse'];
+        $topicID = $_POST['topicID'];
+        
+        if ( (empty($firstName)) || (empty($lastName)) || (empty($email)) || (empty($job)) || (empty($adresse)) || (empty($topicID)))
+        {
+            $this->_redirect( 'master/invite');  //......................
+        }
+        
+        $userModel = new UserModel();
+        
+        try
+        {
+            $userID = $userModel->insert( array( 'first_name' => $firstName, 'last_name' => $lastName, 'email' => $email, 'job' => $job, 'adresse' => $adresse));
+        }
+        catch (Exception $e)
+        {
+            $this->_redirect( 'master'); //fehlerausgabe?
+        }
+        //$this->_redirect('send');  //topicID und userID müssen per post übergeben werden
+    }    
 }
 ?>
