@@ -72,6 +72,21 @@ class MasterController extends Zend_Controller_Action
         }
     }
 
+    /**
+     * overview of friends
+     * 
+     * @param string $friends all information in the table 'user' of 'webressource'
+     * @author Peter Kornowski
+     */
+    public function friendAction()
+    {
+            $userModel = new UserModel();
+            $this->view->friends = $userModel->getAllUser();
+            $createFriendForm = new Application_Form_CreateFriend();
+            $createFriendForm->setTopicID( $_POST['id']);
+            $this->view->createFriendForm = $createFriendForm;
+    }
+
     public function showfriendAction()
     {
         // action body
