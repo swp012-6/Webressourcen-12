@@ -302,8 +302,8 @@ class MasterController extends Zend_Controller_Action
             }
 
             //unset informarion of the friend in master session
-            unset($masterNamespace->email);
-            unset($masterNamespace->userID);
+            $masterNamespace->email  = 0;
+            $masterNamespace->userID = 0;
 
             try	//finilly try to send the mail
             {
@@ -521,6 +521,10 @@ class MasterController extends Zend_Controller_Action
                     $masterNamespace->email  = $email;
                     $masterNamespace->userID = $userID;
                     $this->_redirect( '/master/send');  
+                }
+                else
+                {
+                    $this->_redirect( '/master/friend');
                 }
             }
             //set topicID in the master session to 0
