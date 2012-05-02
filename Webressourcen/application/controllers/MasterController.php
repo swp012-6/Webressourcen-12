@@ -83,7 +83,7 @@ class MasterController extends Zend_Controller_Action
             $userModel = new UserModel();
             $this->view->friends = $userModel->getAllUser();
             $createFriendForm = new Application_Form_CreateFriend();
-            $createFriendForm->setTopicID( $_POST['id']);
+            $createFriendForm->addButton();
             $this->view->createFriendForm = $createFriendForm;
     }
 
@@ -223,10 +223,14 @@ class MasterController extends Zend_Controller_Action
     {
         if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
+            //load master session and save topicID
+            $masterNamespace = new Zend_Session_Namespace('master');
+            $masterNamespace->currentTopic = $_POST['topicID'];
+
             $userModel = new UserModel();
             $this->view->friends = $userModel->getAllUser();
             $createFriendForm = new Application_Form_CreateFriend();
-            $createFriendForm->setTopicID( $_POST['id']);
+            $createFriendForm->addSendButton();
             $this->view->createFriendForm = $createFriendForm;
         }
         else
@@ -243,13 +247,19 @@ class MasterController extends Zend_Controller_Action
      */
     public function sendAction()
     {
-        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
+        //load master session
+        $masterNamespace = new Zend_Session_Namespace('master');
+
+        if ($masterNamespace->currentTopic > 0)	//avoids direct access without having topicID
         {
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
             $topicModel = new TopicModel();
-            
-            $topicName = $topicModel->getTopicName( $_POST['topicID']);
+            //transfer information
+            $topicID = $masterNamespace->currentTopic;
+            $topicName = $topicModel->getTopicName( $topicID );
+            //and set topicID in the master session to 0
+            $masterNamespace->currentTopic = 0;
 
             $config = array('auth' => 'login',	//login mail-server
                 'username' => 'swp12-6@gmx.de',
@@ -263,21 +273,48 @@ class MasterController extends Zend_Controller_Action
             $mail->setBodyText('Einladung zu '. $topicName);
             $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
             $mail->setSubject('Einladung zu '. $topicName);
-            for($i=1; $i<=$max; $i++)		//send to all 
+
+            if ($this->getRequest()->isPost())	//direct access from invite
             {
-                if(isset($_POST[$i]))		//who are checked
+                for($i=1; $i<=$max; $i++)		//send to all 
                 {
-                    $mail->addTo($_POST[$i]);
-                // --- also save the connection in userTopic ---
-                    $hash = md5("U". $i ."T". $_POST['topicID']); //the hashcode
-                    $userTopic = array('userID'  => $i,
-                                       'topicID' => $_POST['topicID'],
-                                       'hash'    => $hash);
-                    $userTopicModel->addUserName($userTopic);
+                    if(isset($_POST[$i]))		//who are checked
+                    {
+                        $mail->addTo($_POST[$i]);
+                    // --- also save the connection in userTopic ---
+                        $hash = md5("U". $i ."T". $topicID); //the hashcode
+                        $userTopic = array('userID'  => $i,
+                                           'topicID' => $topicID,
+                                           'hash'    => $hash);
+                        $userTopicModel->addUserTopic($userTopic);
+                    }
                 }
             }
-            //finily sends the mail
-            $mail->send($transport);
+            else				//access from create friend
+            {
+                $mail->addTo($masterNamespace->email);
+            // --- also save the connection in userTopic ---
+                $hash = md5("U". $masterNamespace->userID ."T". $topicID); //the hashcode
+                $userTopic = array('userID'  => $masterNamespace->userID,
+                                   'topicID' => $topicID,
+                                   'hash'    => $hash);
+                $userTopicModel->addUserTopic($userTopic);
+            }
+
+            //unset informarion of the friend in master session
+            unset($masterNamespace->email);
+            unset($masterNamespace->userID);
+
+            try	//finilly try to send the mail
+            {
+                $mail->send($transport);
+                $this->_redirect("/master/showtopics?id=$topicID&ver=".$topicModel->getMaxTopicVersion($topicID));
+            }
+            catch (Exception $e)
+            {
+                //error message
+                $this->view->error = "Es ist ein Fehler beim Senden aufgetretten";
+            }
         }
         else
         {
@@ -438,34 +475,63 @@ class MasterController extends Zend_Controller_Action
         }
     }
     
-    /** .inserts a new friend in the database and redirects to the send page,
-      * to invite the new created friend. 
-      */
+    /**
+     * .inserts a new friend in the database and redirects to the send page,
+     * to invite the new created friend. 
+     */
     public function createfriendAction()
     {
-        $firstName = $_POST['firstName'];
-        $lastName = $_POST['lastName'];
-        $email = $_POST['email'];
-        $job = $_POST['job'];
-        $adresse = $_POST['adresse'];
-        $topicID = $_POST['topicID'];
-        
-        if ( (empty($firstName)) || (empty($lastName)) || (empty($email)) || (empty($job)) || (empty($adresse)) || (empty($topicID)))
+        //load master session
+        $masterNamespace = new Zend_Session_Namespace('master');
+
+        if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
-            $this->_redirect( 'master/invite');  //......................
+            // load all inforation
+            $firstName = $_POST['firstName'];
+            $lastName = $_POST['lastName'];
+            $email = $_POST['email'];
+            $job = $_POST['job'];
+            $adresse = $_POST['adresse'];
+            
+            if ( !(empty($email)) )		//if email address is entered
+            {
+                $userModel = new UserModel();
+    
+                try				//try to save the user
+                {
+                    $userID = $userModel->insert( 
+                        array( 'first_name' => $firstName, 
+                               'last_name' => $lastName,
+                               'email' => $email,
+                               'job' => $job,
+                               'adresse' => $adresse)
+                        );
+                }
+                catch (Exception $e)
+                {
+                    //set topicID in the master session to 0
+                    $masterNamespace->currentTopic = 0;
+                    //error message
+                    $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
+                    break;
+                }
+    
+                if ( $masterNamespace->currentTopic > 0 )	//if topicID is passed
+                {    
+                    $masterNamespace->email  = $email;
+                    $masterNamespace->userID = $userID;
+                    $this->_redirect( '/master/send');  
+                }
+            }
+            //set topicID in the master session to 0
+            $masterNamespace->currentTopic = 0;
+            //error message
+            $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
         }
-        
-        $userModel = new UserModel();
-        
-        try
+        else
         {
-            $userID = $userModel->insert( array( 'first_name' => $firstName, 'last_name' => $lastName, 'email' => $email, 'job' => $job, 'adresse' => $adresse));
+            $this->_redirect('/master');	//goes to master mainpage
         }
-        catch (Exception $e)
-        {
-            $this->_redirect( 'master'); //fehlerausgabe?
-        }
-        //$this->_redirect('send');  //topicID und userID müssen per post übergeben werden
     }    
 }
 ?>

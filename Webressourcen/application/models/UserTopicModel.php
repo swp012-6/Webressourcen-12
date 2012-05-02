@@ -35,7 +35,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 *
 	 * @param array $userTopic "userID","topicID","hash"
 	 */
-	public function addUserName($userTopic)
+	public function addUserTopic($userTopic)
 	{
 		$this->insert($userTopic);
 	}

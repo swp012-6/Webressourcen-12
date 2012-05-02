@@ -19,15 +19,21 @@ class Application_Form_CreateFriend extends Zend_Form
         $this->addElement( 'text', 'adresse', array( 'label' => 'Adresse:'));
     }
    
-    /** adds the topicID and a submitbutton to the form
-      * @param $topicID ID of the topic which will be accessible by the created user
-      */
-    public function setTopicID( $topicID)
+    /** 
+     * adds a submitbutton to the form
+     */
+    public function addSendButton()
     {
-        $this->addElement( 'hidden', 'topicID', array( 'value' => $topicID));
-        $this->addElement( 'submit', 'neuen Freund einladen');
+        $this->addElement( 'submit', 'neuen_Freund_einladen');
+    }
+   
+    /** 
+     * adds a submitbutton to the form
+     */
+    public function addButton()
+    {
+        $this->addElement( 'submit', 'neuen_Freund_speichern');
     }
 
-
 }
-
+?>
