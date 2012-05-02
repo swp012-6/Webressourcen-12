@@ -30,5 +30,17 @@ class UserModel extends Zend_Db_Table_Abstract
 		$user = $this->fetchAll();
 		return $user;
 	}
+
+	/**
+	 * gets all user
+	 *
+         * @param $userID ID of desired user
+	 * @return $user user with $userID
+	 */
+	public function getUser($userID)
+	{
+		$row = $this->fetchRow('userID = '.$userID);
+		return $row;
+	}
 }
 ?>

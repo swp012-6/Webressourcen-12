@@ -89,7 +89,37 @@ class MasterController extends Zend_Controller_Action
 
     public function showfriendAction()
     {
-        // action body
+        if ($this->getRequest()->isPost()) //avoid direct access
+        {
+            //load models
+            $userTopicModel = new UserTopicModel;
+            $userModel = new UserModel();
+
+            $user = $userModel->getUser($_POST['userID']);
+            //pass first name
+            if(empty($user['first_name']))
+            {
+                $this->view->first_name = 'Herr/Frau';
+            }
+            else
+            {
+                $this->view->first_name = $user['first_name'];
+            }
+            //pass last name
+            if(empty($user['last_name']))
+            {
+                $this->view->last_name = 'Unbekannt';
+            }
+            else
+            {
+                $this->view->last_name = $user['last_name'];
+            }
+            //pass email
+            $this->view->email = $user['email'];
+
+            echo $topics = $userTopicModel->getTopics($_POST['userID']);
+            //_________MUSS NOCH ÜBERARBEITET WERDEN____________________
+        }
     }
 
     /** This function shows a list of all available topics on the left side of the page.
@@ -252,9 +282,11 @@ class MasterController extends Zend_Controller_Action
 
         if ($masterNamespace->currentTopic > 0)	//avoids direct access without having topicID
         {
+            //load models
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
             $topicModel = new TopicModel();
+
             //transfer information
             $topicID = $masterNamespace->currentTopic;
             $topicName = $topicModel->getTopicName( $topicID );
