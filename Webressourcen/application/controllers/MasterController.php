@@ -1,5 +1,10 @@
 ﻿<?php
 
+/** This class is the controller for the section ../public/master .
+  * Only the master has access to this section by loggin in at ../public/index/prelogin .
+  * This controller manages the topic-creation, -deletion, invitation and the update of topics.
+  * @author Christoph Beger and Peter Kornowski
+  */
 class MasterController extends Zend_Controller_Action
 {
 
@@ -28,6 +33,8 @@ class MasterController extends Zend_Controller_Action
                 
                 case 2: $this->view->errorMsg = 'Bitte alle Felder füllen!';
                         break;
+                case 3: $this->view->errorMsg = 'Ihre Eingabe entsprach keiner gültigen URL!';
+                        break;
                 default: 
             }
         }
@@ -55,6 +62,13 @@ class MasterController extends Zend_Controller_Action
         /* HTTP-Request to get body of spezified page */
 		if ($contentType == 'link')
 		{
+            /* validate the POST especially the entered URL */
+            $form = new Application_Form_CreateTopic();
+            if ( !$form->isValid($_POST))
+            {
+                $this->_redirect('master/import?error=3');
+            }
+            
 			$topicSource = $topicContent;
             $client = new Zend_Http_Client($topicContent);
             $response = $client->request();
@@ -127,6 +141,7 @@ class MasterController extends Zend_Controller_Action
     /** This function shows a list of all available topics on the left side of the page.
       * If a topic is selected, his content will get shown in a iframe.
       * The master is also able to access other functions like edittopic, invite, showcomments from this page.
+      * @author Christoph Beger
       */
     public function showtopicsAction()
     {
@@ -231,6 +246,9 @@ class MasterController extends Zend_Controller_Action
         // action body
     }
 
+    /** This function is called, when an user wants to delete a topic.
+      * @author Christoph Beger
+      */
     public function closetopicAction()
     {
         $topicModel = new TopicModel();
@@ -356,7 +374,9 @@ class MasterController extends Zend_Controller_Action
         }
     }
 
-    /* sends the topicContent to the view, so the master is able to edit it in a textarea */
+    /** sends the topicContent to the view, so the master is able to edit it in a textarea 
+      * @author Christoph Beger
+      */
     public function edittopicAction()
     {        
         //session_start(); ..........
@@ -404,7 +424,9 @@ class MasterController extends Zend_Controller_Action
         else $this->view->msg = 'Keine Themen-ID angegeben!';
     }
 
-    /* This function creates a new topicVersion with the posted topicContent and topicSource */
+    /** This function creates a new topicVersion with the posted topicContent and topicSource. 
+      * @author Christoph Beger
+      */
     public function validateeditAction()
     {
         $topicModel = new TopicModel();
@@ -426,7 +448,9 @@ class MasterController extends Zend_Controller_Action
         else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=2');
     }
 
-    /* inserts a comment in the database */
+    /** inserts a comment in the database 
+      * @author Christoph Beger
+      */
     public function validatecommentAction()
     {
         /* save posts in variables */
@@ -461,6 +485,7 @@ class MasterController extends Zend_Controller_Action
     
     /** Controller of the page which contains the topicContent.
       * This page is the target of a iframe in showtopic.
+      * @author Christoph Beger
       */
     public function topicviewAction()
     {
@@ -479,7 +504,9 @@ class MasterController extends Zend_Controller_Action
         }
     }
 
-    /* Shows comments on extra pages with 10 comments per page. */
+    /** Shows comments on extra pages with 10 comments per page. 
+      * @author Christoph Beger
+      */
     public function showcommentsAction()
     {
         //.....session, ausnahmen.............
@@ -510,7 +537,7 @@ class MasterController extends Zend_Controller_Action
     }
     
     /**
-     * .inserts a new friend in the database and redirects to the send page,
+     * inserts a new friend in the database and redirects to the send page,
      * to invite the new created friend. 
      */
     public function createfriendAction()
