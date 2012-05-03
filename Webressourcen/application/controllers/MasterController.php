@@ -60,6 +60,8 @@ class MasterController extends Zend_Controller_Action
             $response = $client->request();
             $body = $response->getBody();
             $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
+            $body = preg_replace('/<form[^>]+>/i', '', $body); //removes <form> tags
+            $body = preg_replace('/<iframe[^>]+>/i', '', $body); //removes <iframe> tags
             $topicContent = $body;
         }
             
