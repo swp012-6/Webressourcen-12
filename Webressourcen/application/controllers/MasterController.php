@@ -70,8 +70,25 @@ class MasterController extends Zend_Controller_Action
             }
             
 			$topicSource = $topicContent;
-            $client = new Zend_Http_Client($topicContent);
-            $response = $client->request();
+            
+            /* get hostname and check if plugin is available */
+            $urlArray = parse_url( $topicContent);
+            
+    /* ----- Please insert new plugins here ----- */
+            switch ($urlArray['host'])
+            {
+                case 'de.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaDe();
+                                            $response = $plugin->getResponse( $topicContent);
+                                            break;
+                                            
+                case 'en.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaEn();
+                                            $response = $plugin->getResponse( $topicContent);
+                                            break;
+                                            
+                default:                    $client = new Zend_Http_Client( $topicContent);
+                                            $response = $client->request();
+            }
+            
             $body = $response->getBody();
             $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
             $body = preg_replace('/<form[^>]+>/i', '', $body); //removes <form> tags
