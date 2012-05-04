@@ -103,6 +103,9 @@ class MasterController extends Zend_Controller_Action
         {
             $this->_redirect( 'master/import?error=1');
         }
+	
+	$this->view->topicID = $result;
+        $this->view->version = $topicModel->getMaxTopicVersion($result);
     }
 
     /**
@@ -120,6 +123,13 @@ class MasterController extends Zend_Controller_Action
             $this->view->createFriendForm = $createFriendForm;
     }
 
+    /**
+     * details of a friend
+     * 
+     * @param int $_POST['userID'] the ID of the user
+     * @param array $infoTopics information about available topics and userName
+     * @author Peter Kornowski
+     */
     public function showfriendAction()
     {
         if ($this->getRequest()->isPost()) //avoid direct access
@@ -127,6 +137,7 @@ class MasterController extends Zend_Controller_Action
             //load models
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
+            $topicModel = new TopicModel();
 
             $user = $userModel->getUser($_POST['userID']);
             //pass first name
@@ -150,8 +161,27 @@ class MasterController extends Zend_Controller_Action
             //pass email
             $this->view->email = $user['email'];
 
-            echo $topics = $userTopicModel->getTopics($_POST['userID']);
-            //_________MUSS NOCH ÜBERARBEITET WERDEN____________________
+            $topics = $userTopicModel->getTopics($_POST['userID']);
+            // prepare arrays
+            $infoTopicIDs = array();
+            $infoTopicNames = array();
+            $infoUserNames = array();
+            // fill arrays
+            for($i=0; $i<sizeof($topics); $i++)
+            {
+                $infoTopicIDs[]   = $topics[$i]["topicID"];
+                $infoTopicNames[] = $topicModel->getTopicName($topics[$i]["topicID"]);
+                $infoUserNames[]  = $topics[$i]["userName"];
+            }
+            //pass all other important information to the view
+            $this->view->infoTopicIDs = $infoTopicIDs;
+            $this->view->infoTopicNames = $infoTopicNames;
+            $this->view->infoUserNames = $infoUserNames;
+            $this->view->size = sizeof($infoTopicIDs);
+            $this->view->userID = $_POST['userID'];
+
+	//Es muss noch eine überarbeitung des Profils ermöglicht werden.
+
         }
     }
 

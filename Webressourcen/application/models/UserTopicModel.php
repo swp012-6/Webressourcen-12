@@ -61,13 +61,8 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 */
 	public function getTopics($userID)
 	{
-		$topics = $this->select('topicID, username')
-			       ->from('userTopic')
-			       ->where('userID = ?',$userID);
-		/*foreach( $row )
-		{
-			//$topics= array($rowset['topicID'] => $rowset['userName']);
-		}*/
+		$topics = $this->fetchAll($this->select()
+			       ->where('userID = ?',$userID));
 		return $topics;
 	}
 }

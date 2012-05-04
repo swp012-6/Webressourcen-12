@@ -124,7 +124,7 @@ class TopicModel extends Zend_Db_Table_Abstract
             $topicAdditiveModel->getAdapter()->rollBack();
             return null;
         }
-        return 1;
+        return $topicID;
     }
     
     /** This function creates a new version to an existing topic.
