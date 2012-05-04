@@ -24,7 +24,7 @@ class IndexController extends Zend_Controller_Action
     public function indexAction()
     {
         $this->view->title = ' - Hauptseite';
-	$masterNamespace = new Zend_Session_Namespace('Master');
+	$masterNamespace = new Zend_Session_Namespace('master');
         $this->view->masterOnline = $masterNamespace->masterOnline;
     }
 
@@ -36,7 +36,7 @@ class IndexController extends Zend_Controller_Action
     public function preloginAction()
     {
         $this->view->title = ' - Administrator';
-	$masterNamespace = new Zend_Session_Namespace('Master');
+	$masterNamespace = new Zend_Session_Namespace('master');
     }
 
     /**
@@ -48,7 +48,7 @@ class IndexController extends Zend_Controller_Action
     public function loginAction()
     {
         $this->view->title = ' - Administrator';
-	$masterNamespace = new Zend_Session_Namespace('Master');
+	$masterNamespace = new Zend_Session_Namespace('master');
 
         if ($this->getRequest()->isPost())		//avoids direct access without having information pass
         {
@@ -92,7 +92,7 @@ class IndexController extends Zend_Controller_Action
      */
     public function logoutAction()
     {
-	$masterNamespace = new Zend_Session_Namespace('Master');
+	$masterNamespace = new Zend_Session_Namespace('master');
         $masterNamespace->masterOnline = 0;
         $this->_redirect('/');
     }
@@ -104,7 +104,7 @@ class IndexController extends Zend_Controller_Action
      */
     public function updateformAction()
     {
-        $masterNamespace = new Zend_Session_Namespace('Master');
+        $masterNamespace = new Zend_Session_Namespace('master');
 
         if ($masterNamespace->masterOnline == 1)
         {
@@ -124,7 +124,7 @@ class IndexController extends Zend_Controller_Action
      */
     public function updateAction()
     {
-	$masterNamespace = new Zend_Session_Namespace('Master');
+	$masterNamespace = new Zend_Session_Namespace('master');
         if ($this->getRequest()->isPost())		//avoids direct access without having information pass
         {
             //gets old user information from updateform
