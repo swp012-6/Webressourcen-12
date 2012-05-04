@@ -37,7 +37,20 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 */
 	public function addUserTopic($userTopic)
 	{
-		$this->insert($userTopic);
+		try	// try to save $userTopic
+		{
+			$this->insert($userTopic);
+		}
+		catch (Exception $e)
+		{
+			// get old entry
+			$row = $this->fetchRow('userID = "'.$userTopic["userID"].'"
+						AND topicID = "'.$userTopic["topicID"].'"');
+			// delete old entry
+			$row->delete();
+			// save again
+			$this->insert($userTopic);
+		}
 	}
 
 	/**

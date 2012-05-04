@@ -328,7 +328,6 @@ class MasterController extends Zend_Controller_Action
             $topicID = $masterNamespace->currentTopic;
             $topicName = $topicModel->getTopicName( $topicID );
             //and set topicID in the master session to 0
-            $masterNamespace->currentTopic = 0;
 
             $config = array('auth' => 'login',	//login mail-server
                 'username' => 'swp12-6@gmx.de',
@@ -337,6 +336,7 @@ class MasterController extends Zend_Controller_Action
             $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
 
             $max = $userModel->getMaxUserID();
+            $masterNamespace->currentTopic = 0;
 
             $mail = new Zend_Mail();		//create mail
             $mail->setBodyText('Einladung zu '. $topicName);
@@ -351,7 +351,7 @@ class MasterController extends Zend_Controller_Action
                     {
                         $mail->addTo($_POST[$i]);
                     // --- also save the connection in userTopic ---
-                        $hash = md5("U". $i ."T". $topicID); //the hashcode
+                        $hash = md5($i .microtime(). $topicID); //the hashcode
                         $userTopic = array('userID'  => $i,
                                            'topicID' => $topicID,
                                            'hash'    => $hash);
