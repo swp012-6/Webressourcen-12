@@ -1,6 +1,6 @@
-﻿<!-- content of the invite overview -->
+﻿<!-- content of the invite overview and createfriend option -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'send'), null, true) ?>" method="post">
-	<table>
+	<table border = "1">
 		<tr>				<!--tablehead-->
 			<td>
 				Vorname
@@ -43,6 +43,10 @@
 	}
 	?>
 	</table>
-    <input type = "hidden" name = "topicID" value = "<?php echo $_POST['topicID']; ?>" />
+	<input type = "hidden" name = "topicID" value = "<?php echo $_POST['topicID']; ?>" />
 	<input type="submit" name="button_send" value="ausgewählte Freunde informieren" class="button" />
 </form>
+
+<?php 
+    echo $this->createFriendForm;
+?>

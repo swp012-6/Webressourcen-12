@@ -1,1 +1,54 @@
-<br /><br /><center>View script for controller <b>Master</b> and script/action name <b>showfriend</b></center>
+<h2><?php echo $this->first_name ?> <?php echo $this->last_name ?></h2>
+<?php echo $this->email ?><br>
+
+<?php
+if(size==0)
+{
+?>
+Dieser Freund ist noch zu keinem Thema eingeladen<br>
+<?php
+}
+else
+{
+?>
+	<table border = "1">
+		<tr>				<!--tablehead-->
+			<td>
+				Thema
+			</td>
+			<td>
+				sein Nick
+			</td>
+			<td>
+			</td>
+		</tr>
+	<?php
+	for($i=0; $i<$this->size; $i++)		//for each topic
+	{
+	?>
+		<tr>
+			<td>
+				<?php echo $this->infoTopicNames[$i] ?>
+			</td>
+			<td>
+				<?php echo $this->infoUserNames[$i] ?>
+			</td>
+			<td>    <!-- disconnect button  -->
+				<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>" method="post">
+					<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
+					<input type = "hidden" name = "topicID" value = "<?php echo $this->infoTopicIDs[$i] ?>" />
+					<input type="submit" name="button_send" value="Trennen" class="button" />
+				</form>
+			</td>
+		</tr>
+	<?php
+	}
+	?>
+</table>
+<?php
+}
+?>
+<!-- return button  -->
+<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true) ?>" method="post">
+	<input type="submit" name="button_send" value="zurück" class="button" />
+</form>

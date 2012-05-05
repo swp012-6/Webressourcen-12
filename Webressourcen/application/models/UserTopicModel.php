@@ -15,7 +15,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 * gets UserName with userID and topicID
 	 *
 	 * @param array $userTopic "userID","topicID"
-	 * @return $userName name of the user
+	 * @return string $userName name of the user
 	 */
 	public function getUserName($userTopic)
 	{
@@ -35,9 +35,35 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 *
 	 * @param array $userTopic "userID","topicID","hash"
 	 */
-	public function addUserName($userTopic)
+	public function addUserTopic($userTopic)
 	{
-		$this->insert($userTopic);
+		try	// try to save $userTopic
+		{
+			$this->insert($userTopic);
+		}
+		catch (Exception $e)
+		{
+			// get old entry
+			$row = $this->fetchRow('userID = "'.$userTopic["userID"].'"
+						AND topicID = "'.$userTopic["topicID"].'"');
+			// delete old entry
+			$row->delete();
+			// save again
+			$this->insert($userTopic);
+		}
+	}
+
+	/**
+	 * gets topicIDs which are connected with $userID
+	 *
+	 * @param int $userID ID of desired user
+         * @return array $topics topicIDs and usernames
+	 */
+	public function getTopics($userID)
+	{
+		$topics = $this->fetchAll($this->select()
+			       ->where('userID = ?',$userID));
+		return $topics;
 	}
 }
 ?>

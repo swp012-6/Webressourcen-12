@@ -1,1 +1,16 @@
-<br /><br /><center>View script for controller <b>Master</b> and script/action name <b>validate</b></center>
+<!-- after the topic is created -->
+<center>
+    <b> Ihr Thema wurde erfolgreich erstellt. </b>
+</center>
+<!-- button to the topic -->
+<?php 
+echo '<form action = "showtopics?id=' . $this->topicID . '&ver=' . $this->version . '" method = "post">';
+?>
+    <input type = "submit" value = "Zum Thema" />
+</form>
+<!-- button to invitation -->
+<form action = "invite" method = "post">
+    <input type = "hidden" name = "topicID" value = "<?php echo $this->topicID ?>" />
+    <input type = "submit" value = "Einladungen versenden" />
+</form>
+
