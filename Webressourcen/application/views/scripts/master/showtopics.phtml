@@ -7,9 +7,12 @@
 <?php
     if ( !empty( $this->topicContent))
     {
-        echo '<div id = "content"><center><h1>';
-        echo $this->topicName;
-        echo '</h1></center>Version: ';
+        echo '<div id = "content">';
+        echo $this->msg;  //errormessage
+        echo '<center><h1>' . $this->topicName . '</h1></center>';
+        
+        /* dropbox with available topicVersion */
+        echo 'Version: '; 
         echo '<form action="showtopics" method="get"><select name="ver">';
     
         foreach( $this->topicVersionArray as $topicVersion)
@@ -25,17 +28,22 @@
         }        
         echo '</select><input type = "hidden" name = "id" value = "' . $_GET['id'] . '"><input type=submit value="go"></form>';
         
+        /* button to close the current topic */
         echo '<form action = "closetopic" method = "post">';
             echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
             echo '<input type = "submit" value = "schließen" onsubmit = "return confirm("Text")"></form>';
         
+        /* invitebutton, redirectes to the invite-page */
         echo '<form action = "invite" method = "post">';
             echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
             echo '<input type = "submit" value = "Einladungen versenden" />';
         echo '</form>';
         
+        /* iframe */
         echo $this->topicContent;
         echo '</div>';
+        
+        /* --- commentpart --- */
         echo '<div id = "comment">';
         
         if ( !empty( $this->CommentRowSet))
