@@ -132,14 +132,16 @@ class MasterController extends Zend_Controller_Action
      */
     public function showfriendAction()
     {
-        if ($this->getRequest()->isPost()) //avoid direct access
+        if ( isset( $_GET['id'])) //if userID in URL do:
         {
             //load models
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
             $topicModel = new TopicModel();
+            //get userID from URL
+            $userID = $_GET['id'];
 
-            $user = $userModel->getUser($_POST['userID']);
+            $user = $userModel->getUser($userID);
             //pass first name
             if(empty($user['first_name']))
             {
@@ -161,7 +163,7 @@ class MasterController extends Zend_Controller_Action
             //pass email
             $this->view->email = $user['email'];
 
-            $topics = $userTopicModel->getTopics($_POST['userID']);
+            $topics = $userTopicModel->getTopics($userID);
             // prepare arrays
             $infoTopicIDs = array();
             $infoTopicNames = array();
@@ -178,10 +180,14 @@ class MasterController extends Zend_Controller_Action
             $this->view->infoTopicNames = $infoTopicNames;
             $this->view->infoUserNames = $infoUserNames;
             $this->view->size = sizeof($infoTopicIDs);
-            $this->view->userID = $_POST['userID'];
+            $this->view->userID = $userID;
 
 	//Es muss noch eine überarbeitung des Profils ermöglicht werden.
 
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
         }
     }
 
@@ -290,7 +296,24 @@ class MasterController extends Zend_Controller_Action
 
     public function lockfriendAction()
     {
-        // action body
+        if ($this->getRequest()->isPost()) //avoid direct access
+        {
+            //load model
+            $userTopicModel = new UserTopicModel;
+            try	// try to delete userTopic
+            {
+                $userTopicModel->delUserTopic($_POST['userID'], $_POST['topicID']);
+                $this->_redirect('/master/showfriend?id='.$_POST['userID']);
+            }
+            catch (Exception $e)
+            {
+                $this->view->error = "Fehler beim Löschen der Verbindung zwischen Freund und Thema";
+            }
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
+        }
     }
 
     /** This function is called, when an user wants to delete a topic.

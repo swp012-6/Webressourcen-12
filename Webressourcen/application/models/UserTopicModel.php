@@ -31,7 +31,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	}
 
 	/**
-	 * adds UserName with userID, topicID and hash
+	 * adds userTopic with userID, topicID and hash
 	 *
 	 * @param array $userTopic "userID","topicID","hash"
 	 */
@@ -64,6 +64,22 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 		$topics = $this->fetchAll($this->select()
 			       ->where('userID = ?',$userID));
 		return $topics;
+	}
+
+	/**
+	 * deletes UserName
+	 *
+	 * @param int $userID  userID of the userTopic
+         * @param int $topicID topicID of the userTopic
+	 */
+	public function delUserTopic($userID, $topicID)
+	{
+		// get userTopic
+		$row = $this->fetchRow('userID = "'.$userID.'"
+					AND topicID = "'.$topicID.'"');
+		// delete userTopic
+		$row->delete();
+		
 	}
 }
 ?>

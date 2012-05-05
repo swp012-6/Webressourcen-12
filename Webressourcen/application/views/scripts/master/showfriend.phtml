@@ -2,7 +2,7 @@
 <?php echo $this->email ?><br>
 
 <?php
-if(size==0)
+if($this->size == 0)
 {
 ?>
 Dieser Freund ist noch zu keinem Thema eingeladen<br>
@@ -34,7 +34,7 @@ else
 				<?php echo $this->infoUserNames[$i] ?>
 			</td>
 			<td>    <!-- disconnect button  -->
-				<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>" method="post">
+				<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'lockfriend'), null, true) ?>" method="post">
 					<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
 					<input type = "hidden" name = "topicID" value = "<?php echo $this->infoTopicIDs[$i] ?>" />
 					<input type="submit" name="button_send" value="Trennen" class="button" />
