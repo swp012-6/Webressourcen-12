@@ -397,23 +397,24 @@ class MasterController extends Zend_Controller_Action
             //transfer information
             $topicID = $masterNamespace->currentTopic;
             $topicName = $topicModel->getTopicName( $topicID );
-            //and set topicID in the master session to 0
+            $max = $userModel->getMaxUserID();
+            $userID = $masterNamespace->userID;
+            //and set IDs in the master session to 0
+            $masterNamespace->currentTopic = 0;
+            $masterNamespace->userID = 0;
 
-            $config = array('auth' => 'login',	//login mail-server
+            //login mail-server
+            $config = array('auth' => 'login',
                 'username' => 'swp12-6@gmx.de',
                 'password' => 'BKLRswp12');
- 
             $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
-
-            $max = $userModel->getMaxUserID();
-            $masterNamespace->currentTopic = 0;
-
-            $mail = new Zend_Mail();		//create mail
+            //prepare mail
+            $mail = new Zend_Mail();
             $mail->setBodyText('Einladung zu '. $topicName);
             $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
             $mail->setSubject('Einladung zu '. $topicName);
 
-            if ($this->getRequest()->isPost())	//direct access from invite
+            if ($this->getRequest()->isPost())
             {
                 for($i=1; $i<=$max; $i++)		//send to all 
                 {
@@ -433,8 +434,8 @@ class MasterController extends Zend_Controller_Action
             {
                 $mail->addTo($masterNamespace->email);
             // --- also save the connection in userTopic ---
-                $hash = md5("U". $masterNamespace->userID ."T". $topicID); //the hashcode
-                $userTopic = array('userID'  => $masterNamespace->userID,
+                $hash = md5($userID .microtime(). $topicID); //the hashcode
+                $userTopic = array('userID'  => $userID,
                                    'topicID' => $topicID,
                                    'hash'    => $hash);
                 $userTopicModel->addUserTopic($userTopic);
@@ -442,7 +443,6 @@ class MasterController extends Zend_Controller_Action
 
             //unset informarion of the friend in master session
             $masterNamespace->email  = 0;
-            $masterNamespace->userID = 0;
 
             try	//finilly try to send the mail
             {
@@ -452,14 +452,21 @@ class MasterController extends Zend_Controller_Action
             catch (Exception $e)
             {
                 //error message
-                $this->view->error = "Es ist ein Fehler beim Senden aufgetretten";
+                $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>Wahrscheinlich ist eine E-Mail-Adresse falsch.";
                 //delete all new userTopics
-                for($i=1; $i<=$max; $i++)
+                if ($this->getRequest()->isPost())	//user from the table
                 {
-                    if(isset($_POST[$i]))
+                    for($i=1; $i<=$max; $i++)
                     {
-                        $userTopicModel->delUserTopic($i,$topicID);
+                        if(isset($_POST[$i]))
+                        {
+                            $userTopicModel->delUserTopic($i,$topicID);
+                        }
                     }
+                }
+                else					//new created user
+                {
+                    $userTopicModel->delUserTopic($userID,$topicID);
                 }
             }
         }
