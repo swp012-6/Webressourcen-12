@@ -67,6 +67,20 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	}
 
 	/**
+	 * gets userIDs which are connected with $topicID
+	 *
+
+	 * @param int $topicID ID of desired topic
+         * @return array $users usersIDs and usernames
+	 */
+	public function getUsers($topicID)
+	{
+		$users = $this->fetchAll($this->select()
+			       ->where('topicID = ?',$topicID));
+		return $users;
+	}
+
+	/**
 	 * deletes UserName
 	 *
 	 * @param int $userID  userID of the userTopic

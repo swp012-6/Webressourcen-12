@@ -347,8 +347,25 @@ class MasterController extends Zend_Controller_Action
             $masterNamespace = new Zend_Session_Namespace('master');
             $masterNamespace->currentTopic = $_POST['topicID'];
 
+            
+            //load models
+            $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
+            //get and pass user
             $this->view->friends = $userModel->getAllUser();
+            //get userIDs from usertopic
+            $users = $userTopicModel->getUsers($_POST['topicID']);
+            // prepare arrays
+            $infoUserIDs = array();
+            // fill arrays
+            for($i=0; $i<sizeof($users); $i++)
+            {
+                $infoUserIDs[] = $users[$i]["userID"];
+            }
+            //pass uderIDs
+            $this->view->infoUserIDs = $infoUserIDs;
+
+            //create createFriendForm
             $createFriendForm = new Application_Form_CreateFriend();
             $createFriendForm->addSendButton();
             $this->view->createFriendForm = $createFriendForm;
@@ -436,6 +453,14 @@ class MasterController extends Zend_Controller_Action
             {
                 //error message
                 $this->view->error = "Es ist ein Fehler beim Senden aufgetretten";
+                //delete all new userTopics
+                for($i=1; $i<=$max; $i++)
+                {
+                    if(isset($_POST[$i]))
+                    {
+                        $userTopicModel->delUserTopic($i,$topicID);
+                    }
+                }
             }
         }
         else
