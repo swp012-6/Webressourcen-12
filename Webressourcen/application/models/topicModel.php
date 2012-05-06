@@ -96,7 +96,7 @@ class TopicModel extends Zend_Db_Table_Abstract
       * @param $topicSource source
       * @return returns 0 if transaction failed, else 1
       */
-    public function createTopic( $topicName, $topicContent, $topicSource) 
+    public function createTopic( $topicName, $topicContent, $topicSource, $topicType) 
     {
         $topicAdditiveModel = new TopicAdditiveModel();
         
@@ -110,7 +110,7 @@ class TopicModel extends Zend_Db_Table_Abstract
             /* get auto-created topicID and insert topicData + topicID in table topic */
             $topicIDRow = $this->fetchRow( $this->select()->where( 'topicName = ?' , $topicName));
             $topicID = $topicIDRow['topicID'];
-            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource, 'topicType' => $topicType));
  
             /* commit transaction */
             $query = $topicAdditiveModel->getAdapter()->commit();
@@ -130,13 +130,13 @@ class TopicModel extends Zend_Db_Table_Abstract
       * @param $topicSource new version's source
       * @return 1 if success, null if failed
       */
-    public function createNewTopicVersion( $topicID, $topicContent, $topicSource)
+    public function createNewTopicVersion( $topicID, $topicContent, $topicSource, $topicType)
     {
         $topicAdditiveModel = new TopicAdditiveModel();
         try
         {
             $maxVersion = $this->getMaxTopicVersion( $topicID);
-            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource));
+            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicVersion' => $maxVersion+1, 'topicContent' => $topicContent, 'topicSource' => $topicSource, 'topicType' => $topicType));
         }
         catch ( Exception $e)
         {
