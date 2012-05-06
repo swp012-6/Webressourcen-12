@@ -161,5 +161,32 @@ class TopicModel extends Zend_Db_Table_Abstract
                                                                                     ->where( 'topicID = ?', $topicID));
         return $maxVersion['maxVersion'];
     }
+    
+    /** 
+     * deletes topic, topicAdditives, comments and userTopics with the given ID
+     * @param topicID given topicID
+     * @return $success 1 successful, 0 failed
+     */
+    public function delTopic($topicID)
+    {
+        //load models
+        $topicAdditiveModel = new TopicAdditiveModel();
+        $topicModel = new TopicModel();
+        $commentModel = new commentModel();
+        $userTopicModel = new UserTopicModel();
+        //delete topic, topicAdditives, comments and userTopics
+        try
+        {
+            $topicModel->delete( 'topicID = '. $topicID);
+            $topicAdditiveModel->delete( 'topicID = '. $topicID);
+            $commentModel->delete( 'topicID = '. $topicID);
+            $userTopicModel->delete( 'topicID = '. $topicID);
+	}
+        catch (Exception $e)
+        {
+            return 0;	//failed
+        }
+        return 1;	//successful
+    }
 }
 ?>

@@ -200,10 +200,12 @@ class MasterController extends Zend_Controller_Action
     {
         $topicModel = new topicModel();
         
-        switch ( $_GET['error'])
+        switch ( $_GET['msg'])
         {
             case 1: $this->view->msg = 'Bitte füllen Sie das Feld Kommentar!';
-            // .........................
+            break;
+            case 2: $this->view->msg = 'Es wurde erfolgreich eine neue Version erstellt.';
+            break;
         }
         
         
@@ -321,11 +323,19 @@ class MasterController extends Zend_Controller_Action
       */
     public function closetopicAction()
     {
+        //load model
         $topicModel = new TopicModel();
-        
-        $topicModel->delete( 'topicID = ' . $_POST['topicID']);    //auf erfolg testen?
-        
-        $this->view->msg = 'Thema wurde erfolgreich gelöscht!';
+        //delete topic, topicAdditives, comments and userTopics
+        $success = $topicModel->delTopic($_POST['topicID']);
+        //check result
+        if($success == 0)
+        {						//error message
+            $this->view->error = 'Es ist ein Fehler beim Löschen aufgetretten.';
+        }
+        else
+        {
+            $this->_redirect('/master/showtopics');	//goes to showtopics
+        }
     }
 
     public function closeAction()
@@ -502,11 +512,9 @@ class MasterController extends Zend_Controller_Action
             /* topics with spezified topicID are available */
             if ( !empty( $topicName)) 
             {
-                switch ( $_GET['error'])
+                switch ( $_GET['msg'])
                 {
                     case 1: $this->view->msg = 'Bitte alle Felder füllen!';
-                            break;
-                    case 2: $this->view->msg = 'Fehler bei der Versionserstellung! Bitte wenden SIe sich an den Administrator.';
                             break;
                 }
                 $this->view->topicName = $topicName;
@@ -540,14 +548,17 @@ class MasterController extends Zend_Controller_Action
         
         if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))
         {
-            $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
+            $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
         
         if ( $topicModel->createNewTopicVersion( $topicID, $topicContent, $topicSource))
         {           
-                $this->view->msg = 'Neue Version wurde erstellt!';
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . ($topicVersion+1) . '&msg=2');
         }
-        else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=2');
+        else 
+        {           
+            $this->view->error = 'Fehler bei der Versionserstellung.';
+        }
     }
 
     /** inserts a comment in the database 
@@ -568,7 +579,7 @@ class MasterController extends Zend_Controller_Action
         }
         if ( empty( $commentText))
         {
-            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
         
         $commentModel = new CommentModel();
