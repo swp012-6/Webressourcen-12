@@ -85,12 +85,8 @@ class TopicModel extends Zend_Db_Table_Abstract
       */
     public function getTopicList()
     {
-        $allTopicsRowSet = $this->fetchAll( $this->select()->from( $this, 'topicID'));
+        $topicList = $this->fetchAll( $this->select() ->from( $this, array( 'topicID', 'topicName')));
         
-        foreach ( $allTopicsRowSet as $allTopicsRow)
-        {
-            $topicList[] = array('topicID' => $allTopicsRow['topicID'], 'topicName' => $this->getTopicName( $allTopicsRow['topicID']));
-        }
         return $topicList;
     }
     
