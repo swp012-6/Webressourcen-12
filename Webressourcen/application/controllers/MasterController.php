@@ -1,4 +1,26 @@
 ﻿<?php
+/* -- INDEX --
+ 
+ - init()
+ - importAction()
+ - validateAction()
+ - friendAction()
+ - showfriendAction()
+ - showtopicsAction()
+ - lockfriendAction()
+ - delfriendAction()
+ - closetopicAction()
+ - closeAction()
+ - inviteAction()
+ - sendAction()
+ - edittopicAction()
+ - validateeditAction()
+ - validatecommentAction()
+ - topicviewAction()
+ - showcommentsAction()
+ - createfriendAction()
+
+ */
 
 /** This class is the controller for the section ../public/master .
   * Only the master has access to this section by loggin in at ../public/index/prelogin .
@@ -296,6 +318,12 @@ class MasterController extends Zend_Controller_Action
         }
     }
 
+    /**
+     * deletes the connection between user and topic
+     * 
+     * @param int $_POST['userID'] the ID of the user
+     * @author Peter Kornowski
+     */
     public function lockfriendAction()
     {
         if ($this->getRequest()->isPost()) //avoid direct access
@@ -310,6 +338,36 @@ class MasterController extends Zend_Controller_Action
             catch (Exception $e)
             {
                 $this->view->error = "Fehler beim Löschen der Verbindung zwischen Freund und Thema";
+            }
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
+        }
+    }
+
+    /**
+     * deletes the user ans his connections
+     * 
+     * @param int $_POST['userID'] the ID of the user
+     * @author Peter Kornowski
+     */
+    public function delfriendAction()
+    {
+        if ($this->getRequest()->isPost()) //avoid direct access
+        {
+            //load model
+            $userModel = new UserModel;
+            $userTopicModel = new UserTopicModel;
+            try	// try to delete userTopic
+            {
+                $userTopicModel->delete( 'userID = '. $_POST['userID']);
+                $userModel->delete( 'userID = '. $_POST['userID']);
+                $this->_redirect('/master/friend');
+            }
+            catch (Exception $e)
+            {
+                $this->view->error = "Fehler beim Löschen des Freundes";
             }
         }
         else
