@@ -16,6 +16,7 @@ class MasterController extends Zend_Controller_Action
     public function indexAction()
     {
         // action body
+        
     }
 
     /** This function shows a form where the master can insert topic-parameters like content or source.
@@ -85,6 +86,10 @@ class MasterController extends Zend_Controller_Action
                                             $response = $plugin->getResponse( $topicContent);
                                             break;
                                             
+                case 't3n.de':              $plugin = new Pligin_Authentication_T3nDE();
+                                            $response = $plugin->getResponse( $topicContent);
+                                            break;
+                                            
                 default:                    $client = new Zend_Http_Client( $topicContent);
                                             $response = $client->request();
             }
@@ -93,6 +98,8 @@ class MasterController extends Zend_Controller_Action
             $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
             $body = preg_replace('/<form[^>]+>/i', '', $body); //removes <form> tags
             $body = preg_replace('/<iframe[^>]+>/i', '', $body); //removes <iframe> tags
+            $body = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $body); //removes <script> tags
+            
             $topicContent = $body;
         }
             
