@@ -28,6 +28,13 @@
             <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>">Thema erstellen</a>
             <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a>
             <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>">Freunde anzeigen</a>
+			
+			<!-- searchfield -->
+			<form align="right">
+					<input name="suchen" type="text" style="styles.css" />
+					<input type="submit" value="Suchen" />
+			</form>
+			
 		</div>
 		<!-- in main_main are the active action methode -->
             <?php echo $this->placeholder('navi') ?>
