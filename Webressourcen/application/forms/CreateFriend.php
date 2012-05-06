@@ -32,7 +32,16 @@ class Application_Form_CreateFriend extends Zend_Form
      */
     public function addButton()
     {
-        $this->addElement( 'submit', 'neuen_Freund_speichern');
+        $this->addElement( 'submit', 'erstellen');
+    }
+   
+    /** 
+     * adds a submitbutton to the form
+     */
+    public function editButton($edit)
+    {
+        $this->addElement( 'hidden', 'edit', array('value' => $edit));
+        $this->addElement( 'submit', 'ändern');
     }
 
 }

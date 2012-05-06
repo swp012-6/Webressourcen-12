@@ -1,7 +1,25 @@
-<h2><?php echo $this->first_name ?> <?php echo $this->last_name ?></h2>
-<?php echo $this->email ?><br>
-
+<table>
+	<tr>	<!-- User Information -->
+		<td width="250">	
+			<h2><?php echo $this->first_name ?> <?php echo $this->last_name ?></h2>
+			<?php echo $this->email ?><br>
+		</td>
+		<td>
+			<?php
+			if($this->job)
+			{
+				echo "<b>Job: </b> ".$this->job."<br>";
+			}
+			if($this->adresse)
+			{
+				echo "<b>Adresse: </b> ".$this->adresse."<br>";
+			}
+			?>
+		</td>
+	</tr>
+</table>
 <?php
+//User-Topic information
 if($this->size == 0)
 {
 ?>
@@ -48,10 +66,16 @@ else
 <?php
 }
 ?>
+
+<?php 
+    // create friend formular
+    echo $this->createFriendForm;
+?>
+
 <!-- delete button  -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" method="post">
 	<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
-	<input type="submit" name="button_delete_friend" value="Freind entfernen" class="button" />
+	<input type="submit" name="button_delete_friend" value="Freund entfernen" class="button" />
 </form>
 <!-- return button  -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true) ?>" method="post">

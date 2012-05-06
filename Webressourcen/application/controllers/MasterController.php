@@ -145,8 +145,10 @@ class MasterController extends Zend_Controller_Action
      */
     public function friendAction()
     {
+            //load all friends
             $userModel = new UserModel();
             $this->view->friends = $userModel->getAllUser();
+            // create friend formular
             $createFriendForm = new Application_Form_CreateFriend();
             $createFriendForm->addButton();
             $this->view->createFriendForm = $createFriendForm;
@@ -167,9 +169,13 @@ class MasterController extends Zend_Controller_Action
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
             $topicModel = new TopicModel();
+            // create friend formular
+            $createFriendForm = new Application_Form_CreateFriend();
+            $createFriendForm->editButton($_GET['id']);
+            $this->view->createFriendForm = $createFriendForm;
             //get userID from URL
             $userID = $_GET['id'];
-
+            //load user
             $user = $userModel->getUser($userID);
             //pass first name
             if(empty($user['first_name']))
@@ -189,8 +195,6 @@ class MasterController extends Zend_Controller_Action
             {
                 $this->view->last_name = $user['last_name'];
             }
-            //pass email
-            $this->view->email = $user['email'];
 
             $topics = $userTopicModel->getTopics($userID);
             // prepare arrays
@@ -210,6 +214,9 @@ class MasterController extends Zend_Controller_Action
             $this->view->infoUserNames = $infoUserNames;
             $this->view->size = sizeof($infoTopicIDs);
             $this->view->userID = $userID;
+            $this->view->email = $user['email'];
+            $this->view->job = $user['job'];
+            $this->view->adresse = $user['adresse'];
 
 	//Es muss noch eine überarbeitung des Profils ermöglicht werden.
 
@@ -731,45 +738,78 @@ class MasterController extends Zend_Controller_Action
             $email = $_POST['email'];
             $job = $_POST['job'];
             $adresse = $_POST['adresse'];
-            
-            if ( !(empty($email)) )		//if email address is entered
+            $edit = $_POST['edit'];
+	//-----EDIT-----
+            if($edit)
             {
+                //load model
                 $userModel = new UserModel();
-    
-                try				//try to save the user
-                {
-                    $userID = $userModel->insert( 
-                        array( 'first_name' => $firstName, 
-                               'last_name' => $lastName,
-                               'email' => $email,
-                               'job' => $job,
-                               'adresse' => $adresse)
-                        );
-                }
-                catch (Exception $e)
-                {
-                    //set topicID in the master session to 0
-                    $masterNamespace->currentTopic = 0;
-                    //error message
-                    $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
-                    break;
-                }
-    
-                if ( $masterNamespace->currentTopic > 0 )	//if topicID is passed
-                {    
-                    $masterNamespace->email  = $email;
-                    $masterNamespace->userID = $userID;
-                    $this->_redirect( '/master/send');  
-                }
-                else
-                {
-                    $this->_redirect( '/master/friend');
-                }
+		//--Update--
+                if($firstName)
+            	{
+                    $userModel->update(array('first_Name' => $firstName),'userID = '.$edit);
+            	}
+                if($lastName)
+            	{
+                    $userModel->update(array('last_Name' => $lastName),'userID = '.$edit);
+            	}
+                if($email)
+            	{
+                    $userModel->update(array('email' => $email),'userID = '.$edit);
+            	}
+                if($job)
+            	{
+                    $userModel->update(array('job' => $job),'userID = '.$edit);
+            	}
+                if($adresse)
+            	{
+                    $userModel->update(array('adresse' => $adresse),'userID = '.$edit);
+            	}
+		//goes back to the details
+                $this->_redirect('/master/showfriend?id='.$edit);
             }
-            //set topicID in the master session to 0
-            $masterNamespace->currentTopic = 0;
-            //error message
-            $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
+            else
+            {
+	//-----SAVE-----
+                if ( !(empty($email)) )		//if email address is entered
+                {
+                    $userModel = new UserModel();
+        
+                    try				//try to save the user
+                        {
+                        $userID = $userModel->insert( 
+                            array( 'first_name' => $firstName, 
+                                   'last_name' => $lastName,
+                                   'email' => $email,
+                                   'job' => $job,
+                                   'adresse' => $adresse)
+                            );
+                    }
+                    catch (Exception $e)
+                    {
+                        //set topicID in the master session to 0
+                        $masterNamespace->currentTopic = 0;
+                        //error message
+                        $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
+                        break;
+                    }
+        
+                    if ( $masterNamespace->currentTopic > 0 )	//if topicID is passed
+                    {    
+                        $masterNamespace->email  = $email;
+                        $masterNamespace->userID = $userID;
+                        $this->_redirect( '/master/send');  
+                    }
+                    else
+                    {
+                        $this->_redirect( '/master/friend');
+                    }
+                }
+                //set topicID in the master session to 0
+                $masterNamespace->currentTopic = 0;
+                //error message
+                $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
+            }
         }
         else
         {
