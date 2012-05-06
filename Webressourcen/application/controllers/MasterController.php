@@ -108,7 +108,7 @@ class MasterController extends Zend_Controller_Action
                                             $response = $plugin->getResponse( $topicContent);
                                             break;
                                             
-                case 't3n.de':              $plugin = new Pligin_Authentication_T3nDE();
+                case 't3n.de':              $plugin = new Plugin_Authentication_T3nDE();
                                             $response = $plugin->getResponse( $topicContent);
                                             break;
                                             
