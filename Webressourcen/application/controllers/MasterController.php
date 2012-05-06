@@ -425,11 +425,6 @@ class MasterController extends Zend_Controller_Action
     {
         if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
-            //load master session and save topicID
-            $masterNamespace = new Zend_Session_Namespace('master');
-            $masterNamespace->currentTopic = $_POST['topicID'];
-
-            
             //load models
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
@@ -444,12 +439,12 @@ class MasterController extends Zend_Controller_Action
             {
                 $infoUserIDs[] = $users[$i]["userID"];
             }
-            //pass uderIDs
+            //pass userIDs
             $this->view->infoUserIDs = $infoUserIDs;
 
             //create createFriendForm
             $createFriendForm = new Application_Form_CreateFriend();
-            $createFriendForm->addSendButton();
+            $createFriendForm->addSendButton($_POST['topicID']);
             $this->view->createFriendForm = $createFriendForm;
         }
         else
@@ -727,8 +722,6 @@ class MasterController extends Zend_Controller_Action
      */
     public function createfriendAction()
     {
-        //load master session
-        $masterNamespace = new Zend_Session_Namespace('master');
 
         if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
@@ -740,7 +733,7 @@ class MasterController extends Zend_Controller_Action
             $adresse = $_POST['adresse'];
             $edit = $_POST['edit'];
 	//-----EDIT-----
-            if($edit)
+            if($edit > 0)
             {
                 //load model
                 $userModel = new UserModel();
@@ -776,7 +769,7 @@ class MasterController extends Zend_Controller_Action
                     $userModel = new UserModel();
         
                     try				//try to save the user
-                        {
+                    {
                         $userID = $userModel->insert( 
                             array( 'first_name' => $firstName, 
                                    'last_name' => $lastName,
@@ -787,15 +780,17 @@ class MasterController extends Zend_Controller_Action
                     }
                     catch (Exception $e)
                     {
-                        //set topicID in the master session to 0
-                        $masterNamespace->currentTopic = 0;
                         //error message
                         $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
                         break;
                     }
         
-                    if ( $masterNamespace->currentTopic > 0 )	//if topicID is passed
-                    {    
+                    if ($_POST['topicID'])	//if topicID is passed
+                    {
+                        //load master session
+                        $masterNamespace = new Zend_Session_Namespace('master');
+                        //save everything in mastersession
+                        $masterNamespace->currentTopic = $_POST['topicID'];
                         $masterNamespace->email  = $email;
                         $masterNamespace->userID = $userID;
                         $this->_redirect( '/master/send');  
@@ -805,8 +800,6 @@ class MasterController extends Zend_Controller_Action
                         $this->_redirect( '/master/friend');
                     }
                 }
-                //set topicID in the master session to 0
-                $masterNamespace->currentTopic = 0;
                 //error message
                 $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
             }
