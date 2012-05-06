@@ -20,38 +20,21 @@
 	<!-- in main_page are all presentation components how main_head, main_menue and main_main-->
 	<div id = "main_Page">
 		
-		<!-- in main_head are the project title-->
+		<!-- in main_head is the project title-->
 		<div id = "main_Head">
 			<center><h1>Webressourcen<?php echo $this->escape($this->title); ?></h1></center>
-			<table>
-				<colgroup>
-					<!-- size of columns -->
-					<col width="100">
-					<col width="100">
-					<col width="100">
-					<col width="100">
-				</colgroup>
-				<tr>		<!-- menu -->
-					<td>
-						<center><a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>">Hauptseite</a></center>
-					</td>
-					<td>
-						<center><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Masterseite</a></center>
-					</td>
-					<td>
-						<center><a href="<?php echo $this->url(array('controller'=>'friend', 'action'=>'index'), null, true); ?>">Friendseite</a></center>
-					</td>
-					<td>
-						<center><a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'index'), null, true); ?>">---</a></center>
-					</td>
-				</tr>
-			</table>
+				<div id = "main_Navbar">
+						<!-- menu -->
+						<a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>">Hauptseite</a> -
+						<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Masterseite</a> -
+						<a href="<?php echo $this->url(array('controller'=>'friend', 'action'=>'index'), null, true); ?>">Friendseite</a> -
+						<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'index'), null, true); ?>">-</a>
+				
+				</div>
 		</div>
 		
 		<!-- in main_menue are the topictitle to select-->
 		<div id = "main_Menue">
-			
-			<h3> hier ist das Menü </h3>
 <ul>
 <?php
     foreach( $this->topicList as $topic)
