@@ -253,7 +253,7 @@ class MasterController extends Zend_Controller_Action
             $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
             $navi .= $topic['topicName'].'</a></li>';
         }
-        $this->view->placeholder( 'navi')->append( '<div id = "main_Menue"><ul>' . $navi . '</ul></div>');
+        $this->view->placeholder( 'navi')->append( $navi);
         
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
