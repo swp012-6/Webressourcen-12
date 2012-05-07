@@ -19,6 +19,9 @@
 		echo	"<form action =\"create\" method = \"get\">
 					<input type=\"submit\" class=\"FriendButtonTableHeadCreate\" value = \"Add Comment\" />
 				</form>";
+        echo	"<form action =\"createname\" method = \"get\">
+					<input type=\"submit\" class=\"FriendButtonTableHeadCreateName\" value = \"Update Name\" />
+				</form>";
 		echo "</th>";
 	echo "</tr>";
 	//Table body
@@ -87,9 +90,17 @@
 		{
 			echo "<td>";
 				echo 	"<form action =\"showcomment\" method = \"get\">
-							<input type =\"hidden\" name = \"Page\" value = \"".(($this->escape($this->currentPageNavigator)*$this->escape($this->maxPageNavigator))+$i)."\" />
-							<input type=\"submit\" class=\"FriendPageButton\" value = \"".(($this->escape($this->currentPageNavigator)*$this->escape($this->maxPageNavigator))+$i+1)."\" />
-						</form>";
+							<input type =\"hidden\" name = \"Page\" value = \"".(($this->escape($this->currentPageNavigator)*$this->escape($this->maxPageNavigator))+$i)."\" />";
+                            if(($this->escape($this->Page)) == (($this->escape($this->currentPageNavigator)*$this->escape($this->maxPageNavigator))+$i))
+                            {
+                                echo "<input type=\"submit\" class=\"FriendPageButton\" value = \"[".(($this->escape($this->currentPageNavigator)*$this->escape($this->maxPageNavigator))+$i+1)."]\" />";
+                            }
+                            else
+                            {
+                                echo "<input type=\"submit\" class=\"FriendPageButton\" value = \"".(($this->escape($this->currentPageNavigator)*$this->escape($this->maxPageNavigator))+$i+1)."\" />";
+                            }
+						
+                    echo "</form>";
 			echo "</td>";
 		}
 		//rightoperator----------
