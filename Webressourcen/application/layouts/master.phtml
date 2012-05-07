@@ -29,15 +29,18 @@
             <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a> -
             <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>">Freunde anzeigen</a>
 			
-			<!-- searchfield -->
-			<form>
-					<input name="suchen" type="text" style="styles.css" />
-					<input type="submit" value="Suchen" />
-			</form>
+		
 			
 		</div>
 		  
 		<div id = "main_Menue">
+			<div id = "main_TopicNav">
+				<!-- searchfield -->
+				<form>
+					<input name="suchen" type="text" style="styles.css" />
+					<input type="submit" value="Suchen" />
+				</form>
+			</div>
 			<div id = "main_TopicNav">
 					<?php echo $this->placeholder('navi') ?>
 			</div>
