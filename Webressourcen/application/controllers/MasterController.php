@@ -72,18 +72,18 @@ class MasterController extends Zend_Controller_Action
 		
         /* save content of posted variables */
         $topicName = $_POST['topicName'];
-		$contentType = $_POST['contentType'];
+		$topicType = $_POST['topicType'];
 		$topicContent = nl2br($_POST['topicContent']);
 		$topicSource = $_POST['topicSource'];
 		
-        /* if the form-textfields where filled */
+        /* if the form-textfields are not filled */
 		if ( (empty( $topicName)) || (empty( $topicContent)))
 		{	
             $this->_redirect('master/import?error=2');
         }
         
         /* HTTP-Request to get body of spezified page */
-		if ($contentType == 'link')
+		if ( $topicType)
 		{
             /* validate the POST especially the entered URL */
             $form = new Application_Form_CreateTopic();
@@ -94,39 +94,11 @@ class MasterController extends Zend_Controller_Action
             
 			$topicSource = $topicContent;
             
-            /* get hostname and check if plugin is available */
-            $urlArray = parse_url( $topicContent);
-            
-    /* ----- Please insert new plugins here ----- */
-            switch ($urlArray['host'])
-            {
-                case 'de.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaDe();
-                                            $response = $plugin->getResponse( $topicContent);
-                                            break;
-                                            
-                case 'en.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaEn();
-                                            $response = $plugin->getResponse( $topicContent);
-                                            break;
-                                            
-                case 't3n.de':              $plugin = new Plugin_Authentication_T3nDE();
-                                            $response = $plugin->getResponse( $topicContent);
-                                            break;
-                                            
-                default:                    $client = new Zend_Http_Client( $topicContent);
-                                            $response = $client->request();
-            }
-            
-            $body = $response->getBody();
-            $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
-            $body = preg_replace('/<form[^>]+>/i', '', $body); //removes <form> tags
-            $body = preg_replace('/<iframe[^>]+>/i', '', $body); //removes <iframe> tags
-            $body = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $body); //removes <script> tags
-            
-            $topicContent = $body;
+            $topicContent = $this->httpRequest( $topicContent);
         }
             
         $topicModel = new topicModel();
-        $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource);
+        $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource, $topicType);
             
         if ( !$result)
         {
@@ -253,7 +225,7 @@ class MasterController extends Zend_Controller_Action
             $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
             $navi .= $topic['topicName'].'</a></li>';
         }
-        $this->view->placeholder( 'navi')->append( '<div id = "main_Menue"><ul>' . $navi . '</ul></div>');
+        $this->view->placeholder( 'navi')->append( $navi);
         
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
@@ -560,45 +532,61 @@ class MasterController extends Zend_Controller_Action
     {        
         //session_start(); ..........
         
-        if ( isset( $_GET['id']))
+        if ( !isset( $_GET['id']))
         {
-            $topicID = $_GET['id'];
-            
-            /* set topicVersion to default if necessary and send it to the view */
-            if ( !isset( $_GET['ver']))
-            {
-                $topicVersion = 1;
-            }
-            else $topicVersion = $_GET['ver'];
-            $this->view->topicVersion = $topicVersion;
-            
-            $topicModel = new topicModel();
-            
-            $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
-            
-            /* topics with spezified topicID are available */
-            if ( !empty( $topicName)) 
-            {
-                switch ( $_GET['msg'])
-                {
-                    case 1: $this->view->msg = 'Bitte alle Felder füllen!';
-                            break;
-                }
-                $this->view->topicName = $topicName;
-                
-                $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
-                
-                /* if link specified version is available for this topic */
-                if ( !empty( $topicRow))
-                {
-                    $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
-                    $this->view->topicSource = $topicRow['topicSource'];
-                }
-                else $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
-            }
-            else $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
+            $this->view->msg = 'Keine Themen-ID angegeben!';
         }
-        else $this->view->msg = 'Keine Themen-ID angegeben!';
+        $topicID = $_GET['id'];
+        
+        $topicModel = new TopicModel();    
+        
+        /* set topicVersion to maximum if necessary and send it to the view */
+        if ( !isset( $_GET['ver']))
+        {
+            $topicVersion = $topicModel->getMaxTopicVersion( $topicID);
+        }
+        else $topicVersion = $_GET['ver'];
+        $this->view->topicVersion = $topicVersion;
+            
+        $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
+            
+        /* topics with spezified topicID are not available */
+        if ( empty( $topicName)) 
+        {
+            $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
+        }
+        
+        /* error-msg output */
+        switch ( $_GET['msg'])
+        {
+            case 1: $this->view->msg = 'Bitte alle Felder füllen!';
+                    break;
+            case 2: $this->view->msg = 'Ihre Eingabe entsprach keiner gültigen URL.';
+                    break;
+        }
+        $this->view->topicName = $topicName;
+                
+        $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
+                
+        /* if there is no topic with the specified versionNumber */
+        if ( empty( $topicRow))
+        {
+            $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
+        }
+        
+        /* topic type is text ( "0") */
+        if ( !$topicRow['topicType'])
+        {
+            $this->view->topicType = 0;
+            $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+        }
+        else //if topic type is link ( "1"), just show the URL
+        {
+            $this->view->topicType = 1;
+            $this->view->topicContent = $topicRow['topicSource'];
+        }
+        
+        $this->view->topicSource = $topicRow['topicSource']; 
     }
 
     /** This function creates a new topicVersion with the posted topicContent and topicSource. 
@@ -612,15 +600,30 @@ class MasterController extends Zend_Controller_Action
         $topicVersion = $_POST['topicVersion'];
         $topicContent = nl2br( $_POST['topicContent']);
         $topicSource = $_POST['topicSource'];
+        $topicType = $_POST['topicType'];
         
         if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))
         {
             $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
         
-        if ( $topicModel->createNewTopicVersion( $topicID, $topicContent, $topicSource))
+        /* new version contains a link */
+        if ( $topicType)
+        {
+            /* validate the POST especially the entered URL */
+            $form = new Application_Form_CreateTopic();
+            if ( !$form->isValid($_POST))
+            {
+                $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=2');
+            }
+            
+            $topicSource = $topicContent;
+            $topicContent = $this->httpRequest( $topicContent);
+        }
+        
+        if ( $topicModel->createNewTopicVersion( $topicID, $topicContent, $topicSource, $topicType))
         {           
-            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . ($topicVersion+1) . '&msg=2');
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . ( $topicVersion + 1) . '&msg=2');
         }
         else 
         {           
@@ -809,5 +812,42 @@ class MasterController extends Zend_Controller_Action
             $this->_redirect('/master');	//goes to master mainpage
         }
     }    
+    
+    /** This function handels the HTTP-Request to get the content of a page.
+      * @param $url URL of the page
+      * @author Christoph Beger
+      */
+    public function httpRequest( $url)
+    {
+        /* get hostname and check if plugin is available */
+        $urlArray = parse_url( $url);
+            
+        /* ----- Please insert new plugins here ----- */
+        switch ($urlArray['host'])
+        {
+            case 'de.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaDe();
+                                        $response = $plugin->getResponse( $url);
+                                        break;
+                                            
+            case 'en.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaEn();
+                                        $response = $plugin->getResponse( $url);
+                                        break;
+                                           
+            case 't3n.de':              $plugin = new Plugin_Authentication_T3nDE();
+                                        $response = $plugin->getResponse( $url);
+                                        break;
+                                           
+            default:                    $client = new Zend_Http_Client( $url);
+                                        $response = $client->request();
+        }
+         
+        $body = $response->getBody();
+        $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
+        $body = preg_replace('/<form[^>]+>/i', '', $body); //removes <form> tags
+        $body = preg_replace('/<iframe[^>]+>/i', '', $body); //removes <iframe> tags
+        $body = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $body); //removes <script> tags
+            
+        return $body;
+    }
 }
 ?>
