@@ -1,1 +1,13 @@
-Viel Erfolg!!
+Anleitung:
+
+Bitte befolgen Sie folgende Schritte:
+- 'webressourceBeispiel.sql' in Ihre Datenbank importieren
+- in '..\Webressourcen\application\configs\application.ini' die Datenbankangaben anpassen
+- in '..\Webressourcen\application\Bootstrap.php' die CSS anpassen
+
+Masterlogin:
+Username: admin
+Password: test
+
+Anmerkung:
+Das Projekt ist noch in der Entwicklungsphase. Einige Funktionen werden noch nicht ordnungsgem‰ﬂ funktionieren.
