@@ -21,9 +21,11 @@ class Application_Form_CreateFriend extends Zend_Form
    
     /** 
      * adds a submitbutton to the form
+     * @param $topicID ID of the topic
      */
-    public function addSendButton()
+    public function addSendButton($topicID)
     {
+        $this->addElement( 'hidden', 'topicID', array('value' => $topicID));
         $this->addElement( 'submit', 'neuen_Freund_einladen');
     }
    
@@ -32,7 +34,17 @@ class Application_Form_CreateFriend extends Zend_Form
      */
     public function addButton()
     {
-        $this->addElement( 'submit', 'neuen_Freund_speichern');
+        $this->addElement( 'submit', 'erstellen');
+    }
+   
+    /** 
+     * adds a submitbutton to the form
+     * @param $edig ID of the user
+     */
+    public function editButton($edit)
+    {
+        $this->addElement( 'hidden', 'edit', array('value' => $edit));
+        $this->addElement( 'submit', 'ändern');
     }
 
 }

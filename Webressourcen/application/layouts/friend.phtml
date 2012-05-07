@@ -1,0 +1,60 @@
+<?php 
+	// the doctype is from Bootstrapp
+	echo $this->doctype(); 
+?>
+ 
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+<head>
+ 
+<?php
+	
+	// in the Bootstrapp declared
+	echo $this->headTitle();
+	echo $this->headMeta();
+	echo $this->headLink();
+	
+?>
+ 
+</head>
+<body>
+
+	<!-- in main_page are all pressentation components how main_head, main_menue and main_main-->
+	<div id = "main_Page">
+		
+		<!-- in main_head are the project title-->
+		<div id = "main_Head">
+			<h1> Webressourcen </h1>
+
+		</div>
+        <!-- in main_menue are the topictitle to select-->
+		<div id = "main_Menue">
+        
+        <?php
+            
+            //output title
+            echo "<div id = \"main_Menue_Title\">";
+            echo $this->escape($this->main_menue_title);
+            echo "</div>";
+            
+            //output topic buttons
+               
+            foreach($this->main_menue_topics as $topics)
+            {
+                echo 	"<form action =\"showtopic\" method = \"get\">
+								<input type =\"hidden\" name = \"topic\" value = \"".$this->escape($topics["topicID"])."\" />
+								<input type=\"submit\" class=\"FriendButtonDelete\" value = \"".$this->escape($topics["topicName"])."\" />
+						</form>";
+            }
+        
+        ?>
+		</div>
+		<!-- in main_main are the active action methode -->
+        <div id = "main_Main">
+			<?php
+				//-- import Mainpage
+				echo $this->layout()->content;
+			?>
+		</div>
+	</div>
+</body>
+</html>
