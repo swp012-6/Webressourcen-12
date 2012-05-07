@@ -19,6 +19,8 @@
 		</td>
 		<td>
 		</td>
+		<td>
+		</td>
 	</tr>
 <?php
 foreach ($this->friends as $a)		//for each friend
@@ -41,9 +43,14 @@ foreach ($this->friends as $a)		//for each friend
 			<?php echo $this->escape($a->adresse) ?>
 		</td>
 		<td>
-			<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>" method="post">
-				<input type = "hidden" name = "userID" value = "<?php echo $this->escape($a->userID) ?>" />
+			<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>?id=<?php echo $this->escape($a->userID) ?>" method="post">
 				<input type="submit" name="button_send" value="Details" class="button" />
+			</form>
+		</td>
+		<td>
+			<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" method="post">
+					<input type = "hidden" name = "userID" value = "<?php echo $this->escape($a->userID) ?>" />
+				<input type="submit" name="button_delete_friend" value=" X " class="button" />
 			</form>
 		</td>
 	</tr>

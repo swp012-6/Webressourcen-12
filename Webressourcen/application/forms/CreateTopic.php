@@ -9,10 +9,10 @@ class Application_Form_CreateTopic extends Zend_Form
     {
         $this->setMethod( 'post');
 		$this->setAttrib( 'action', 'validate');
-		$this->addElement( 'radio', 'contentType', array(	'label' => 'Typ:',
-															'multioptions' => array(	'text' => 'Text',
-																						'link' => 'Link'),
-															'separator' => '  '));
+		$this->addElement( 'radio', 'topicType', array(	'label' => 'Typ:',
+                                                        'multioptions' => array(	0 => 'Text',
+                                                                                    1 => 'Link'),
+														'separator' => '  '));
 		$this->addElement( 'text', 'topicName', array( 'label' => 'Topic-Name:'));
 		$this->addElement( 'textarea', 'topicContent', array( 'label' => 'Inhalt:', 'rows' =>20, 'cols' => 90));
         $this->getElement( 'topicContent')->addValidator( new BV_Validate_Uri());

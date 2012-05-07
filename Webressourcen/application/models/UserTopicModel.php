@@ -29,16 +29,49 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         
 		return $row->userName;
 	}
+    
+    /**
+        save the userName in the database
+        @param userID
+        @param topicID
+        @param userName
+    */
+    public function setUserName($userID,$topicID,$userName)
+    {
+        if(!(empty($userID) || empty($topicID)))
+        {
+            $key = "userID = $userID AND topicID = $topicID";
+            $where = $this->getAdapter()->quoteInto($key);
+            
+            $data =  array("userName" => $userName);
+            
+            $this->update($data,$where);
+            
+        }
+    }
 
-	/**
-	 * adds UserName with userID, topicID and hash
-	 *
-	 * @param array $userTopic "userID","topicID","hash"
-	 */
-	public function addUserTopic($userTopic)
-	{
-		$this->insert($userTopic);
-	}
+    /**
+     * adds UserTopic with userID, topicID and hash
+     *
+     * @param array $userTopic "userID","topicID","hash"
+     */
+    public function addUserTopic($userTopic)
+    {
+        try  // try to save $userTopic
+        {
+            $this->insert($userTopic);
+        }
+        catch (Exception $e)
+        {
+            // get old entry
+            $row = $this->fetchRow('userID = "'.$userTopic["userID"].'"
+                               AND topicID = "'.$userTopic["topicID"].'"');
+            // delete old entry
+            $row->delete();
+            // save again
+            $this->insert($userTopic);
+        }
+    }
 
 	/**
 	 * gets topicIDs which are connected with $userID
@@ -48,14 +81,51 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 */
 	public function getTopics($userID)
 	{
-		$topics = $this->select('topicID, username')
-			       ->from('userTopic')
-			       ->where('userID = ?',$userID);
-		/*foreach( $row )
-		{
-			//$topics= array($rowset['topicID'] => $rowset['userName']);
-		}*/
+		$topics = $this ->fetchAll($this->select()
+				->where('userID = ?',$userID));
 		return $topics;
 	}
+    
+    /**
+        give out with help from the hash code the userID and the topicID of the Database
+        @param hash
+        @return userID and topicID
+    */
+    public function registerHash($hash)
+    {
+        $rowset = $this->fetchAll('hash = "'.$hash.'"');
+		$row = $rowset->current();
+        
+        $output = array("userID"=>$row->userID,"topicID"=>$row->topicID);
+        return $output;
+    }
+    
+    /**
+     * gets userIDs which are connected with $topicID
+     *
+     * @param int $topicID ID of desired topic
+     * @return array $users usersIDs and usernames
+     */
+    public function getUsers($topicID)
+    {
+        $users = $this->fetchAll($this->select()
+                      ->where('topicID = ?',$topicID));
+        return $users;
+    }
+    
+    /**
+     * deletes UserName
+     *
+     * @param int $userID  userID of the userTopic
+     * @param int $topicID topicID of the userTopic
+     */
+    public function delUserTopic($userID, $topicID)
+    {
+        // get userTopic
+        $row = $this->fetchRow('userID = "'.$userID.'"
+        AND topicID = "'.$topicID.'"');
+        // delete userTopic
+        $row->delete();  	
+    }
 }
 ?>

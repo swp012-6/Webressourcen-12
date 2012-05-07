@@ -1,4 +1,26 @@
 ﻿<?php
+/* -- INDEX --
+ 
+ - init()
+ - importAction()
+ - validateAction()
+ - friendAction()
+ - showfriendAction()
+ - showtopicsAction()
+ - lockfriendAction()
+ - delfriendAction()
+ - closetopicAction()
+ - closeAction()
+ - inviteAction()
+ - sendAction()
+ - edittopicAction()
+ - validateeditAction()
+ - validatecommentAction()
+ - topicviewAction()
+ - showcommentsAction()
+ - createfriendAction()
+
+ */
 
 /** This class is the controller for the section ../public/master .
   * Only the master has access to this section by loggin in at ../public/index/prelogin .
@@ -16,6 +38,7 @@ class MasterController extends Zend_Controller_Action
     public function indexAction()
     {
         // action body
+        
     }
 
     /** This function shows a form where the master can insert topic-parameters like content or source.
@@ -49,18 +72,18 @@ class MasterController extends Zend_Controller_Action
 		
         /* save content of posted variables */
         $topicName = $_POST['topicName'];
-		$contentType = $_POST['contentType'];
+		$topicType = $_POST['topicType'];
 		$topicContent = nl2br($_POST['topicContent']);
 		$topicSource = $_POST['topicSource'];
 		
-        /* if the form-textfields where filled */
+        /* if the form-textfields are not filled */
 		if ( (empty( $topicName)) || (empty( $topicContent)))
 		{	
             $this->_redirect('master/import?error=2');
         }
         
         /* HTTP-Request to get body of spezified page */
-		if ($contentType == 'link')
+		if ( $topicType)
 		{
             /* validate the POST especially the entered URL */
             $form = new Application_Form_CreateTopic();
@@ -70,22 +93,20 @@ class MasterController extends Zend_Controller_Action
             }
             
 			$topicSource = $topicContent;
-            $client = new Zend_Http_Client($topicContent);
-            $response = $client->request();
-            $body = $response->getBody();
-            $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
-            $body = preg_replace('/<form[^>]+>/i', '', $body); //removes <form> tags
-            $body = preg_replace('/<iframe[^>]+>/i', '', $body); //removes <iframe> tags
-            $topicContent = $body;
+            
+            $topicContent = $this->httpRequest( $topicContent);
         }
             
         $topicModel = new topicModel();
-        $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource);
+        $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource, $topicType);
             
         if ( !$result)
         {
             $this->_redirect( 'master/import?error=1');
         }
+	
+	$this->view->topicID = $result;
+        $this->view->version = $topicModel->getMaxTopicVersion($result);
     }
 
     /**
@@ -96,22 +117,38 @@ class MasterController extends Zend_Controller_Action
      */
     public function friendAction()
     {
+            //load all friends
             $userModel = new UserModel();
             $this->view->friends = $userModel->getAllUser();
+            // create friend formular
             $createFriendForm = new Application_Form_CreateFriend();
             $createFriendForm->addButton();
             $this->view->createFriendForm = $createFriendForm;
     }
 
+    /**
+     * details of a friend
+     * 
+     * @param int $_POST['userID'] the ID of the user
+     * @param array $infoTopics information about available topics and userName
+     * @author Peter Kornowski
+     */
     public function showfriendAction()
     {
-        if ($this->getRequest()->isPost()) //avoid direct access
+        if ( isset( $_GET['id'])) //if userID in URL do:
         {
             //load models
             $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
-
-            $user = $userModel->getUser($_POST['userID']);
+            $topicModel = new TopicModel();
+            // create friend formular
+            $createFriendForm = new Application_Form_CreateFriend();
+            $createFriendForm->editButton($_GET['id']);
+            $this->view->createFriendForm = $createFriendForm;
+            //get userID from URL
+            $userID = $_GET['id'];
+            //load user
+            $user = $userModel->getUser($userID);
             //pass first name
             if(empty($user['first_name']))
             {
@@ -130,11 +167,35 @@ class MasterController extends Zend_Controller_Action
             {
                 $this->view->last_name = $user['last_name'];
             }
-            //pass email
-            $this->view->email = $user['email'];
 
-            echo $topics = $userTopicModel->getTopics($_POST['userID']);
-            //_________MUSS NOCH ÜBERARBEITET WERDEN____________________
+            $topics = $userTopicModel->getTopics($userID);
+            // prepare arrays
+            $infoTopicIDs = array();
+            $infoTopicNames = array();
+            $infoUserNames = array();
+            // fill arrays
+            for($i=0; $i<sizeof($topics); $i++)
+            {
+                $infoTopicIDs[]   = $topics[$i]["topicID"];
+                $infoTopicNames[] = $topicModel->getTopicName($topics[$i]["topicID"]);
+                $infoUserNames[]  = $topics[$i]["userName"];
+            }
+            //pass all other important information to the view
+            $this->view->infoTopicIDs = $infoTopicIDs;
+            $this->view->infoTopicNames = $infoTopicNames;
+            $this->view->infoUserNames = $infoUserNames;
+            $this->view->size = sizeof($infoTopicIDs);
+            $this->view->userID = $userID;
+            $this->view->email = $user['email'];
+            $this->view->job = $user['job'];
+            $this->view->adresse = $user['adresse'];
+
+	//Es muss noch eine überarbeitung des Profils ermöglicht werden.
+
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
         }
     }
 
@@ -147,10 +208,12 @@ class MasterController extends Zend_Controller_Action
     {
         $topicModel = new topicModel();
         
-        switch ( $_GET['error'])
+        switch ( $_GET['msg'])
         {
             case 1: $this->view->msg = 'Bitte füllen Sie das Feld Kommentar!';
-            // .........................
+            break;
+            case 2: $this->view->msg = 'Es wurde erfolgreich eine neue Version erstellt.';
+            break;
         }
         
         
@@ -162,7 +225,7 @@ class MasterController extends Zend_Controller_Action
             $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
             $navi .= $topic['topicName'].'</a></li>';
         }
-        $this->view->placeholder( 'navi')->append( '<div id = "main_Menue"><ul>' . $navi . '</ul></div>');
+        $this->view->placeholder( 'navi')->append( $navi);
         
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
@@ -241,9 +304,62 @@ class MasterController extends Zend_Controller_Action
         }
     }
 
+    /**
+     * deletes the connection between user and topic
+     * 
+     * @param int $_POST['userID'] the ID of the user
+     * @author Peter Kornowski
+     */
     public function lockfriendAction()
     {
-        // action body
+        if ($this->getRequest()->isPost()) //avoid direct access
+        {
+            //load model
+            $userTopicModel = new UserTopicModel;
+            try	// try to delete userTopic
+            {
+                $userTopicModel->delUserTopic($_POST['userID'], $_POST['topicID']);
+                $this->_redirect('/master/showfriend?id='.$_POST['userID']);
+            }
+            catch (Exception $e)
+            {
+                $this->view->error = "Fehler beim Löschen der Verbindung zwischen Freund und Thema";
+            }
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
+        }
+    }
+
+    /**
+     * deletes the user ans his connections
+     * 
+     * @param int $_POST['userID'] the ID of the user
+     * @author Peter Kornowski
+     */
+    public function delfriendAction()
+    {
+        if ($this->getRequest()->isPost()) //avoid direct access
+        {
+            //load model
+            $userModel = new UserModel;
+            $userTopicModel = new UserTopicModel;
+            try	// try to delete userTopic
+            {
+                $userTopicModel->delete( 'userID = '. $_POST['userID']);
+                $userModel->delete( 'userID = '. $_POST['userID']);
+                $this->_redirect('/master/friend');
+            }
+            catch (Exception $e)
+            {
+                $this->view->error = "Fehler beim Löschen des Freundes";
+            }
+        }
+        else
+        {
+            $this->_redirect('/master');	//goes to master mainpage
+        }
     }
 
     /** This function is called, when an user wants to delete a topic.
@@ -251,11 +367,19 @@ class MasterController extends Zend_Controller_Action
       */
     public function closetopicAction()
     {
+        //load model
         $topicModel = new TopicModel();
-        
-        $topicModel->delete( 'topicID = ' . $_POST['topicID']);    //auf erfolg testen?
-        
-        $this->view->msg = 'Thema wurde erfolgreich gelöscht!';
+        //delete topic, topicAdditives, comments and userTopics
+        $success = $topicModel->delTopic($_POST['topicID']);
+        //check result
+        if($success == 0)
+        {						//error message
+            $this->view->error = 'Es ist ein Fehler beim Löschen aufgetretten.';
+        }
+        else
+        {
+            $this->_redirect('/master/showtopics');	//goes to showtopics
+        }
     }
 
     public function closeAction()
@@ -273,14 +397,26 @@ class MasterController extends Zend_Controller_Action
     {
         if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
-            //load master session and save topicID
-            $masterNamespace = new Zend_Session_Namespace('master');
-            $masterNamespace->currentTopic = $_POST['topicID'];
-
+            //load models
+            $userTopicModel = new UserTopicModel;
             $userModel = new UserModel();
+            //get and pass user
             $this->view->friends = $userModel->getAllUser();
+            //get userIDs from usertopic
+            $users = $userTopicModel->getUsers($_POST['topicID']);
+            // prepare arrays
+            $infoUserIDs = array();
+            // fill arrays
+            for($i=0; $i<sizeof($users); $i++)
+            {
+                $infoUserIDs[] = $users[$i]["userID"];
+            }
+            //pass userIDs
+            $this->view->infoUserIDs = $infoUserIDs;
+
+            //create createFriendForm
             $createFriendForm = new Application_Form_CreateFriend();
-            $createFriendForm->addSendButton();
+            $createFriendForm->addSendButton($_POST['topicID']);
             $this->view->createFriendForm = $createFriendForm;
         }
         else
@@ -310,23 +446,24 @@ class MasterController extends Zend_Controller_Action
             //transfer information
             $topicID = $masterNamespace->currentTopic;
             $topicName = $topicModel->getTopicName( $topicID );
-            //and set topicID in the master session to 0
+            $max = $userModel->getMaxUserID();
+            $userID = $masterNamespace->userID;
+            //and set IDs in the master session to 0
             $masterNamespace->currentTopic = 0;
+            $masterNamespace->userID = 0;
 
-            $config = array('auth' => 'login',	//login mail-server
+            //login mail-server
+            $config = array('auth' => 'login',
                 'username' => 'swp12-6@gmx.de',
                 'password' => 'BKLRswp12');
- 
             $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
-
-            $max = $userModel->getMaxUserID();
-
-            $mail = new Zend_Mail();		//create mail
+            //prepare mail
+            $mail = new Zend_Mail();
             $mail->setBodyText('Einladung zu '. $topicName);
             $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
             $mail->setSubject('Einladung zu '. $topicName);
 
-            if ($this->getRequest()->isPost())	//direct access from invite
+            if ($this->getRequest()->isPost())
             {
                 for($i=1; $i<=$max; $i++)		//send to all 
                 {
@@ -334,7 +471,7 @@ class MasterController extends Zend_Controller_Action
                     {
                         $mail->addTo($_POST[$i]);
                     // --- also save the connection in userTopic ---
-                        $hash = md5("U". $i ."T". $topicID); //the hashcode
+                        $hash = md5($i .microtime(). $topicID); //the hashcode
                         $userTopic = array('userID'  => $i,
                                            'topicID' => $topicID,
                                            'hash'    => $hash);
@@ -346,8 +483,8 @@ class MasterController extends Zend_Controller_Action
             {
                 $mail->addTo($masterNamespace->email);
             // --- also save the connection in userTopic ---
-                $hash = md5("U". $masterNamespace->userID ."T". $topicID); //the hashcode
-                $userTopic = array('userID'  => $masterNamespace->userID,
+                $hash = md5($userID .microtime(). $topicID); //the hashcode
+                $userTopic = array('userID'  => $userID,
                                    'topicID' => $topicID,
                                    'hash'    => $hash);
                 $userTopicModel->addUserTopic($userTopic);
@@ -355,7 +492,6 @@ class MasterController extends Zend_Controller_Action
 
             //unset informarion of the friend in master session
             $masterNamespace->email  = 0;
-            $masterNamespace->userID = 0;
 
             try	//finilly try to send the mail
             {
@@ -365,7 +501,22 @@ class MasterController extends Zend_Controller_Action
             catch (Exception $e)
             {
                 //error message
-                $this->view->error = "Es ist ein Fehler beim Senden aufgetretten";
+                $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>Wahrscheinlich ist eine E-Mail-Adresse falsch.";
+                //delete all new userTopics
+                if ($this->getRequest()->isPost())	//user from the table
+                {
+                    for($i=1; $i<=$max; $i++)
+                    {
+                        if(isset($_POST[$i]))
+                        {
+                            $userTopicModel->delUserTopic($i,$topicID);
+                        }
+                    }
+                }
+                else					//new created user
+                {
+                    $userTopicModel->delUserTopic($userID,$topicID);
+                }
             }
         }
         else
@@ -381,47 +532,61 @@ class MasterController extends Zend_Controller_Action
     {        
         //session_start(); ..........
         
-        if ( isset( $_GET['id']))
+        if ( !isset( $_GET['id']))
         {
-            $topicID = $_GET['id'];
-            
-            /* set topicVersion to default if necessary and send it to the view */
-            if ( !isset( $_GET['ver']))
-            {
-                $topicVersion = 1;
-            }
-            else $topicVersion = $_GET['ver'];
-            $this->view->topicVersion = $topicVersion;
-            
-            $topicModel = new topicModel();
-            
-            $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
-            
-            /* topics with spezified topicID are available */
-            if ( !empty( $topicName)) 
-            {
-                switch ( $_GET['error'])
-                {
-                    case 1: $this->view->msg = 'Bitte alle Felder füllen!';
-                            break;
-                    case 2: $this->view->msg = 'Fehler bei der Versionserstellung! Bitte wenden SIe sich an den Administrator.';
-                            break;
-                }
-                $this->view->topicName = $topicName;
-                
-                $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
-                
-                /* if link specified version is available for this topic */
-                if ( !empty( $topicRow))
-                {
-                    $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
-                    $this->view->topicSource = $topicRow['topicSource'];
-                }
-                else $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
-            }
-            else $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
+            $this->view->msg = 'Keine Themen-ID angegeben!';
         }
-        else $this->view->msg = 'Keine Themen-ID angegeben!';
+        $topicID = $_GET['id'];
+        
+        $topicModel = new TopicModel();    
+        
+        /* set topicVersion to maximum if necessary and send it to the view */
+        if ( !isset( $_GET['ver']))
+        {
+            $topicVersion = $topicModel->getMaxTopicVersion( $topicID);
+        }
+        else $topicVersion = $_GET['ver'];
+        $this->view->topicVersion = $topicVersion;
+            
+        $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
+            
+        /* topics with spezified topicID are not available */
+        if ( empty( $topicName)) 
+        {
+            $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
+        }
+        
+        /* error-msg output */
+        switch ( $_GET['msg'])
+        {
+            case 1: $this->view->msg = 'Bitte alle Felder füllen!';
+                    break;
+            case 2: $this->view->msg = 'Ihre Eingabe entsprach keiner gültigen URL.';
+                    break;
+        }
+        $this->view->topicName = $topicName;
+                
+        $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
+                
+        /* if there is no topic with the specified versionNumber */
+        if ( empty( $topicRow))
+        {
+            $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
+        }
+        
+        /* topic type is text ( "0") */
+        if ( !$topicRow['topicType'])
+        {
+            $this->view->topicType = 0;
+            $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+        }
+        else //if topic type is link ( "1"), just show the URL
+        {
+            $this->view->topicType = 1;
+            $this->view->topicContent = $topicRow['topicSource'];
+        }
+        
+        $this->view->topicSource = $topicRow['topicSource']; 
     }
 
     /** This function creates a new topicVersion with the posted topicContent and topicSource. 
@@ -435,17 +600,35 @@ class MasterController extends Zend_Controller_Action
         $topicVersion = $_POST['topicVersion'];
         $topicContent = nl2br( $_POST['topicContent']);
         $topicSource = $_POST['topicSource'];
+        $topicType = $_POST['topicType'];
         
         if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))
         {
-            $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
+            $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
         
-        if ( $topicModel->createNewTopicVersion( $topicID, $topicContent, $topicSource))
-        {           
-                $this->view->msg = 'Neue Version wurde erstellt!';
+        /* new version contains a link */
+        if ( $topicType)
+        {
+            /* validate the POST especially the entered URL */
+            $form = new Application_Form_CreateTopic();
+            if ( !$form->isValid($_POST))
+            {
+                $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=2');
+            }
+            
+            $topicSource = $topicContent;
+            $topicContent = $this->httpRequest( $topicContent);
         }
-        else $this->_redirect( 'edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&error=2');
+        
+        if ( $topicModel->createNewTopicVersion( $topicID, $topicContent, $topicSource, $topicType))
+        {           
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . ( $topicVersion + 1) . '&msg=2');
+        }
+        else 
+        {           
+            $this->view->error = 'Fehler bei der Versionserstellung.';
+        }
     }
 
     /** inserts a comment in the database 
@@ -466,7 +649,7 @@ class MasterController extends Zend_Controller_Action
         }
         if ( empty( $commentText))
         {
-            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion . '&error=1');
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
         
         $commentModel = new CommentModel();
@@ -542,8 +725,6 @@ class MasterController extends Zend_Controller_Action
      */
     public function createfriendAction()
     {
-        //load master session
-        $masterNamespace = new Zend_Session_Namespace('master');
 
         if ($this->getRequest()->isPost())	//avoids direct access without having information passed
         {
@@ -553,50 +734,120 @@ class MasterController extends Zend_Controller_Action
             $email = $_POST['email'];
             $job = $_POST['job'];
             $adresse = $_POST['adresse'];
-            
-            if ( !(empty($email)) )		//if email address is entered
+            $edit = $_POST['edit'];
+	//-----EDIT-----
+            if($edit > 0)
             {
+                //load model
                 $userModel = new UserModel();
-    
-                try				//try to save the user
-                {
-                    $userID = $userModel->insert( 
-                        array( 'first_name' => $firstName, 
-                               'last_name' => $lastName,
-                               'email' => $email,
-                               'job' => $job,
-                               'adresse' => $adresse)
-                        );
-                }
-                catch (Exception $e)
-                {
-                    //set topicID in the master session to 0
-                    $masterNamespace->currentTopic = 0;
-                    //error message
-                    $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
-                    break;
-                }
-    
-                if ( $masterNamespace->currentTopic > 0 )	//if topicID is passed
-                {    
-                    $masterNamespace->email  = $email;
-                    $masterNamespace->userID = $userID;
-                    $this->_redirect( '/master/send');  
-                }
-                else
-                {
-                    $this->_redirect( '/master/friend');
-                }
+		//--Update--
+                if($firstName)
+            	{
+                    $userModel->update(array('first_Name' => $firstName),'userID = '.$edit);
+            	}
+                if($lastName)
+            	{
+                    $userModel->update(array('last_Name' => $lastName),'userID = '.$edit);
+            	}
+                if($email)
+            	{
+                    $userModel->update(array('email' => $email),'userID = '.$edit);
+            	}
+                if($job)
+            	{
+                    $userModel->update(array('job' => $job),'userID = '.$edit);
+            	}
+                if($adresse)
+            	{
+                    $userModel->update(array('adresse' => $adresse),'userID = '.$edit);
+            	}
+		//goes back to the details
+                $this->_redirect('/master/showfriend?id='.$edit);
             }
-            //set topicID in the master session to 0
-            $masterNamespace->currentTopic = 0;
-            //error message
-            $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
+            else
+            {
+	//-----SAVE-----
+                if ( !(empty($email)) )		//if email address is entered
+                {
+                    $userModel = new UserModel();
+        
+                    try				//try to save the user
+                    {
+                        $userID = $userModel->insert( 
+                            array( 'first_name' => $firstName, 
+                                   'last_name' => $lastName,
+                                   'email' => $email,
+                                   'job' => $job,
+                                   'adresse' => $adresse)
+                            );
+                    }
+                    catch (Exception $e)
+                    {
+                        //error message
+                        $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
+                        break;
+                    }
+        
+                    if ($_POST['topicID'])	//if topicID is passed
+                    {
+                        //load master session
+                        $masterNamespace = new Zend_Session_Namespace('master');
+                        //save everything in mastersession
+                        $masterNamespace->currentTopic = $_POST['topicID'];
+                        $masterNamespace->email  = $email;
+                        $masterNamespace->userID = $userID;
+                        $this->_redirect( '/master/send');  
+                    }
+                    else
+                    {
+                        $this->_redirect( '/master/friend');
+                    }
+                }
+                //error message
+                $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
+            }
         }
         else
         {
             $this->_redirect('/master');	//goes to master mainpage
         }
     }    
+    
+    /** This function handels the HTTP-Request to get the content of a page.
+      * @param $url URL of the page
+      * @author Christoph Beger
+      */
+    public function httpRequest( $url)
+    {
+        /* get hostname and check if plugin is available */
+        $urlArray = parse_url( $url);
+            
+        /* ----- Please insert new plugins here ----- */
+        switch ($urlArray['host'])
+        {
+            case 'de.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaDe();
+                                        $response = $plugin->getResponse( $url);
+                                        break;
+                                            
+            case 'en.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaEn();
+                                        $response = $plugin->getResponse( $url);
+                                        break;
+                                           
+            case 't3n.de':              $plugin = new Plugin_Authentication_T3nDE();
+                                        $response = $plugin->getResponse( $url);
+                                        break;
+                                           
+            default:                    $client = new Zend_Http_Client( $url);
+                                        $response = $client->request();
+        }
+         
+        $body = $response->getBody();
+        $body = preg_replace('/<a[^>]+>/i', '', $body); //removes <a> tags
+        $body = preg_replace('/<form[^>]+>/i', '', $body); //removes <form> tags
+        $body = preg_replace('/<iframe[^>]+>/i', '', $body); //removes <iframe> tags
+        $body = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $body); //removes <script> tags
+            
+        return $body;
+    }
 }
 ?>

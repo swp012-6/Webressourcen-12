@@ -21,17 +21,32 @@
 	<!-- in main_page are all pressentation components how main_head, main_menue and main_main-->
 	<div id = "main_Page">
 		
-		<!-- in main_head are the project title-->
+		<!-- in main_head is the project title-->
 		<div id = "main_Head">
-			<h1> Webressourcen - Verwaltung </h1>
-            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Hauptseite</a>
-            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>">Thema erstellen</a>
-            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a>
+			<center><h1> Webressourcen - Verwaltung </h1></center>
+            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Hauptseite</a> -
+            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>">Thema erstellen</a> -
+            <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a> -
             <a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>">Freunde anzeigen</a>
+			
+		
+			
 		</div>
-		<!-- in main_main are the active action methode -->
-            <?php echo $this->placeholder('navi') ?>
-        <div id = "main_Main">
+		  
+		<div id = "main_Menue">
+			<div id = "main_TopicNav">
+				<!-- searchfield -->
+				<form action="" method="post">
+					<input name="search" type="text" style="styles.css" />
+					<input type="submit" value="Suchen" />
+				</form>
+			</div>
+			<div id = "main_TopicNav">
+					<?php echo $this->placeholder('navi') ?>
+			</div>
+		</div>
+        <!-- in main_main are the active action methode -->
+		<div id = "main_Main">
 			<?php
 				//-- import Mainpage
 				echo $this->layout()->content;

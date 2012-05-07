@@ -35,7 +35,7 @@
 			<td>
 				<?php echo $this->escape($a->job) ?>
 			</td>
-			<td>
+			<td <?php if(in_array($this->escape($a->userID),$this->infoUserIDs)){echo 'style="background-color:#FF0000"';} ?>>
 				<input type="checkbox" name="<?php echo $this->escape($a->userID) ?>" value="<?php echo $this->escape($a->email) ?>">
 			</td>
 		</tr>
@@ -43,7 +43,7 @@
 	}
 	?>
 	</table>
-	<input type = "hidden" name = "topicID" value = "<?php echo $_POST['topicID']; ?>" />
+	<input type = "hidden" name = "topicID" value = "<?php echo $this->topicID; ?>" />
 	<input type="submit" name="button_send" value="ausgewählte Freunde informieren" class="button" />
 </form>
 
