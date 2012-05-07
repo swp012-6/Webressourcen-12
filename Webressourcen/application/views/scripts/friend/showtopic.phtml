@@ -4,19 +4,23 @@
 	echo "<div id = \"FriendShowTopicTitel\" >";
 	echo $this->escape($this->friendTopicTitel);
 	echo "</div>";
-	//Topic---------------------------------------------------
 	
 	//select TopicVersion--------------------------------------
 	echo "<table id = \"FriendShowTopicVersionTable\" border = \"1\" >";
 		echo "<tr>";
 		
+        //Version Tittel
+        echo "<td>";
+           echo $this->escape($this->versionTitle); 
+        echo "</td>";
+        
 		//leftoperator----------
 		
 		if($this->escape($this->currentPageNavigator) > 0)
 		{
 			echo "<td>";
 				echo 	"<form action =\"showtopic\" method = \"get\">
-							<input type =\"hidden\" name = \"PageNavigator\" value = \"".($this->escape($this->currentPageNavigator)+1-1)."\" />
+							<input type =\"hidden\" name = \"PageNavigator\" value = \"".($this->escape($this->currentPageNavigator)-1)."\" />
 							<input type=\"submit\" class=\"FriendPageButton\" value = \"<-\" />
 						</form>";
 			echo "</td>";
@@ -27,9 +31,18 @@
 		{
 			echo "<td>";
 				echo 	"<form action =\"showtopic\" method = \"get\">
-							<input type =\"hidden\" name = \"Page\" value = \"".($this->escape($v))."\" />
-							<input type=\"submit\" class=\"FriendPageButton\" value = \"".($this->escape($v))."\" />
-						</form>";
+							<input type =\"hidden\" name = \"topicVersion\" value = \"".($this->escape($v))."\" />";
+                            
+                            if(($this->escape($this->currentTopicVersion)) == ($this->escape($v)))
+                            {
+                            
+                                echo "<input type=\"submit\" class=\"FriendPageButton\" value = \"[".($this->escape($v))."]\" />";
+                            }
+                            else
+                            {
+                                echo "<input type=\"submit\" class=\"FriendPageButton\" value = \"".($this->escape($v))."\" />";
+                            }
+				echo		"</form>";
 			echo "</td>";
 		}
 		
@@ -39,7 +52,7 @@
 		{
 			echo "<td>";
 				echo 	"<form action =\"showtopic\" method = \"get\">
-							<input type =\"hidden\" name = \"PageNavigator\" value = \"".($this->escape($this->currentPageNavigator)+1+1)."\" />
+							<input type =\"hidden\" name = \"PageNavigator\" value = \"".($this->escape($this->currentPageNavigator)+1)."\" />
 							<input type=\"submit\" class=\"FriendPageButton\" value = \"->\" />
 						</form>";
 			echo "</td>";
@@ -50,6 +63,13 @@
 		echo "</tr>";
 	echo "</table>";
 	
+    //Topic---------------------------------------------------
+	echo  "<iframe src=\"topicview?id= ".($this->escape($this->topicID)) ." &ver= ". ($this->escape($this->currentTopicVersion)) . "\" width=\"90%\" height=\"400\" name=\"Topic\"></iframe></br>";
+    echo $this->escape($this->topicSource). "\n";
+    
+    //Topic assessment-------------------------------------------------
+    
+    
 	//Comment--------------------------------------------------
 	echo "<table id = \"FriendShowTopicCommentTable\" border = \"1\" >";
 	
@@ -62,6 +82,9 @@
 				
 		echo	"<form action =\"create\" method = \"get\">
 					<input type=\"submit\" class=\"FriendButtonTableHeadCreate\" value = \"Add Comment\" />
+				</form>";
+        echo	"<form action =\"createname\" method = \"get\">
+					<input type=\"submit\" class=\"FriendButtonTableHeadCreateName\" value = \"Update Name\" />
 				</form>";
 		echo "</th>";
 	echo "</tr>";
