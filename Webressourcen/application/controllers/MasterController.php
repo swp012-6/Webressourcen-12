@@ -63,6 +63,10 @@ class MasterController extends Zend_Controller_Action
         }
         $topicForm = new Application_Form_CreateTopic();
 		$this->view->topicForm = $topicForm;
+        
+        /* set baseUrl for the view */
+        $list = explode( '/', $_SERVER['REQUEST_URI']);
+        $this->view->baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $list['1'];
     }
 
     /* This function inserts topic-parameters in the database */
