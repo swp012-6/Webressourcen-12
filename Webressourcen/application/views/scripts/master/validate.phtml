@@ -1,16 +1,12 @@
-<!-- after the topic is created -->
 <center>
     <b> Ihr Thema wurde erfolgreich erstellt. </b>
 </center>
-<!-- button to the topic -->
-<?php 
-echo '<form action = "showtopics?id=' . $this->topicID . '&ver=' . $this->version . '" method = "post">';
-?>
-    <input type = "submit" value = "Zum Thema" />
+
+<form action = "showtopics" method = "get">
+    <input type = "submit" value = "Zur Themenauswahl" />
 </form>
-<!-- button to invitation -->
 <form action = "invite" method = "post">
-    <input type = "hidden" name = "topicID" value = "<?php echo $this->topicID ?>" />
+    <input type = "hidden" name = "id" value = "<?php echo $_GET['id'] ?>" />
     <input type = "submit" value = "Einladungen versenden" />
 </form>
 

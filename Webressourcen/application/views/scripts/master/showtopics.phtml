@@ -39,13 +39,6 @@
             echo '<input type = "submit" value = "Einladungen versenden" />';
         echo '</form>';
         
-        /* button to edit and create a new topicVersion */
-        echo '<form action = "edittopic" method = "get">';
-            echo '<input type = "hidden" name = "id" value = "' . $_GET['id'] . '" />';
-            echo '<input type = "hidden" name = "ver" value = "' . $_GET['ver'] . '" />';
-            echo '<input type = "submit" value = "Inhalt überarbeiten" />';
-        echo '</form>';
-        
         /* iframe */
         echo $this->topicContent;
         echo '</div>';
