@@ -28,11 +28,14 @@
   * @author Christoph Beger and Peter Kornowski
   */
 class MasterController extends Zend_Controller_Action
-{
-
+{ 
+    
     public function init()
     {
         Zend_Layout::getMvcInstance()->setLayout('master');
+        
+        $bootstrap = $this->getInvokeArg( 'bootstrap');
+        $this->config = $bootstrap->getOptions();
     }
 
     public function indexAction()
@@ -93,7 +96,7 @@ class MasterController extends Zend_Controller_Action
             $form = new Application_Form_CreateTopic();
             if ( !$form->isValid($_POST))
             {
-                $this->_redirect('master/import?error=3');
+                //$this->_redirect('master/import?error=3');
             }
             
 			$topicSource = $topicContent;
@@ -109,8 +112,8 @@ class MasterController extends Zend_Controller_Action
             $this->_redirect( 'master/import?error=1');
         }
 	
-	$this->view->topicID = $result;
-        $this->view->version = $topicModel->getMaxTopicVersion($result);
+        $this->view->topicID = $result;
+        $this->view->version = $topicModel->getMaxTopicVersion( $result);
     }
 
     /**
@@ -456,10 +459,10 @@ class MasterController extends Zend_Controller_Action
             $masterNamespace->userID = 0;
 
             //login mail-server
-            $config = array('auth' => 'login',
-                'username' => 'swp12-6@gmx.de',
-                'password' => 'BKLRswp12');
-            $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
+            $emailConfig = array('auth' => $this->config['email']['auth'],
+                            'username' => $this->config['email']['username'],
+                            'password' => $this->config['email']['password']);
+            $transport = new Zend_Mail_Transport_Smtp( $this->config['email']['host'], $emailConfig);
             //prepare mail
             $mail = new Zend_Mail();
             $mail->setBodyText('Einladung zu '. $topicName);
@@ -833,15 +836,15 @@ class MasterController extends Zend_Controller_Action
         switch ($urlArray['host'])
         {
             case 'de.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaDe();
-                                        $response = $plugin->getResponse( $url);
+                                        $response = $plugin->getResponse( $url, $this->config['wikipedia']);
                                         break;
                                             
             case 'en.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaEn();
-                                        $response = $plugin->getResponse( $url);
+                                        $response = $plugin->getResponse( $url, $this->config['wikipedia']);
                                         break;
                                            
             case 't3n.de':              $plugin = new Plugin_Authentication_T3nDE();
-                                        $response = $plugin->getResponse( $url);
+                                        $response = $plugin->getResponse( $url, $this->config['t3n']);
                                         break;
                                            
             default:                    $client = new Zend_Http_Client( $url);
