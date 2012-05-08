@@ -19,7 +19,7 @@
  - topicviewAction()
  - showcommentsAction()
  - createfriendAction()
-
+ - searchAction()
  */
 
 /** This class is the controller for the section ../public/master .
@@ -856,5 +856,9 @@ class MasterController extends Zend_Controller_Action
             
         return $body;
     }
+	
+	public function searchAction()
+	{
+	}
 }
 ?>

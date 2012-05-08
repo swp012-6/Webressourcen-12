@@ -36,7 +36,7 @@
 		<div id = "main_Menue">
 			<div id = "main_TopicNav">
 				<!-- searchfield -->
-				<form action="" method="post">
+				<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'search'), null, true); ?>" method="post">
 					<input name="search" type="text" style="styles.css" />
 					<input type="submit" value="Suchen" />
 				</form>
