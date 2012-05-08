@@ -1,20 +1,37 @@
-<div id = "main_Main">
+<script type="text/javascript" src="<?php echo $this->baseUrl . '/public/_files/tinymce/jscripts/tiny_mce/tiny_mce.js' ?>"></script>
+
+<script type="text/javascript">
+tinyMCE.init({
+        forced_root_block : "",
+        mode : "textareas"
+});
+</script>
 <?php
     if (!empty( $this->msg))
     {
         echo $this->msg;
     }
-    else 
-    {
-        echo '<h1>' . $this->topicName . '</h1>';
-        echo '<h2>Version :' . $this->topicVersion . '</h2>';
-        echo '<form action = "validateedit" method = "post">';
-            echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '"/>';
-            echo '<input type = "hidden" name = "topicVersion" value = "' . $this->topicVersion . '"/>';
-            echo '<textarea name = "topicContent" cols = "100" rows = "20"/>' . $this->topicContent . '</textarea>';
-            echo '<input type = "text" name = "topicSource" value = "' . $this->topicSource . '"/>';
-            echo '<input type = "submit" value = "neue Version speichern"/>';
-        echo '</form>';
-    }
+
+    echo '<h1>' . $this->topicName . '</h1>';
+    echo '<h2>Version: ' . $this->topicVersion . '</h2>';
+    echo '<form action = "validateedit" method = "post">';
+        echo '<input type = "radio" name = "topicType" value = "0"';
+        if ( !$this->topicType)
+        {
+            echo 'checked';
+        }
+        echo '> Text ';
+        echo '<input type = "radio" name = "topicType" value = "1"';
+        if ( $this->topicType)
+        {
+            echo 'checked';
+        }
+        echo '> Link <p>';
+        echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '"/>';
+        echo '<input type = "hidden" name = "topicVersion" value = "' . $this->topicVersion . '"/>';
+        echo '<textarea name = "topicContent" cols = "100" rows = "20"/>' . $this->topicContent . '</textarea>';
+        echo '<input type = "text" name = "topicSource" value = "' . $this->topicSource . '"/>';
+        echo '<input type = "submit" value = "neue Version speichern"/>';
+    echo '</form>';
+
 ?>
-</div>

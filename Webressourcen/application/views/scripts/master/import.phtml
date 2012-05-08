@@ -1,3 +1,11 @@
+<script type="text/javascript" src="<?php echo $this->baseUrl . '/public/_files/tinymce/jscripts/tiny_mce/tiny_mce.js' ?>"></script>
+
+<script type="text/javascript">
+tinyMCE.init({
+        forced_root_block : "",
+        mode : "textareas"
+});
+</script>
 
 <?php 
     echo $this->errorMsg;
