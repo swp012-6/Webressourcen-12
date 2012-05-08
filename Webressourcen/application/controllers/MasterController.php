@@ -271,8 +271,7 @@ class MasterController extends Zend_Controller_Action
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicName;
                 $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>Quelle: ' . $topicSource;                
-                $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
-                $topicContent .= 'Inhalt überarbeiten</a>';
+
                 $this->view->topicContent = $topicContent;
                 
                 
@@ -553,7 +552,11 @@ class MasterController extends Zend_Controller_Action
         $this->view->topicVersion = $topicVersion;
             
         $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
-            
+        
+        /* set baseUrl for the view */
+        $list = explode( '/', $_SERVER['REQUEST_URI']);
+        $this->view->baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $list['1'];
+        
         /* topics with spezified topicID are not available */
         if ( empty( $topicName)) 
         {

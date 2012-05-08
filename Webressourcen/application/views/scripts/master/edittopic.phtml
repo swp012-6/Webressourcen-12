@@ -1,3 +1,13 @@
+<script type="text/javascript" src="<?php echo $this->baseUrl . '/public/_files/tinymce/jscripts/tiny_mce/tiny_mce.js' ?>"></script>
+
+<script type="text/javascript">
+tinyMCE.init({
+        theme : "advanced",
+        mode : "textareas",
+        plugins : "fullpage",
+        theme_advanced_buttons3_add : "fullpage"
+});
+</script>
 <?php
     if (!empty( $this->msg))
     {
