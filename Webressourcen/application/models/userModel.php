@@ -45,8 +45,8 @@ class UserModel extends Zend_Db_Table_Abstract
 	
 	public function getSearchResult($searchWord)
 	{
-	$firstNameResult = $this->fetchRow( $this->select() ->from( $this) ->where('firstName LIKE ? ', $searchWord.'%'))
-	$lastNameresult = $this->fetchRow( $this->select() ->from( $this) ->where('lastName LIKE ? ', $searchWord.'%'));
+	$firstNameResult = $this->fetchRow( $this->select() ->from( $this) ->where('firstName LIKE ? ', $searchWord.'%'));
+	$lastNameResult = $this->fetchRow( $this->select() ->from( $this) ->where('lastName LIKE ? ', $searchWord.'%'));
 	foreach($firstNameResult as $result)
 	{
 		$lastNameResult->addRow( $result);
