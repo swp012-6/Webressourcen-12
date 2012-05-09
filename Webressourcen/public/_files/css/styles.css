@@ -60,3 +60,14 @@
 {
 	width:800px;
 }
+
+#Footer
+{
+	text-align: center;
+	background-color: rgb(190,058,111);
+	font-family: Heletica, arial;
+	min-height: 25px;
+	border: 2px inset;
+	border-left-color: white;
+	border-top-color: white;
+}

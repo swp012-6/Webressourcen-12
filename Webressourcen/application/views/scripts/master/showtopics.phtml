@@ -19,24 +19,21 @@ function confirmation()
         if ( !empty( $this->topicContent))
         {
             /* dropbox with available topicVersion */
-            echo 'Version: '; 
-            echo '<form action="showtopics" method="get"><select name="ver">';
+            echo '<form name = "versionSelectForm">';
+            echo 'Version: <select name="versionSelect" onChange = "window.location=document.versionSelectForm.versionSelect.options[document.versionSelectForm.versionSelect.selectedIndex].value">';
     
             foreach( $this->topicVersionArray as $topicVersion)
             {
                 if ( $this->selectedTopicVersion == $topicVersion)
                 {
-                    echo '<option value = "' . $topicVersion . '" selected = "selected">' . $topicVersion;
+                    echo '<option selected = "selected" value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
                 }
                 else
                 {
-                    echo '<option value = "' . $topicVersion . '">' . $topicVersion;
+                    echo '<option value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
                 }
             }        
-            echo '</select><input type = "hidden" name = "id" value = "' . $_GET['id'] . '"><input type=submit value="go"></form>';
-        
-            /* iframe */
-            echo $this->topicContent;
+            echo '</form>';
             
             /* button to close the current topic */
             echo '<form id = "closeTopicForm" action = "closetopic" method = "post">';
@@ -55,6 +52,9 @@ function confirmation()
                 echo '<input type = "hidden" name = "ver" value = "' . $_GET['ver'] . '" />';
                 echo '<input type = "submit" value = "Inhalt überarbeiten" />';
             echo '</form>';
+            
+            /* iframe */
+            echo $this->topicContent;
         }
         echo '</div>';
         

@@ -35,30 +35,30 @@
 		
 		<!-- in main_menue are the topictitle to select-->
 		<div id = "main_Menue">
-<ul>
-<?php
-    foreach( $this->topicList as $topic)
-	{
-        if ( isset( $_GET['id']))
-        {
-            if ( $_GET['id'] == $topic['topicID'])
-            {
-                echo '<li>aktuelles Thema</li>';
-            }
-            else 
-            {
-                echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
-                echo $topic['topicName'].'</a></li>';
-            }
-        }
-        else 
-        {
-            echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
-            echo $topic['topicName'].'</a></li>';
-        }
-    }
-?>
-</ul>
+            <ul>
+                <?php
+                    foreach( $this->topicList as $topic)
+                    {
+                        if ( isset( $_GET['id']))
+                        {
+                            if ( $_GET['id'] == $topic['topicID'])
+                            {
+                                echo '<li>aktuelles Thema</li>';
+                            }
+                            else 
+                            {
+                                echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
+                                echo $topic['topicName'].'</a></li>';
+                            }
+                        }
+                        else 
+                        {
+                            echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
+                            echo $topic['topicName'].'</a></li>';
+                        }
+                    }
+                ?>
+            </ul>
 		</div>
 		
 		<!-- in main_main are the active action methode -->
@@ -68,7 +68,9 @@
 				echo $this->layout()->content;
 			?>
 		</div>
-		
+		<div id = "footer">
+            Webressourcen 2012
+        </div>
 	</div>
 </body>
 </html>

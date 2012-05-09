@@ -96,7 +96,7 @@ class MasterController extends Zend_Controller_Action
             $form = new Application_Form_CreateTopic();
             if ( !$form->isValid($_POST))
             {
-                //$this->_redirect('master/import?error=3');
+                $this->_redirect('master/import?error=3');
             }
             
 			$topicSource = $topicContent;
@@ -691,10 +691,9 @@ class MasterController extends Zend_Controller_Action
         
         $topicRow = $topicModel->getTopic( $_GET['id'], $_GET['ver']);
                 
-        /* if link specified version is available for this topic */
         if ( !empty( $topicRow))
         {
-            $this->view->topicContent = $topicRow['topicContent'];
+            $this->view->topicContent = str_replace('<br />', '', $topicRow['topicContent']);
         }
     }
 
