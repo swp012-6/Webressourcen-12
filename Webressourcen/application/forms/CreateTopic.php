@@ -12,7 +12,8 @@ class Application_Form_CreateTopic extends Zend_Form
 		$this->addElement( 'radio', 'topicType', array(	'label' => 'Typ:',
                                                         'multioptions' => array(	0 => 'Text',
                                                                                     1 => 'Link'),
-														'separator' => '  '));
+							'separator' => '  ',
+                                                        'value' => 0));
 		$this->addElement( 'text', 'topicName', array( 'label' => 'Topic-Name:'));
 		$this->addElement( 'textarea', 'topicContent', array( 'label' => 'Inhalt:', 'rows' =>20, 'cols' => 90));
         $this->getElement( 'topicContent')->addValidator( new BV_Validate_Uri());
