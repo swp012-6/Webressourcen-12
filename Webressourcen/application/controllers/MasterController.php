@@ -227,6 +227,7 @@ class MasterController extends Zend_Controller_Action
         /* get all topics as rowSet and sent it to the view */
 		$topicList = $topicModel->getTopicList();
 		
+        $navi = '';
         foreach( $topicList as $topic)
         {
             $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
@@ -293,7 +294,7 @@ class MasterController extends Zend_Controller_Action
                 if ( !empty( $commentRowSet))
                 {
                     /* send the rowSet with user-comments and names to the view */
-                    $this->view->CommentRowSet = $commentRowSet;
+                    $this->view->commentRowSet = $commentRowSet;
                 }
                 
                 $userID = 1; //test-purpose
@@ -376,9 +377,9 @@ class MasterController extends Zend_Controller_Action
         //load model
         $topicModel = new TopicModel();
         //delete topic, topicAdditives, comments and userTopics
-        $success = $topicModel->delTopic($_POST['topicID']);
+        $success = $topicModel->delTopic( $_POST['topicID']);
         //check result
-        if($success == 0)
+        if( !$success)
         {						//error message
             $this->view->error = 'Es ist ein Fehler beim Löschen aufgetretten.';
         }
@@ -866,5 +867,28 @@ class MasterController extends Zend_Controller_Action
 		$result = $userModel->getSearchResult($_POST['search']);
 		$this->view->result = $result;
 	}
+    
+    /** This function deletes a comment by commentID
+      * @author Christoph Beger
+      */
+    public function deletecommentAction()
+    {
+        /* no commentID got transmitted */
+        if ( (!isset( $_POST['commentID'])) || (!isset( $_POST['topicID'])) || (!isset( $_POST['topicVersion'])))
+        {
+            $this->_redirect( 'master');
+        }
+        
+        $commentID = $_POST['commentID'];
+        $topicID = $_POST['topicID'];
+        $topicVersion = $_POST['topicVersion'];
+        
+        $commentModel = new CommentModel();
+        
+        $commentModel->deleteComment( $commentID);
+        
+        $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
+    
+    }
 }
 ?>
