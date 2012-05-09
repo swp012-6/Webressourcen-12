@@ -19,7 +19,9 @@
  - topicviewAction()
  - showcommentsAction()
  - createfriendAction()
+ - httpRequest($url)
  - searchAction()
+ - deletecommentAction()
  */
 
 /** This class is the controller for the section ../public/master .
@@ -41,7 +43,6 @@ class MasterController extends Zend_Controller_Action
     public function indexAction()
     {
         // action body
-        
     }
 
     /** This function shows a form where the master can insert topic-parameters like content or source.
@@ -220,6 +221,8 @@ class MasterController extends Zend_Controller_Action
             case 1: $this->view->msg = 'Bitte füllen Sie das Feld Kommentar!';
             break;
             case 2: $this->view->msg = 'Es wurde erfolgreich eine neue Version erstellt.';
+            break;
+            case 3: $this->view->msg = 'Einladungen erfolgreich versendet.';
             break;
         }
         
@@ -420,6 +423,8 @@ class MasterController extends Zend_Controller_Action
             }
             //pass userIDs
             $this->view->infoUserIDs = $infoUserIDs;
+            //pass topicID
+            $this->view->topicID = $_POST['topicID'];
 
             //create createFriendForm
             $createFriendForm = new Application_Form_CreateFriend();
@@ -443,33 +448,42 @@ class MasterController extends Zend_Controller_Action
         //load master session
         $masterNamespace = new Zend_Session_Namespace('master');
 
-        if ($masterNamespace->currentTopic > 0)	//avoids direct access without having topicID
+        if ($masterNamespace->currentTopic > 0 || $this->getRequest()->isPost())	//avoids direct access without having topicID
         {
             //load models
             $userTopicModel = new UserTopicModel;
-            $userModel = new UserModel();
-            $topicModel = new TopicModel();
+            $userModel      = new UserModel();
+            $topicModel     = new TopicModel();
 
             //transfer information
-            $topicID = $masterNamespace->currentTopic;
+            if ($this->getRequest()->isPost())
+            {
+                $topicID = $_POST['topicID'];
+            }
+            else
+            {
+                $topicID = $masterNamespace->currentTopic;
+                $userID  = $masterNamespace->userID;
+                $email   = $masterNamespace->email;
+                //and set IDs in the master session to 0
+                $masterNamespace->currentTopic = 0;
+                $masterNamespace->userID       = 0;
+                $masterNamespace->email        = 0;
+            }
             $topicName = $topicModel->getTopicName( $topicID );
             $max = $userModel->getMaxUserID();
-            $userID = $masterNamespace->userID;
-            //and set IDs in the master session to 0
-            $masterNamespace->currentTopic = 0;
-            $masterNamespace->userID = 0;
 
             //login mail-server
             $emailConfig = array('auth' => $this->config['email']['auth'],
-                            'username' => $this->config['email']['username'],
-                            'password' => $this->config['email']['password']);
+                             'username' => $this->config['email']['username'],
+                             'password' => $this->config['email']['password']);
             $transport = new Zend_Mail_Transport_Smtp( $this->config['email']['host'], $emailConfig);
             //prepare mail
             $mail = new Zend_Mail();
-            $mail->setBodyText('Einladung zu '. $topicName);
-            $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
             $mail->setSubject('Einladung zu '. $topicName);
+            $mail->setFrom($this->config['email']['username'], 'Webressourcen');
 
+//----access directly from invite----
             if ($this->getRequest()->isPost())
             {
                 for($i=1; $i<=$max; $i++)		//send to all 
@@ -483,47 +497,65 @@ class MasterController extends Zend_Controller_Action
                                            'topicID' => $topicID,
                                            'hash'    => $hash);
                         $userTopicModel->addUserTopic($userTopic);
+                        //mail message
+                        $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
+                                          ."Mit diesem Link koennen Sie das Thema erreichen: "
+                                          ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
+                                          ."/Webressourcen/public/friend?hash=".$hash);
+
+                        try	//finilly try to send the mail
+                        {
+                            $mail->send($transport);
+                        }
+                        catch (Exception $e)
+                        {
+                            //error message
+                            $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>"
+                                                ."Wahrscheinlich ist eine der E-Mail-Adressen falsch.<br>"
+                                                ."Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.";
+                            $error = 1;
+                            //delete new userTopic
+                            $userTopicModel->delUserTopic($i,$topicID);
+                        }
                     }
                 }
             }
-            else				//access from create friend
+//----access from create friend----
+            else				
             {
-                $mail->addTo($masterNamespace->email);
+                $mail->addTo($email);
             // --- also save the connection in userTopic ---
                 $hash = md5($userID .microtime(). $topicID); //the hashcode
                 $userTopic = array('userID'  => $userID,
                                    'topicID' => $topicID,
                                    'hash'    => $hash);
                 $userTopicModel->addUserTopic($userTopic);
-            }
+                //mail message
+                $mail->setSubject('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
+                                 ."Mit diesem Link erreichen Sie das Thema: "
+                                 ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
+                                 ."/Webressourcen/public/friend?hash=".$hash);
 
-            //unset informarion of the friend in master session
-            $masterNamespace->email  = 0;
-
-            try	//finilly try to send the mail
-            {
-                $mail->send($transport);
-                $this->_redirect("/master/showtopics?id=$topicID&ver=".$topicModel->getMaxTopicVersion($topicID));
-            }
-            catch (Exception $e)
-            {
-                //error message
-                $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>Wahrscheinlich ist eine E-Mail-Adresse falsch.";
-                //delete all new userTopics
-                if ($this->getRequest()->isPost())	//user from the table
+                try	//finilly try to send the mail
                 {
-                    for($i=1; $i<=$max; $i++)
-                    {
-                        if(isset($_POST[$i]))
-                        {
-                            $userTopicModel->delUserTopic($i,$topicID);
-                        }
-                    }
+                    $mail->send($transport);
                 }
-                else					//new created user
+                catch (Exception $e)
                 {
+                    //error message
+                    $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>"
+                                        ."Wahrscheinlich ist eine der E-Mail-Adressen falsch.<br>"
+                                        ."Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.";
+                    $error = 1;
+                    //delete new userTopic
                     $userTopicModel->delUserTopic($userID,$topicID);
                 }
+            }
+
+            
+            if($error!=1)
+            {
+                $this->_redirect("/master/showtopics?id=$topicID&ver=".$topicModel->getMaxTopicVersion($topicID)."&msg=3");
             }
         }
         else
