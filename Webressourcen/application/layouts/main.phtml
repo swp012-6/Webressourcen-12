@@ -13,7 +13,7 @@
 	echo $this->headLink();
 	
 ?>
- 
+
 </head>
 <body>
 
@@ -23,15 +23,19 @@
 		<!-- in main_head is the project title-->
 		<div id = "main_Head">
 			<center><h1>Webressourcen<?php echo $this->escape($this->title); ?></h1></center>
-				<div id = "main_Navbar">
-						<!-- menu -->
-						<a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>">Hauptseite</a> -
-						<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Masterseite</a> -
-						<a href="<?php echo $this->url(array('controller'=>'friend', 'action'=>'index'), null, true); ?>">Friendseite</a> -
-						<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'index'), null, true); ?>">-</a>
 				
+				<div id = "Nav">
+						<!-- menu -->
+						
+						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>">Hauptseite</a> - 
+						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Masterseite</a> - 
+						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'friend', 'action'=>'index'), null, true); ?>">Friendseite</a> - 
+						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'index', 'action'=>'index'), null, true); ?>">-</a>
 				</div>
+				
 		</div>
+		
+		
 		
 		<!-- in main_menue are the topictitle to select-->
 		<div id = "main_Menue">

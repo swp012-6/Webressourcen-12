@@ -1,6 +1,9 @@
 
-
-
+	a.navlink:link {color:black; size:14px;}
+	a.navlink:visited {color:black; size:14px;}
+	a.navlink:active {color:black; size:14px;}
+	a.navlink:hover {color:grey; size:14px; text-decoration:underline;}
+			
 #main_Page
 {
 	font-family: Helvetica, arial;
@@ -8,7 +11,8 @@
 	width: 1010px;
 	margin: auto;
 	min-height: 300px;
-	background-color: FFEFD5;
+	background-color: FFEFD5#;
+	margin: auto; 
 
 }
 
@@ -27,15 +31,14 @@
 	border-right-color: white;
 }
 
-
-
 #main_Menue
 {
+
 	background-color: rgb(190,058,111);
 	font-family: Helvetica, arial;
 	width: 175px;
-	min-height: 570px;
 	float: left;
+	min-height: 570px;
 	padding-left:10px;
 	padding-top:20px;
 	border: 2px inset;
@@ -67,7 +70,16 @@
 	background-color: rgb(190,058,111);
 	font-family: Heletica, arial;
 	min-height: 25px;
+	width: 1000px;
 	border: 2px inset;
 	border-left-color: white;
 	border-top-color: white;
 }
+
+
+
+#Nav
+{
+
+}
+ 
