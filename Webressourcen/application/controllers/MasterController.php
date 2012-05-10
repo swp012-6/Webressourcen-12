@@ -236,6 +236,7 @@ class MasterController extends Zend_Controller_Action
             $navi .= '<a class="Navlink" href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
             $navi .= $topic['topicName'].'</a><br>';
         }
+
         $this->view->placeholder( 'navi')->append( $navi);
         
         /* topic was already selectet to show */
@@ -531,10 +532,10 @@ class MasterController extends Zend_Controller_Action
                                    'hash'    => $hash);
                 $userTopicModel->addUserTopic($userTopic);
                 //mail message
-                $mail->setSubject('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
-                                 ."Mit diesem Link erreichen Sie das Thema: "
-                                 ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
-                                 ."/Webressourcen/public/friend?hash=".$hash);
+                $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
+                                  ."Mit diesem Link erreichen Sie das Thema: "
+                                  ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
+                                  ."/Webressourcen/public/friend?hash=".$hash);
 
                 try	//finilly try to send the mail
                 {
