@@ -892,6 +892,9 @@ class MasterController extends Zend_Controller_Action
         return $body;
     }
 	
+	/** This function is looking for a word
+	  * @author Enrico Kleemann
+	  */
 	public function searchAction()
 	{
 		$userModel = new UserModel();
