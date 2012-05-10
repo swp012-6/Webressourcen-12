@@ -82,7 +82,7 @@
                 }
                  echo ">";
                  
-                echo "<img src=\"../_files/immage/rating/stars/5Star_".($this->escape($this->topicrating)).".png\" height=\"50\" alt=\"".($this->escape($this->topicrating))."\"";
+                echo "<img src=\"../_files/image/rating/stars/5Star_".($this->escape($this->topicrating)).".png\" height=\"50\" alt=\"".($this->escape($this->topicrating))."\"";
                     
                     if($this->escape($this->ratingpercent) != 0)
                     {
@@ -118,7 +118,7 @@
                         if($i == $this->escape($this->ratingPoint))
                         {
                             //view the immage
-                            echo "<img src=\"../_files/immage/rating/stars/".$i."Star_on.png\" height=\"50\" alt=\"".$i."Star\">";
+                            echo "<img src=\"../_files/image/rating/stars/".$i."Star_on.png\" height=\"50\" alt=\"".$i."Star\">";
                         }
                         else
                         {
@@ -126,7 +126,7 @@
                
                              echo "<form action =\"showtopic\" method = \"post\">
                                     <input type =\"hidden\" name = \"RatingUpdate\" value = \"".$i."\" />
-                                    <input type=\"image\" src=\"../_files/immage/rating/stars/".$i."Star_off.png\" onmouseover=\"this.src='../_files/immage/rating/stars/".$i."Star_on.png'\" onmouseout =\"this.src='../_files/immage/rating/stars/".$i."Star_off.png'\" height=\"50\" alt=\"".$i."Star\" class=\"RatingButtonUpdate\"  value = \"".$i." Star\" > </input>
+                                    <input type=\"image\" src=\"../_files/image/rating/stars/".$i."Star_off.png\" onmouseover=\"this.src='../_files/image/rating/stars/".$i."Star_on.png'\" onmouseout =\"this.src='../_files/image/rating/stars/".$i."Star_off.png'\" height=\"50\" alt=\"".$i."Star\" class=\"RatingButtonUpdate\"  value = \"".$i." Star\" > </input>
                                     </form>";
                         }
                         echo "</td>";
