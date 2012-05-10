@@ -1,7 +1,42 @@
 <?php
-foreach( $this->result as $a){
-echo $a['first_name'];
-echo ' ';
-echo $a['last_name'];
+	if($this->result != "" && $this->result != " ")
+	{
+?>
+<table border = "1"> <!-- tablehead -->
+<tr>
+	<td>Vorname</td>
+	<td>Nachname</td>
+	<td>E-Mail-Adresse</td>
+	<td>Beruf</td>
+	<td>Adresse</td>
+</tr>
+<?php
+	foreach( $this->result as $a)
+	{
+?>
+	<tr>									<!-- tablebody -->
+		<td>
+			<?php echo $a['first_name']; ?>
+		</td>
+		<td>
+			<?php echo $a['last_name']; ?>
+		</td>
+		<td> 
+			<?php echo $a['email']; ?>
+		</td>
+		<td> 
+			<?php echo $a['job']; ?>
+		</td>
+		<td> 
+			<?php echo $a['adresse']; ?>
+		</td>
+	</tr>
+<?php
+	}
+?>
+</table>
+<?php
 }
+else
+echo "Sie m&uuml;ssen den Namen eines Freundes eingeben!";
 ?>
