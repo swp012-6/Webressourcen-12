@@ -238,7 +238,7 @@ class FriendController extends Zend_Controller_Action
 		else// its the input correctly, then send the results to the database
 		{
 			$name = $form->getValue('name');
-			$comment = $form->getValue('comment');
+			$comment = nl2br( $form->getValue('comment'));
 			
 			//array for the database
 			$conntent = array("userID" => $userID,"topicID"=>$topicID,"topicVersion" => $topicVersion,"anonymous"=> $name,"commentText"=>$comment);

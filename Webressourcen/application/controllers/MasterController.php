@@ -308,8 +308,6 @@ class MasterController extends Zend_Controller_Action
                 }
                 
                 
-                
-                
                 //-----------------show comments-----------------------
                 $comment = new CommentModel;
                 
@@ -706,7 +704,7 @@ class MasterController extends Zend_Controller_Action
     public function validatecommentAction()
     {
         /* save posts in variables */
-        $commentText = strip_tags($_POST['commentText'], '<p><br>');
+        $commentText = nl2br(strip_tags($_POST['commentText'], '<p><br>'));
         $userID = $_POST['userID'];
         $topicID = $_POST['topicID'];
         $topicVersion = $_POST['topicVersion'];
