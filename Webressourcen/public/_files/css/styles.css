@@ -11,9 +11,7 @@
 	width: 1010px;
 	margin: auto;
 	min-height: 300px;
-	background-color: FFEFD5#;
-	margin: auto; 
-
+	background-color: FFEFD5;
 }
 
 #main_Head
@@ -33,7 +31,6 @@
 
 #main_Menue
 {
-
 	background-color: rgb(190,058,111);
 	font-family: Helvetica, arial;
 	width: 175px;
@@ -44,8 +41,7 @@
 	border: 2px inset;
 	border-left-color: white;
 	border-top-color: white;
-	border-top-width: 0px; 
-	
+	border-top-width: 0px; 	
 }
 
 #main_Main
