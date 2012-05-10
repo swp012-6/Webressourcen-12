@@ -13,7 +13,7 @@
 	echo $this->headLink();
 	
 ?>
-
+ 
 </head>
 <body>
 
@@ -23,46 +23,43 @@
 		<!-- in main_head is the project title-->
 		<div id = "main_Head">
 			<center><h1>Webressourcen<?php echo $this->escape($this->title); ?></h1></center>
-				
-				<div id = "Nav">
-						<!-- menu -->
-						
-						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>">Hauptseite</a> - 
-						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Masterseite</a> - 
-						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'friend', 'action'=>'index'), null, true); ?>">Friendseite</a> - 
-						<a class = "navlink" href="<?php echo $this->url(array('controller'=>'index', 'action'=>'index'), null, true); ?>">-</a>
-				</div>
-				
+			<?php 
+			if($this->masterOnline == 1)		//if logged in
+			{
+			?>
+				<a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>">Hauptseite</a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Masterseite</a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>">Thema erstellen</a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>">Freunde anzeigen</a>
+			<?php 
+			}
+			?>
 		</div>
-		
-		
 		
 		<!-- in main_menue are the topictitle to select-->
 		<div id = "main_Menue">
-            <ul>
-                <?php
-                    foreach( $this->topicList as $topic)
-                    {
-                        if ( isset( $_GET['id']))
-                        {
-                            if ( $_GET['id'] == $topic['topicID'])
-                            {
-                                echo '<li>aktuelles Thema</li>';
-                            }
-                            else 
-                            {
-                                echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
-                                echo $topic['topicName'].'</a></li>';
-                            }
-                        }
-                        else 
-                        {
-                            echo '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=1">';
-                            echo $topic['topicName'].'</a></li>';
-                        }
-                    }
-                ?>
-            </ul>
+			<?php 
+			if($this->masterOnline == 1)		//if logged in
+			{
+			?>
+				<center><p>
+				<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'logout'), null, true); ?>">Logout</a>
+				</center></p>
+				<center><p>
+				<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'updateform'), null, true); ?>">Update</a>
+				</center></p>
+			<?php 
+			} 
+			else					//if not logged in
+			{
+			?>
+				<center><p>
+				<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'prelogin'), null, true); ?>">Login</a>
+				</center></p>
+			<?php 
+			}
+			?>
 		</div>
 		
 		<!-- in main_main are the active action methode -->

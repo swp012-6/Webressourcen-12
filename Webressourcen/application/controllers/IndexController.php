@@ -37,6 +37,7 @@ class IndexController extends Zend_Controller_Action
     {
         $this->view->title = ' - Administrator';
 	$masterNamespace = new Zend_Session_Namespace('master');
+        $this->view->masterOnline = $masterNamespace->masterOnline;
     }
 
     /**
@@ -105,6 +106,7 @@ class IndexController extends Zend_Controller_Action
     public function updateformAction()
     {
         $masterNamespace = new Zend_Session_Namespace('master');
+        $this->view->masterOnline = $masterNamespace->masterOnline;
 
         if ($masterNamespace->masterOnline == 1)
         {
@@ -125,6 +127,7 @@ class IndexController extends Zend_Controller_Action
     public function updateAction()
     {
 	$masterNamespace = new Zend_Session_Namespace('master');
+        $this->view->masterOnline = $masterNamespace->masterOnline;
         if ($this->getRequest()->isPost())		//avoids direct access without having information pass
         {
             //gets old user information from updateform
