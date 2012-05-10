@@ -43,11 +43,26 @@ class UserModel extends Zend_Db_Table_Abstract
 		return $row;
 	}
 	
+	/** this function gives a search result back
+	  *	@param $searchWord sought-after word
+	  * @return user by name
+	  */
 	public function getSearchResult($searchWord)
 	{
-	$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ? OR last_name LIKE ?', $searchWord.'%'));
-    
-    return $result;
+		if($searchWord != "" && $searchWord != " ")
+		{
+			if(strpos($searchWord, " ") !== false)
+			{
+			$searchWordFirst = substr($searchWord, 0, strpos($searchWord, " "));
+			$searchWordLast = substr($searchWord, strpos($searchWord, " ")+1, strlen($searchWord)-1);
+			$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ?', $searchWordFirst.'%' ) ->where('last_name LIKE ?', $searchWordLast.'%'));
+			}
+			else
+				$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ? OR last_name LIKE ?', $searchWord.'%'));
+		}		
+		else
+			$result = $searchWord;
+		return $result;
 	
 	}
 }
