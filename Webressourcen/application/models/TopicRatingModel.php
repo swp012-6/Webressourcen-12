@@ -23,16 +23,18 @@ class TopicRatingModel extends Zend_Db_Table_Abstract
         //test the params of empty
         if(!(empty($topicID)||empty($topicVersion)||empty($userID)))
         {
-          
+            
             //test the topicID,topicVersion and userID in the database,if this empty then create the rating
-            $where = array("topicID" => $topicID,"topicVersion"=> $topicVersion,"userID" => $userID);
+            $where = "topicID = $topicID AND topicVersion = $topicVersion AND userID = $userID";
             $rowset = $this->fetchAll($where);
             $row = $rowset->current();
-            
-            if(NULL == $row['rating'])
+          
+            if(NULL == $row->rating)
             {
+                
                 //if the row empty, than create 
                 $date = array("topicID" => $topicID,"topicVersion"=> $topicVersion,"userID" => $userID,"rating"=> 1);
+               
                 $this->insert($date);
                
             }
