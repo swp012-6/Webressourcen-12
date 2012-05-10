@@ -38,7 +38,7 @@ function confirmation()
             /* button to close the current topic */
             echo '<form id = "closeTopicForm" action = "closetopic" method = "post">';
                 echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
-                echo '<input type = "button" value = "schließen" onclick = "confirmation()" /></form>';
+                echo '<input type = "button" value = "Thema schließen" onclick = "confirmation()" /></form>';
         
             /* invitebutton, redirectes to the invite-page */
             echo '<form action = "invite" method = "post">';
@@ -55,6 +55,14 @@ function confirmation()
             
             /* iframe */
             echo $this->topicContent;
+            
+            echo '<p>Durchschnittliche Bewertung: <p><img src = "../_files/image/rating/stars/5Star_' . $this->topicRating . '.png" height = "50" alt = "' . $this->topicRating . '"';
+                    
+            if( $this->ratingPercent)
+            {
+                echo ' ."Stars from 5 Stars"';
+            }
+            echo '>';
         }
         echo '</div>';
         

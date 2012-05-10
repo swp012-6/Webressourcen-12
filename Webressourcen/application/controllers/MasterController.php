@@ -282,6 +282,31 @@ class MasterController extends Zend_Controller_Action
 
                 $this->view->topicContent = $topicContent;
                 
+                //----------------topic rating-------------------------
+                $topicRatingModel = new TopicRatingModel();
+                
+                $ratingPercent = $topicRatingModel->getRating( $topicID, $selectedTopicVersion);
+                $this->view->ratingPercent = $ratingPercent;
+        
+                //if the topic is not rated yet
+                if( !$ratingPercent)
+                {
+                    $this->view->topicRating = "not rated";
+                }
+                else
+                {
+                    $ratingStars = ceil( (( $ratingPercent * 100) - 20) / (16) );
+                    if( $ratingStars <= 0)
+                    {
+                        $ratingStars = 1;
+                    }
+                    elseif( 5 < $ratingStars)
+                    {
+                        $ratingStars = 5;
+                    }
+                    $this->view->topicRating = $ratingStars;
+                }
+                
                 
                 
                 
