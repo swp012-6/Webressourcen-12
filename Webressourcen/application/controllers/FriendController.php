@@ -69,10 +69,12 @@ class FriendController extends Zend_Controller_Action
         $friendSession->userID = $userID;
         $friendSession->topicID = $topicID;
         
+        //no friend can not log in as Master
+        //if($usertopic[] == true)
         if($usertopic['userName'] == NULL)
         {
             //jump to createName
-            $this->_redirect('/Friend/createName');
+            $this->_redirect('/Friend/createname');
         }
         
         //jump to the topic
@@ -107,7 +109,6 @@ class FriendController extends Zend_Controller_Action
         $userID = $friendSession->userID;
         $topicID = $friendSession->topicID;
         
-
         if(empty($userID) || empty($topicID))
         {
             //if the userID ore the topicID empty, then go to IndexController
@@ -139,6 +140,7 @@ class FriendController extends Zend_Controller_Action
 		//when comment is empty ore when its the first attempt, is send the form  to the viewer
 		if(!$request->isPost() || !$form->isValid($_POST))
 		{
+            //send form to view
 			$view->form = $form;
 		}
 		else// its the input correctly, then send the results to the database
@@ -262,9 +264,7 @@ class FriendController extends Zend_Controller_Action
 		//Init the Database 
 		$dbTopic = new TopicModel();
 		$dbComment = new CommentModel();
-		
-        
-        
+		$dbRating = new TopicRatingModel();
         
 		//Topic select--------------------
         //look to the global session.
@@ -360,8 +360,68 @@ class FriendController extends Zend_Controller_Action
 		$topicAdditiveContent = $dbTopic->getTopic($topicID,$topicVersion);
         $view->topicSource = "Source: ".$topicAdditiveContent['topicSource'];
         
+        //Rating+++++++++++++++++++++++++++++++++++++++++++++++++
         
-		//comment view--------------------------------------
+        //Friend Rating-------------------------------------
+        
+        //Friend Rating title
+        $view->ratingTitleFriend = "Your Rating: ";
+        
+        //have create a rating
+        if(1 == $request->getPost("RatingCreate"))
+        {
+            $dbRating->createRating($topicID,$topicVersion,$userID);
+        }
+        
+        //update the Rate
+        if(0 < $request->getPost("RatingUpdate"))
+        {
+            $dbRating->updateRating($topicID,$topicVersion,$userID,$request->getPost("RatingUpdate"));
+        }
+        
+        
+        $ratingPoint = $dbRating->getRatingPoint($topicID,$topicVersion,$userID);
+        
+        //if the ratingPoint == NULL, then have not rate the friend
+        if($ratingPoint == NULL)
+        {
+           $view->ratingPoint = 0; //is 0-> show then a button to create the rating
+        }
+        else
+        {
+            $view->ratingPoint = $ratingPoint;
+        }
+        
+        //TopicRating-------------------------------------------
+        //title of the Rating from all friends
+        $view->ratingTitleAll = "Topic rating: ";
+        
+        //is the topic rating from owne Version
+        $ratingpercent = $dbRating->getRating($topicID,$topicVersion);
+        $view->ratingpercent = $ratingpercent;
+        
+        //if the rating == 0, then have not rated
+        if($ratingpercent == 0)
+        {
+            $view->topicrating = "not rated";
+        }
+        else
+        {
+            $ratingstars = ceil((($ratingpercent*100)-20)/(16));
+            if($ratingstars <= 0)
+            {
+                $ratingstars = 1;
+            }
+            elseif(5 < $ratingstars)
+            {
+                $ratingstars = 5;
+            }
+            $view->topicrating = $ratingstars;
+        }
+        
+        
+		//comment view++++++++++++++++++++++++++++++++++++++++++
+       
 		$commentOption = array("topicID" => $topicID,"topicVersion"=>$topicVersion, "orderup"=>false,"number" => 3,"page" => 1);
 		$view->friendComment = $dbComment->getComment($commentOption);
 			
@@ -453,7 +513,7 @@ class FriendController extends Zend_Controller_Action
 		$commentOption = array("topicID" => $topicID,"topicVersion"=>$topicVersion, "orderup"=>false, "number" => $maxComment,"page" => $page+1);
 		$view->friendComment = $dbComment->getComment($commentOption);
 		
-		
+
 		//Page Navigator+++++++++++++++++++++++++++++++++++++++++++++++
 		
 		
