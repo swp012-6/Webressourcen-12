@@ -13,6 +13,16 @@ class IndexController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
+        if ( isset( $_GET['lang']))
+        {
+            $registry = Zend_Registry::getInstance();
+            $translate = $registry->get( 'Zend_Translate');
+            switch ( $_GET['lang'])
+            {
+                case 'de':  $translate->setLocale( 'en'); break;
+                default:    $translate->setLocale( 'de');
+            }   
+        }
     }
 
     /**
@@ -24,7 +34,7 @@ class IndexController extends Zend_Controller_Action
     public function indexAction()
     {
         $this->view->title = ' - Hauptseite';
-	$masterNamespace = new Zend_Session_Namespace('master');
+        $masterNamespace = new Zend_Session_Namespace('master');
         $this->view->masterOnline = $masterNamespace->masterOnline;
     }
 

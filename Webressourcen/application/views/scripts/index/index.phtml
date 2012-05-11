@@ -17,9 +17,9 @@ if($this->masterOnline == 1)		//if logged in
 else					//if not logged in
 {
 ?>
-	<p>Auf dieser Seite können Sie verschiedene Themen mit ihren Freunden besprechen.</p>
-	<p>Bitte benutzen die ein Link um zu den Themen zu gelangen,<br> 
-           oder wenn Sie der Administrator sind, melden Sie sich einfach an.</p>
+	<p><?php echo $this->translate( 'Auf dieser Seite können Sie verschiedene Themen mit ihren Freunden besprechen.'); ?></p>
+	<p><?php echo $this->translate( 'Bitte benutzen die einen Link um zu den Themen zu gelangen,'); ?><br> 
+           <?php echo $this->translate( 'oder wenn Sie der Administrator sind, melden Sie sich einfach an.'); ?></p>
 <?php 
 }
 ?>

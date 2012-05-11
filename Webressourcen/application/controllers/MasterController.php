@@ -38,6 +38,17 @@ class MasterController extends Zend_Controller_Action
         
         $bootstrap = $this->getInvokeArg( 'bootstrap');
         $this->config = $bootstrap->getOptions();
+        
+        if ( isset( $_GET['lang']))
+        {
+            $registry = Zend_Registry::getInstance();
+            $translate = $registry->get( 'Zend_Translate');
+            switch ( $_GET['lang'])
+            {
+                case 'de':  $translate->setLocale( 'en'); break;
+                default:    $translate->setLocale( 'de');
+            }   
+        }
     }
 
     public function indexAction()

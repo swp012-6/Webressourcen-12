@@ -23,6 +23,10 @@
 		<!-- in main_head is the project title-->
 		<div id = "main_Head">
 			<center><h1>Webressourcen<?php echo $this->escape($this->title); ?></h1></center>
+            <!-- change the language -->
+            <a href = "<?php echo $this->url() . '?lang=de';?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
+            <a href = "<?php echo $this->url() . '?lang=en';?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langEN.png'; ?>" alt = "english"></a>
+            
 			<?php 
 			if($this->masterOnline == 1)		//if logged in
 			{
