@@ -66,8 +66,77 @@
     //Topic---------------------------------------------------
 	echo  "<iframe src=\"topicview?id= ".($this->escape($this->topicID)) ." &ver= ". ($this->escape($this->currentTopicVersion)) . "\" width=\"90%\" height=\"400\" name=\"Topic\"></iframe></br>";
     echo $this->escape($this->topicSource). "\n";
+    //Topic Rating---------------------------------------------------------------------------------------
     
-    //Topic assessment-------------------------------------------------
+    echo "<table id = \"FriendShowTopicRatingTable\" border = \"1\">";
+        //is the rating from all Frinds
+        echo "<tr>";
+            //title
+            echo "<td>";
+                echo $this->escape($this->ratingTitleAll);
+            echo "</td>";
+            echo "<td";
+                if($this->escape($this->ratingpercent) != 0)
+                {
+                    echo " colspan=\"5\"";
+                }
+                 echo ">";
+                 
+                echo "<img src=\"../_files/image/rating/stars/5Star_".($this->escape($this->topicrating)).".png\" height=\"50\" alt=\"".($this->escape($this->topicrating))."\"";
+                    
+                    if($this->escape($this->ratingpercent) != 0)
+                    {
+                        echo " .\"Stars from 5 Stars\"";
+                    }
+                    echo ">";
+            echo "</td>";
+        echo "</tr>";
+        //ist the rating form the Friend
+        echo "<tr>";
+            //title
+            echo "<td>";
+                echo $this->escape($this->ratingTitleFriend);
+            echo "</td>";
+            
+               //Rating for the Friend
+               
+               //have the Friend never rated
+               if($this->escape($this->ratingPoint) == 0)
+               {
+                    echo "<td>";
+                        echo "<form action =\"showtopic\" method = \"post\">
+                                <input type =\"hidden\" name = \"RatingCreate\" value = \"1\" />
+                                <input type=\"submit\" class=\"RatingButtonCreate\" value = \"Rate?\" />
+                            </form>";
+                    echo "<td>";
+               }
+               else
+               {
+                    for($i = 1; $i<=5; $i++)
+                    {
+                        echo "<td>";
+                        if($i == $this->escape($this->ratingPoint))
+                        {
+                            //view the immage
+                            echo "<img src=\"../_files/image/rating/stars/".$i."Star_on.png\" height=\"50\" alt=\"".$i."Star\">";
+                        }
+                        else
+                        {
+                            //view the button
+               
+                             echo "<form action =\"showtopic\" method = \"post\">
+                                    <input type =\"hidden\" name = \"RatingUpdate\" value = \"".$i."\" />
+                                    <input type=\"image\" src=\"../_files/image/rating/stars/".$i."Star_off.png\" onmouseover=\"this.src='../_files/image/rating/stars/".$i."Star_on.png'\" onmouseout =\"this.src='../_files/image/rating/stars/".$i."Star_off.png'\" height=\"50\" alt=\"".$i."Star\" class=\"RatingButtonUpdate\"  value = \"".$i." Star\" > </input>
+                                    </form>";
+                        }
+                        echo "</td>";
+                    }
+               }
+               
+            
+        echo "</tr>";
+    echo "</table>";
+    //Topic assessment--------------------------------------------------------------------------------------------
     
     
 	//Comment--------------------------------------------------

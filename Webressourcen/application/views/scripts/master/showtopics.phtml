@@ -1,59 +1,88 @@
-﻿<script language = "javascript">
- function Abfrage()
- {
- return confirm('bla bla');
- }
- </script>
+﻿<script type = "text/javascript">
+function confirmation()
+{
+    answer = confirm( 'Sind Sie sicher, dass Sie dieses Thema entgültig löschen möchten?');
+    if ( answer)
+    {
+        document.forms['closeTopicForm'].submit();
+    }
+}
+</script>
 <?php
     if ( !empty( $this->topicContent))
     {
         echo '<div id = "content">';
+        
         echo $this->msg;  //errormessage
         echo '<center><h1>' . $this->topicName . '</h1></center>';
         
-        /* dropbox with available topicVersion */
-        echo 'Version: '; 
-        echo '<form action="showtopics" method="get"><select name="ver">';
-    
-        foreach( $this->topicVersionArray as $topicVersion)
+        if ( !empty( $this->topicContent))
         {
-            if ( $this->selectedTopicVersion == $topicVersion)
+            /* dropbox with available topicVersion */
+            echo '<form name = "versionSelectForm">';
+            echo 'Version: <select name="versionSelect" onChange = "window.location=document.versionSelectForm.versionSelect.options[document.versionSelectForm.versionSelect.selectedIndex].value">';
+    
+            foreach( $this->topicVersionArray as $topicVersion)
             {
-                echo '<option value = "' . $topicVersion . '" selected = "selected">' . $topicVersion;
-            }
-            else
+                if ( $this->selectedTopicVersion == $topicVersion)
+                {
+                    echo '<option selected = "selected" value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
+                }
+                else
+                {
+                    echo '<option value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
+                }
+            }        
+            echo '</form>';
+            
+            /* button to close the current topic */
+            echo '<form id = "closeTopicForm" action = "closetopic" method = "post">';
+                echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
+                echo '<input type = "button" value = "Thema schließen" onclick = "confirmation()" /></form>';
+        
+            /* invitebutton, redirectes to the invite-page */
+            echo '<form action = "invite" method = "post">';
+                echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
+                echo '<input type = "submit" value = "Einladungen versenden" />';
+            echo '</form>';
+        
+            /* button to edit and create a new topicVersion */
+            echo '<form action = "edittopic" method = "get">';
+                echo '<input type = "hidden" name = "id" value = "' . $_GET['id'] . '" />';
+                echo '<input type = "hidden" name = "ver" value = "' . $_GET['ver'] . '" />';
+                echo '<input type = "submit" value = "Inhalt überarbeiten" />';
+            echo '</form>';
+            
+            /* iframe */
+            echo $this->topicContent;
+            
+            echo '<p>Durchschnittliche Bewertung: <p><img src = "../_files/image/rating/stars/5Star_' . $this->topicRating . '.png" height = "50" alt = "' . $this->topicRating . '"';
+                    
+            if( $this->ratingPercent)
             {
-                echo '<option value = "' . $topicVersion . '">' . $topicVersion;
+                echo ' ."Stars from 5 Stars"';
             }
-        }        
-        echo '</select><input type = "hidden" name = "id" value = "' . $_GET['id'] . '"><input type=submit value="go"></form>';
-        
-        /* button to close the current topic */
-        echo '<form action = "closetopic" method = "post">';
-            echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
-            echo '<input type = "submit" value = "schließen" onsubmit = "return confirm("Text")"></form>';
-        
-        /* invitebutton, redirectes to the invite-page */
-        echo '<form action = "invite" method = "post">';
-            echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
-            echo '<input type = "submit" value = "Einladungen versenden" />';
-        echo '</form>';
-        
-        /* iframe */
-        echo $this->topicContent;
+            echo '>';
+        }
         echo '</div>';
         
         /* --- commentpart --- */
         echo '<div id = "comment">';
         
-        if ( !empty( $this->CommentRowSet))
+        if ( !empty( $this->commentRowSet))
         {
             echo '<table border = "1">';
-            foreach( $this->CommentRowSet as $CommentRow)
+            foreach( $this->commentRowSet as $commentRow)
             {
-                echo '<tr><td>' . $CommentRow['commentDate'] . '</td>';
-                echo '<td>' . $CommentRow['userName'] . '</td>';
-                echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
+                echo '<tr><td>' . $commentRow['commentDate'] . '</td>';
+                echo '<td>' . $commentRow['userName'] . '</td>';
+                echo '<td>' . $commentRow['commentText'] . '</td>';
+                echo '<td><form action = "deletecomment" method = "post">';
+                    echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
+                    echo '<input type = "hidden" name = "topicVersion" value = "' . $_GET['ver'] . '" />';
+                    echo '<input type = "hidden" name = "commentID" value = "' . $commentRow['commentID'] . '" />';
+                    echo '<input type = "submit" value = "löschen" />';
+                echo '</form></td></tr>';
             }
             echo '</table>';
             
