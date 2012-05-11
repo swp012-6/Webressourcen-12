@@ -3,19 +3,19 @@
 <table border = "1">
 	<tr>				<!--tablehead-->
 		<td>
-			Vorname
+			<?php echo $this->translate( 'Vorname'); ?>
 		</td>
 		<td>
-			Nachname
+			<?php echo $this->translate( 'Nachname'); ?>
 		</td>
 		<td>
-			E-Mail-Adresse
+			<?php echo $this->translate( 'E-Mail-Adresse'); ?>
 		</td>
 		<td>
-			Beruf
+			<?php echo $this->translate( 'Beruf'); ?>
 		</td>
 		<td>
-			Adresse
+			<?php echo $this->translate( 'Adresse'); ?>
 		</td>
 		<td>
 		</td>
@@ -44,7 +44,7 @@ foreach ($this->friends as $a)		//for each friend
 		</td>
 		<td>
 			<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>?id=<?php echo $this->escape($a->userID) ?>" method="post">
-				<input type="submit" name="button_send" value="Details" class="button" />
+				<input type="submit" name="button_send" value="<?php echo $this->translate( 'Details'); ?>" class="button" />
 			</form>
 		</td>
 		<td>

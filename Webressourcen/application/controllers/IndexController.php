@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License(GPL)
@@ -9,7 +9,8 @@
  */
 class IndexController extends Zend_Controller_Action
 {
-
+    protected $_translate;
+    
     public function init()
     {
         $languageNamespace = new Zend_Session_Namespace( 'language');
@@ -21,6 +22,7 @@ class IndexController extends Zend_Controller_Action
         
         $registry = Zend_Registry::getInstance();
         $translate = $registry->get( 'Zend_Translate');
+        $this->_translate = $translate;
         switch ( $languageNamespace->lang)
         {
             case 'de':  $translate->setLocale( 'en'); break;
@@ -36,7 +38,7 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction()
     {
-        $this->view->title = ' - Hauptseite';
+        $this->view->title = ' - ' . $this->_translate->_( 'Hauptseite');
         $masterNamespace = new Zend_Session_Namespace('master');
         $this->view->masterOnline = $masterNamespace->masterOnline;
     }
@@ -89,7 +91,7 @@ class IndexController extends Zend_Controller_Action
                 else
                 {
                     //error if it didn't work
-                    $this->view->error = "Login failed. Have you confirmed your account?";
+                    $this->view->error = $this->_translate->_( 'Login fehlgeschlagen. Haben Sie ihren Account bestätigt?');
                 }
             }
         }
@@ -175,7 +177,7 @@ class IndexController extends Zend_Controller_Action
             else
             {
                 //error if it didn't work
-                $this->view->error = "Update failed. Have you confirmed your account?";
+                $this->view->error = $this->_translate->_( 'Update fehlgeschlagen. Haben Sie ihren Account bestätigt?');
             }
         }
         else  
@@ -186,16 +188,4 @@ class IndexController extends Zend_Controller_Action
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
+?>

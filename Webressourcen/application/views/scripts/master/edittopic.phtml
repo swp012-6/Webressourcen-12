@@ -31,7 +31,7 @@ tinyMCE.init({
         echo '<input type = "hidden" name = "topicVersion" value = "' . $this->topicVersion . '"/>';
         echo '<textarea name = "topicContent" cols = "100" rows = "20"/>' . $this->topicContent . '</textarea>';
         echo '<input type = "text" name = "topicSource" value = "' . $this->topicSource . '"/>';
-        echo '<input type = "submit" value = "neue Version speichern"/>';
+        echo '<input type = "submit" value = "' . <?php echo $this->translate( 'neue Version speichern'); ?> . '"/>';
     echo '</form>';
 
 ?>

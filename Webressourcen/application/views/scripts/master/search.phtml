@@ -1,14 +1,14 @@
-<?php
+﻿<?php
 	if($this->result != "" && $this->result != " ")
 	{
 ?>
 <table border = "1"> <!-- tablehead -->
 <tr>
-	<td>Vorname</td>
-	<td>Nachname</td>
-	<td>E-Mail-Adresse</td>
-	<td>Beruf</td>
-	<td>Adresse</td>
+	<td><?php echo $this->translate( 'Vorname'); ?></td>
+	<td><?php echo $this->translate( 'Nachname'); ?></td>
+	<td><?php echo $this->translate( 'E-Mail-Adresse'); ?></td>
+	<td><?php echo $this->translate( 'Beruf'); ?></td>
+	<td><?php echo $this->translate( 'Adresse'); ?></td>
 </tr>
 <?php
 	foreach( $this->result as $a)
@@ -38,5 +38,5 @@
 <?php
 }
 else
-echo "Sie m&uuml;ssen den Namen eines Freundes eingeben!";
+echo "<?php echo $this->translate( 'Sie müssen den Namen eines Freundes eingeben!'); ?>";
 ?>
