@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Webressourcen 2012\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-11 21:59+0100\n"
-"PO-Revision-Date: 2012-05-11 21:59+0100\n"
+"PO-Revision-Date: 2012-05-11 22:06+0100\n"
 "Last-Translator: Kotnascher <kot@kotig.com>\n"
 "Language-Team: swp6-12\n"
 "MIME-Version: 1.0\n"
@@ -256,7 +256,7 @@ msgstr "On this page you are able to discuss different topics with your friends.
 
 #: views/scripts/index/index.phtml:21
 msgid "Bitte benutzen die einen Link um zu den Themen zu gelangen,"
-msgstr "Please use one of the links on the left side to access a topic,"
+msgstr "Please use a links to access a topic,"
 
 #: views/scripts/index/index.phtml:22
 msgid "oder wenn Sie der Administrator sind, melden Sie sich einfach an."
