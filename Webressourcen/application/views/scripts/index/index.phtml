@@ -1,17 +1,17 @@
 <!-- content of the mainpage -->
-<h1>Willkommen</h1>
+<h1><?php echo $this->translate( 'Willkommen'); ?></h1>
 <?php 
 if($this->masterOnline == 1)		//if logged in
 {
 ?>
-	Sie wurden als Master angemeldet und haben nun folgende Möglichkeiten:
+	<?php echo $this->translate( 'Sie wurden als Master angemeldet und haben nun folgende Möglichkeiten:'); ?>
 	<ul>
-	    <li>Neues Thema erstellen</li>
-	    <li>Thema überarbeiten und eine aktuellere Version erzeugen</li>
-	    <li>Freunde zu ihren Themen per Email einladen bzw. Einladungen widerrufen</li>
-	    <li>Kommentare schreiben und löschen</li>
+	    <li><?php echo $this->translate( 'Neues Thema erstellen'); ?></li>
+	    <li><?php echo $this->translate( 'Thema überarbeiten und eine aktuellere Version erzeugen'); ?></li>
+	    <li><?php echo $this->translate( 'Freunde zu ihren Themen per Email einladen bzw. Einladungen widerrufen'); ?></li>
+	    <li><?php echo $this->translate( 'Kommentare schreiben und löschen'); ?></li>
 	</ul>
-	Auf der linken Seite finden Sie ein Suchfeld, mit dessen Hilfe Sie leicht nach Freunden bzw. Themen suchen können.
+	<?php echo $this->translate( 'Auf der linken Seite finden Sie ein Suchfeld, mit dessen Hilfe Sie leicht nach Freunden bzw. Themen suchen können.'); ?>
 <?php 
 } 
 else					//if not logged in
