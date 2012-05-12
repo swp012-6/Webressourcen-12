@@ -260,8 +260,9 @@ class MasterController extends Zend_Controller_Action
         if ( isset( $_GET['id']))
         {
             $topicID = $_GET['id'];
+            
             /* set version to standard if not available */
-            if (!isset( $_GET['ver']))
+            if ( !isset( $_GET['ver']))
             {
                 $selectedTopicVersion = $topicModel->getMaxTopicVersion( $topicID);
             }
@@ -298,6 +299,7 @@ class MasterController extends Zend_Controller_Action
                 $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>' . $this->_translate->_( 'Quelle:') . $topicSource;                
 
                 $this->view->topicContent = $topicContent;
+                $this->view->topicTest = 1;
                 
                 //----------------topic rating-------------------------
                 $topicRatingModel = new TopicRatingModel();
@@ -350,6 +352,7 @@ class MasterController extends Zend_Controller_Action
             }
             else // no topic for the specified topicID + topicVersion
             {
+                $this->view->topicTest = 0;
                 $this->view->topicContent = '<h1>' . $this->_translate->_( 'Kein Thema vorhanden!') . '</h1>';
             }
         }

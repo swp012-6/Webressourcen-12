@@ -155,7 +155,11 @@ class TopicModel extends Zend_Db_Table_Abstract
         
         $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
                                                                                     ->where( 'topicID = ?', $topicID));
-        return $maxVersion['maxVersion'];
+        if ( !empty( $maxVersion['maxVersion']))
+        {
+            return $maxVersion['maxVersion'];
+        }
+        else return 0;
     }
     
     /** 
@@ -183,6 +187,22 @@ class TopicModel extends Zend_Db_Table_Abstract
             return 0;	//failed
         }
         return 1;	//successful
+    }
+    
+    /** 
+     * returns 1 if the topicID exists
+     * @param $topicID the topicID
+     * @return 1 if topicID exists, 0 if not    
+     */
+    public function topicExists( $topicID)
+    {
+        $result = $this->getTopicName( $topicID);
+        
+        if ( empty( $result))
+        {
+            return 0;
+        }
+        else return 1;
     }
 }
 ?>
