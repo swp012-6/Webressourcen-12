@@ -1,7 +1,7 @@
 ﻿<script type = "text/javascript">
 function confirmation()
 {
-    answer = confirm( <?php echo $this->translate( 'Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?'); ?>);
+    answer = confirm( '<?php echo $this->translate( 'Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?'); ?>');
     if ( answer)
     {
         document.forms['closeTopicForm'].submit();
@@ -16,7 +16,7 @@ function confirmation()
         echo $this->msg;  //errormessage
         echo '<center><h1>' . $this->topicName . '</h1></center>';
         
-        if ( !empty( $this->topicContent))
+        if ( $this->topicTest)
         {
             /* dropbox with available topicVersion */
             echo '<form name = "versionSelectForm">';
@@ -63,6 +63,10 @@ function confirmation()
                 echo ' ."' . $this->translate( 'Sterne von 5 Sternen') . '"';
             }
             echo '>';
+        }
+        else 
+        {
+            echo $this->topicContent;
         }
         echo '</div>';
         
