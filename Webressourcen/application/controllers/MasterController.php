@@ -700,7 +700,7 @@ class MasterController extends Zend_Controller_Action
         $topicSource = $_POST['topicSource'];
         $topicType = $_POST['topicType'];
         
-        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))
+        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)))
         {
             $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
