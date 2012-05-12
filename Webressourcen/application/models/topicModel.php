@@ -191,23 +191,7 @@ class TopicModel extends Zend_Db_Table_Abstract
         return 1;	//successful
     }
     
-    /** 
-     * returns 1 if the topicID exists
-     * @param $topicID the topicID
-     * @return 1 if topicID exists, 0 if not    
-     */
-    public function topicExists( $topicID)
-    {
-        $result = $this->getTopicName( $topicID);
-        
-        if ( empty( $result))
-        {
-            return 0;
-        }
-        else return 1;
-    }
-	
-	public function getSearchResult($searchTopic)
+    public function getSearchResult($searchTopic)
 	{
 		if($searchTopic != "" && $searchTopic != " ")
 		{
@@ -217,6 +201,5 @@ class TopicModel extends Zend_Db_Table_Abstract
 			$result = $searchTopic;
 		return $result;
 	}
-			
 }
 ?>

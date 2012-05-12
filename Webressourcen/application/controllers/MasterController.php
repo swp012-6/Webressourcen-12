@@ -615,65 +615,76 @@ class MasterController extends Zend_Controller_Action
     {        
         //session_start(); ..........
         
-        if ( !isset( $_GET['id']))
+        if ( isset( $_GET['id']))
         {
-            $this->view->msg = $this->_translate->_( 'Keine Themen-ID angegeben!');
-        }
-        $topicID = $_GET['id'];
+            $topicID = $_GET['id'];
         
-        $topicModel = new TopicModel();    
+            $topicModel = new TopicModel();    
         
-        /* set topicVersion to maximum if necessary and send it to the view */
-        if ( !isset( $_GET['ver']))
-        {
-            $topicVersion = $topicModel->getMaxTopicVersion( $topicID);
-        }
-        else $topicVersion = $_GET['ver'];
-        $this->view->topicVersion = $topicVersion;
+            /* set topicVersion to maximum if necessary and send it to the view */
+            if ( !isset( $_GET['ver']))
+            {
+                $topicVersion = $topicModel->getMaxTopicVersion( $topicID);
+            }
+            else $topicVersion = $_GET['ver'];
+            $this->view->topicVersion = $topicVersion;
             
-        $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
+            $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
         
-        /* set baseUrl for the view */
-        $list = explode( '/', $_SERVER['REQUEST_URI']);
-        $this->view->baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $list['1'];
+            /* set baseUrl for the view */
+            $list = explode( '/', $_SERVER['REQUEST_URI']);
+            $this->view->baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $list['1'];
         
-        /* topics with spezified topicID are not available */
-        if ( empty( $topicName)) 
-        {
-            $this->view->msg = $this->_translate->_( 'Kein Thema zum bearbeiten vorhanden!');
-        }
-        
-        /* error-msg output */
-        switch ( $_GET['msg'])
-        {
-            case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder füllen!');
-                    break;
-            case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL.');
-                    break;
-        }
-        $this->view->topicName = $topicName;
+            /* topics with spezified topicID are not available */
+            if ( empty( $topicName)) 
+            {
+                $this->view->msg = '<h1>' . $this->_translate->_( 'Kein Thema zum bearbeiten vorhanden!') . '</h1>';
+                $this->view->topicTest = 0;
+            }
+            else 
+            {
+                /* error-msg output */
+                switch ( $_GET['msg'])
+                {
+                    case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder füllen!');
+                            break;
+                    case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL.');
+                            break;
+                }
+                $this->view->topicName = $topicName;
                 
-        $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
+                $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
                 
-        /* if there is no topic with the specified versionNumber */
-        if ( empty( $topicRow))
-        {
-            $this->view->msg = $this->_translate->_( 'Angegebende Version existiert für dieses Thema nicht!');
-        }
+                /* if there is no topic with the specified versionNumber */
+                if ( empty( $topicRow))
+                {
+                    $this->view->msg = '<h1>' . $this->_translate->_( 'Angegebende Version existiert für dieses Thema nicht!') . '</h1>';
+                    $this->view->topicTest = 0;
+                }
+                else 
+                {
+                    /* topic type is text ( "0") */
+                    if ( !$topicRow['topicType'])
+                    {
+                        $this->view->topicType = 0;
+                        $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+                    }
+                    else //if topic type is link ( "1"), just show the URL
+                    {
+                        $this->view->topicType = 1;
+                        $this->view->topicContent = $topicRow['topicSource'];
+                    }
         
-        /* topic type is text ( "0") */
-        if ( !$topicRow['topicType'])
-        {
-            $this->view->topicType = 0;
-            $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+                    $this->view->topicSource = $topicRow['topicSource'];
+                    $this->view->topicTest = 1;
+                }
+            }
         }
-        else //if topic type is link ( "1"), just show the URL
+        else 
         {
-            $this->view->topicType = 1;
-            $this->view->topicContent = $topicRow['topicSource'];
+            $this->view->msg = '<h1>' . $this->_translate->_( 'Keine Themen-ID angegeben!') . '</h1>';
+            $this->view->topicTest = 0;
         }
-        
-        $this->view->topicSource = $topicRow['topicSource']; 
     }
 
     /** This function creates a new topicVersion with the posted topicContent and topicSource. 
@@ -941,7 +952,6 @@ class MasterController extends Zend_Controller_Action
 	  */
 	public function searchAction()
 	{
-		$userModel = new UserModel();
 		$topicModel = new Topicmodel();
 		$resultFriend = $userModel->getSearchResult($_POST['search']);
 		$resultTopic = $topicModel->getSearchResult($_POST['search']);
