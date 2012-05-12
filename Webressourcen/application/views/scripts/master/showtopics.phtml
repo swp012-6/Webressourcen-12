@@ -1,10 +1,10 @@
 ﻿<script type = "text/javascript">
-function confirmation()
+function confirmation( form)
 {
     answer = confirm( '<?php echo $this->translate( 'Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?'); ?>');
     if ( answer)
     {
-        document.forms['closeTopicForm'].submit();
+        form.submit();
     }
 }
 </script>
@@ -33,13 +33,14 @@ function confirmation()
                     echo '<option value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
                 }
             }        
-            echo '</form>';
-            
+            echo '</select></form>';
+        
             /* button to close the current topic */
             echo '<form id = "closeTopicForm" action = "closetopic" method = "post">';
                 echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
-                echo '<input type = "button" value = "' . $this->translate( 'Thema schließen') . '" onclick = "confirmation()" /></form>';
-        
+                echo '<input type = "button" value = "' . $this->translate( 'Thema schließen') . '" onclick = "confirmation( this.form)" />';
+            echo '</form>';
+            
             /* invitebutton, redirectes to the invite-page */
             echo '<form action = "invite" method = "post">';
                 echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
