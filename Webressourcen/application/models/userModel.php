@@ -47,21 +47,21 @@ class UserModel extends Zend_Db_Table_Abstract
 	  *	@param $searchWord sought-after word
 	  * @return user by name
 	  */
-	public function getSearchResult($searchWord)
+	public function getSearchResult($searchFriend)
 	{
-		if($searchWord != "" && $searchWord != " ")
+		if($searchFriend != "" && $searchFriend != " ")
 		{
-			if(strpos($searchWord, " ") !== false)
+			if(strpos($searchFriend, " ") !== false)
 			{
-			$searchWordFirst = substr($searchWord, 0, strpos($searchWord, " "));
-			$searchWordLast = substr($searchWord, strpos($searchWord, " ")+1, strlen($searchWord)-1);
+			$searchWordFirst = substr($searchFreind, 0, strpos($searchFriend, " "));
+			$searchWordLast = substr($searchFriend, strpos($searchFriend, " ")+1, strlen($searchFriend)-1);
 			$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ?', $searchWordFirst.'%' ) ->where('last_name LIKE ?', $searchWordLast.'%'));
 			}
 			else
-				$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ? OR last_name LIKE ?', $searchWord.'%'));
+				$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ? OR last_name LIKE ?', $searchFriend.'%'));
 		}		
 		else
-			$result = $searchWord;
+			$result = $searchFriend;
 		return $result;
 	
 	}

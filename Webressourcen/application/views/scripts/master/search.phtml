@@ -1,42 +1,74 @@
 ﻿<?php
-	if($this->result != "" && $this->result != " ")
+	if($this->resultFriend['firstname']!=NULL)
 	{
+		if($this->resultFriend != "" && $this->resultFriend != " ")
+		{
 ?>
-<table border = "1"> <!-- tablehead -->
-<tr>
-	<td><?php echo $this->translate( 'Vorname'); ?></td>
-	<td><?php echo $this->translate( 'Nachname'); ?></td>
-	<td><?php echo $this->translate( 'E-Mail-Adresse'); ?></td>
-	<td><?php echo $this->translate( 'Beruf'); ?></td>
-	<td><?php echo $this->translate( 'Adresse'); ?></td>
-</tr>
+			<table border = "1"> <!-- tablehead -->
+				<tr>
+					<td><?php echo $this->translate( 'Vorname'); ?></td>
+					<td><?php echo $this->translate( 'Nachname'); ?></td>
+					<td><?php echo $this->translate( 'E-Mail-Adresse'); ?></td>
+					<td><?php echo $this->translate( 'Beruf'); ?></td>
+					<td><?php echo $this->translate( 'Adresse'); ?></td>
+				</tr>
 <?php
-	foreach( $this->result as $a)
-	{
+				foreach( $this->resultFriend as $a)
+				{
 ?>
-	<tr>									<!-- tablebody -->
-		<td>
-			<?php echo $a['first_name']; ?>
-		</td>
-		<td>
-			<?php echo $a['last_name']; ?>
-		</td>
-		<td> 
-			<?php echo $a['email']; ?>
-		</td>
-		<td> 
-			<?php echo $a['job']; ?>
-		</td>
-		<td> 
-			<?php echo $a['adresse']; ?>
-		</td>
-	</tr>
+					<tr>									<!-- tablebody -->
+						<td>
+							<?php echo $a['first_name']; ?>
+						</td>
+						<td>
+							<?php echo $a['last_name']; ?>
+						</td>
+						<td> 
+							<?php echo $a['email']; ?>
+						</td>
+						<td> 
+							<?php echo $a['job']; ?>
+						</td>
+						<td> 
+							<?php echo $a['adresse']; ?>
+						</td>
+					</tr>
 <?php
+				}
+?>
+			</table>
+<?php
+		}
+		else
+			echo "<?php echo $this->translate( 'Kein Freund gefunden!'); ?>";
 	}
 ?>
-</table>
 <?php
-}
-else
-echo "<?php echo $this->translate( 'Sie müssen den Namen eines Freundes eingeben!'); ?>";
+	if($this->resulttopic['topicName']!= NULL)
+	{
+		if($this->resultTopic != "" && $this->resultTopic != " ")
+		{
+?>
+			<table border = "1"> <!-- tablehead -->
+				<tr>
+					<td><?php echo $this->translate( 'Thema'); ?></td>
+				</tr>
+<?php
+				foreach( $this->resultTopic as $b)
+				{
+?>
+					<tr>									<!-- tablebody -->
+						<td>
+							<?php echo $b['topicName']; ?>
+						</td>
+					</tr>
+<?php
+				}
+?>
+			</table>
+<?php
+		}
+	}
+	if($this->resultFriend['firstname']==NULL && $this->resultTopic['topicName']==NULL)
+		echo "Nichts gefunden!";
 ?>

@@ -204,5 +204,17 @@ class TopicModel extends Zend_Db_Table_Abstract
         }
         else return 1;
     }
+	
+	public function getSearchResult($searchTopic)
+	{
+		if($searchTopic != "" && $searchTopic != " ")
+		{
+			$result = $this->fetchAll( $this->select() ->from( $this)  ->where('topicName LIKE ?', $searchTopic.'%'));
+		}		
+		else
+			$result = $searchTopic;
+		return $result;
+	}
+			
 }
 ?>
