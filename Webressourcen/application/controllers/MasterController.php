@@ -343,7 +343,7 @@ class MasterController extends Zend_Controller_Action
                     $this->view->commentRowSet = $commentRowSet;
                 }
                 
-                $userID = 1; //test-purpose
+                $userID = 1; //test-purpose -------------------------------------------------------------------------------------------------------
                 /* send a generated comment-creation-form to the view */
                 $createCommentForm = new Application_Form_CreateComment();
                 $createCommentForm->setIDs( $topicID, $userID, $selectedTopicVersion);
@@ -811,7 +811,7 @@ class MasterController extends Zend_Controller_Action
             if ( !empty( $commentRowSet))
             {    
                 /* send the rowSet with user-comments and names to the view */
-                $this->view->CommentRowSet = $commentRowSet;
+                $this->view->commentRowSet = $commentRowSet;
             }
         }
     }

@@ -1,16 +1,22 @@
 ﻿<?php 
 
-    if ( empty( $this->CommentRowSet))
+    if ( empty( $this->commentRowSet))
     {
         $this->_redirect('showtopics?id=' . $_GET['id'] . '&ver=' . $_GET['ver']);
     }
     
     echo '<table border = "1">';
-    foreach( $this->CommentRowSet as $CommentRow)
+    foreach( $this->commentRowSet as $commentRow)
     {
-        echo '<tr><td>' . $CommentRow['commentDate'] . '</td>';
-        echo '<td>' . $CommentRow['userName'] . '</td>';
-        echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
+        echo '<tr><td>' . $commentRow['commentDate'] . '</td>';
+        echo '<td>' . $commentRow['userName'] . '</td>';
+        echo '<td>' . $commentRow['commentText'] . '</td>';
+        echo '<td><form action = "deletecomment" method = "post">';
+                    echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
+                    echo '<input type = "hidden" name = "topicVersion" value = "' . $_GET['ver'] . '" />';
+                    echo '<input type = "hidden" name = "commentID" value = "' . $commentRow['commentID'] . '" />';
+                    echo '<input type = "submit" value = "' . $this->translate( 'löschen') . '" />';
+                echo '</form></td></tr>';
     }
     echo '</table>Seite: ';
     
