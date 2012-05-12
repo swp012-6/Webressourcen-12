@@ -168,8 +168,9 @@ class TopicModel extends Zend_Db_Table_Abstract
         //load models
         $topicAdditiveModel = new TopicAdditiveModel();
         $topicModel = new TopicModel();
-        $commentModel = new commentModel();
+        $commentModel = new CommentModel();
         $userTopicModel = new UserTopicModel();
+        $topicRatingModel = new TopicRatingModel();
         //delete topic, topicAdditives, comments and userTopics
         try
         {
@@ -177,6 +178,7 @@ class TopicModel extends Zend_Db_Table_Abstract
             $topicAdditiveModel->delete( 'topicID = '. $topicID);
             $commentModel->delete( 'topicID = '. $topicID);
             $userTopicModel->delete( 'topicID = '. $topicID);
+            $topicRatingModel->delete( 'topicID = '. $topicID);
 	}
         catch (Exception $e)
         {
