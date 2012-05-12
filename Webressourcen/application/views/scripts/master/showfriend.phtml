@@ -1,3 +1,16 @@
+﻿<script type = "text/javascript">
+/**
+ * asks the user if he really want to delete this friend
+ */
+function confirmation()
+{
+    var answer = confirm( '<?php echo $this->translate( 'Sind Sie sicher, dass Sie diesen Freund endgültig löschen möchten?'); ?>');
+    if ( answer)
+    {
+        document.forms['deleteFriend'].submit();
+    }
+}
+</script>
 <table>
 	<tr>	<!-- User Information -->
 		<td width="250">	
@@ -55,7 +68,7 @@ else
 				<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'lockfriend'), null, true) ?>" method="post">
 					<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
 					<input type = "hidden" name = "topicID" value = "<?php echo $this->infoTopicIDs[$i] ?>" />
-					<input type="submit" name="button_send" value="<?php echo $this->translate( 'Trennen'); ?>" class="button" />
+					<input type="submit" name="button_cut" value="<?php echo $this->translate( 'Trennen'); ?>" class="button" />
 				</form>
 			</td>
 		</tr>
@@ -75,9 +88,9 @@ else
 <!-- delete button  -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" method="post">
 	<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
-	<input type="submit" name="button_delete_friend" value="<?php echo $this->translate( 'Freund entfernen'); ?>" class="button" />
+	<input id = "deleteFriend" type="submit" name="button_delete_friend" value="<?php echo $this->translate( 'Freund entfernen'); ?>" onclick = "confirmation()" />
 </form>
 <!-- return button  -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true) ?>" method="post">
-	<input type="submit" name="button_send" value="<?php echo $this->translate( 'zurück'); ?>" class="button" />
+	<input type="submit" name="button_back" value="<?php echo $this->translate( 'zurück'); ?>" class="button" />
 </form>

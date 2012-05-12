@@ -174,6 +174,11 @@ class MasterController extends Zend_Controller_Action
             $userID = $_GET['id'];
             //load user
             $user = $userModel->getUser($userID);
+            //authentification
+            if(empty($user['email']))
+            {
+                $this->_redirect('/master/friend');
+            }
             //pass first name
             if(empty($user['first_name']))
             {
