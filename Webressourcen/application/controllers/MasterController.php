@@ -939,8 +939,11 @@ class MasterController extends Zend_Controller_Action
 	public function searchAction()
 	{
 		$userModel = new UserModel();
-		$result = $userModel->getSearchResult($_POST['search']);
-		$this->view->result = $result;
+		$topicModel = new Topicmodel();
+		$resultFriend = $userModel->getSearchResult($_POST['search']);
+		$resultTopic = $topicModel->getSearchResult($_POST['search']);
+		$this->view->resultFriend = $resultFriend;
+		$this->view->resultTopic = $resultTopic;
 	}
     
     /** This function deletes a comment by commentID
