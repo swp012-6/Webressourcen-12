@@ -23,7 +23,7 @@
 if($this->size == 0)
 {
 ?>
-Dieser Freund ist noch zu keinem Thema eingeladen<br>
+<?php echo $this->translate( 'Dieser Freund ist noch zu keinem Thema eingeladen'); ?><br>
 <?php
 }
 else
@@ -32,10 +32,10 @@ else
 	<table border = "1">
 		<tr>				<!--tablehead-->
 			<td>
-				Thema
+				<?php echo $this->translate( 'Thema'); ?>
 			</td>
 			<td>
-				sein Nick
+				<?php echo $this->translate( 'sein Nick'); ?>
 			</td>
 			<td>
 			</td>
@@ -55,7 +55,7 @@ else
 				<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'lockfriend'), null, true) ?>" method="post">
 					<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
 					<input type = "hidden" name = "topicID" value = "<?php echo $this->infoTopicIDs[$i] ?>" />
-					<input type="submit" name="button_send" value="Trennen" class="button" />
+					<input type="submit" name="button_send" value="<?php echo $this->translate( 'Trennen'); ?>" class="button" />
 				</form>
 			</td>
 		</tr>
@@ -75,9 +75,9 @@ else
 <!-- delete button  -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" method="post">
 	<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
-	<input type="submit" name="button_delete_friend" value="Freund entfernen" class="button" />
+	<input type="submit" name="button_delete_friend" value="<?php echo $this->translate( 'Freund entfernen'); ?>" class="button" />
 </form>
 <!-- return button  -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true) ?>" method="post">
-	<input type="submit" name="button_send" value="zurück" class="button" />
+	<input type="submit" name="button_send" value="<?php echo $this->translate( 'zurück'); ?>" class="button" />
 </form>

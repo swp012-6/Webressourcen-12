@@ -31,6 +31,7 @@
   */
 class MasterController extends Zend_Controller_Action
 { 
+    protected $_translate;
     
     public function init()
     {
@@ -38,6 +39,22 @@ class MasterController extends Zend_Controller_Action
         
         $bootstrap = $this->getInvokeArg( 'bootstrap');
         $this->config = $bootstrap->getOptions();
+        
+        $languageNamespace = new Zend_Session_Namespace( 'language');
+        
+        if ( isset( $_GET['lang']))
+        {
+            $languageNamespace->lang = $_GET['lang'];
+        }
+        
+        $registry = Zend_Registry::getInstance();
+        $translate = $registry->get( 'Zend_Translate');
+        $this->_translate = $translate;
+        switch ( $languageNamespace->lang)
+        {
+            case 'de':  $translate->setLocale( 'en'); break;
+            default:    $translate->setLocale( 'de');
+        }   
     }
 
     public function indexAction()
@@ -55,18 +72,18 @@ class MasterController extends Zend_Controller_Action
         {
             switch ($_GET['error'])
             {
-                case 1: $this->view->errorMsg = 'Themen-Name bereits vergeben!'; 
+                case 1: $this->view->errorMsg = $this->_translate->_( 'Themen-Name bereits vergeben!'); 
                         break;
                 
-                case 2: $this->view->errorMsg = 'Bitte alle Felder füllen!';
+                case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder füllen!');
                         break;
-                case 3: $this->view->errorMsg = 'Ihre Eingabe entsprach keiner gültigen URL!';
+                case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL!');
                         break;
                 default: 
             }
         }
-        $topicForm = new Application_Form_CreateTopic();
-		$this->view->topicForm = $topicForm;
+        $topicForm = new Application_Form_CreateTopic(); 
+        $this->view->topicForm = $topicForm;
         
         /* set baseUrl for the view */
         $list = explode( '/', $_SERVER['REQUEST_URI']);
@@ -160,7 +177,7 @@ class MasterController extends Zend_Controller_Action
             //pass first name
             if(empty($user['first_name']))
             {
-                $this->view->first_name = 'Herr/Frau';
+                $this->view->first_name = $this->_translate->_( 'Herr/Frau');
             }
             else
             {
@@ -169,7 +186,7 @@ class MasterController extends Zend_Controller_Action
             //pass last name
             if(empty($user['last_name']))
             {
-                $this->view->last_name = 'Unbekannt';
+                $this->view->last_name = $this->_translate->_( 'Unbekannt');
             }
             else
             {
@@ -218,11 +235,11 @@ class MasterController extends Zend_Controller_Action
         
         switch ( $_GET['msg'])
         {
-            case 1: $this->view->msg = 'Bitte füllen Sie das Feld Kommentar!';
+            case 1: $this->view->msg = $this->_translate->_( 'Bitte füllen Sie das Feld Kommentar!');
             break;
-            case 2: $this->view->msg = 'Es wurde erfolgreich eine neue Version erstellt.';
+            case 2: $this->view->msg = $this->_translate->_( 'Es wurde erfolgreich eine neue Version erstellt.');
             break;
-            case 3: $this->view->msg = 'Einladungen erfolgreich versendet.';
+            case 3: $this->view->msg = $this->_translate->_( 'Einladungen erfolgreich versendet.');
             break;
         }
         
@@ -273,12 +290,12 @@ class MasterController extends Zend_Controller_Action
                 /* set the topicSource if empty */
                 if ( empty( $topicSource))
                 {
-                    $topicSource = 'nicht angegeben/bekannt';
+                    $topicSource = $this->_translate->_( 'nicht angegeben/bekannt');
                 }
                 
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicName;
-                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>Quelle: ' . $topicSource;                
+                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>' . $this->_translate->_( 'Quelle:') . $topicSource;                
 
                 $this->view->topicContent = $topicContent;
                 
@@ -291,7 +308,7 @@ class MasterController extends Zend_Controller_Action
                 //if the topic is not rated yet
                 if( !$ratingPercent)
                 {
-                    $this->view->topicRating = "not rated";
+                    $this->view->topicRating = $this->_translate->_( 'noch nicht bewertet');
                 }
                 else
                 {
@@ -333,7 +350,7 @@ class MasterController extends Zend_Controller_Action
             }
             else // no topic for the specified topicID + topicVersion
             {
-                $this->view->topicContent = '<h1>Kein Thema vorhanden!</h1>';
+                $this->view->topicContent = '<h1>' . $this->_translate->_( 'Kein Thema vorhanden!') . '</h1>';
             }
         }
     }
@@ -357,7 +374,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch (Exception $e)
             {
-                $this->view->error = "Fehler beim Löschen der Verbindung zwischen Freund und Thema";
+                $this->view->error = $this->_translate->_( 'Fehler beim Löschen der Verbindung zwischen Freund und Thema');
             }
         }
         else
@@ -387,7 +404,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch (Exception $e)
             {
-                $this->view->error = "Fehler beim Löschen des Freundes";
+                $this->view->error = $this->_translate->_( 'Fehler beim Löschen des Freundes');
             }
         }
         else
@@ -408,7 +425,7 @@ class MasterController extends Zend_Controller_Action
         //check result
         if( !$success)
         {						//error message
-            $this->view->error = 'Es ist ein Fehler beim Löschen aufgetretten.';
+            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Löschen aufgetretten.');
         }
         else
         {
@@ -534,9 +551,9 @@ class MasterController extends Zend_Controller_Action
                         catch (Exception $e)
                         {
                             //error message
-                            $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>"
-                                                ."Wahrscheinlich ist eine der E-Mail-Adressen falsch.<br>"
-                                                ."Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.";
+                            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Senden aufgetretten.') . '<br>'
+                                                . $this->_translate->_( 'Wahrscheinlich ist eine der E-Mail-Adressen falsch.') . '<br>'
+                                                . $this->_translate->_( 'Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.');
                             $error = 1;
                             //delete new userTopic
                             $userTopicModel->delUserTopic($i,$topicID);
@@ -567,9 +584,9 @@ class MasterController extends Zend_Controller_Action
                 catch (Exception $e)
                 {
                     //error message
-                    $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>"
-                                        ."Wahrscheinlich ist eine der E-Mail-Adressen falsch.<br>"
-                                        ."Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.";
+                    $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Senden aufgetretten.') . '<br>'
+                                        . $this->_translate->_( 'Wahrscheinlich ist eine der E-Mail-Adressen falsch.') . '<br>'
+                                        . $this->_translate->_( 'Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.');
                     $error = 1;
                     //delete new userTopic
                     $userTopicModel->delUserTopic($userID,$topicID);
@@ -597,7 +614,7 @@ class MasterController extends Zend_Controller_Action
         
         if ( !isset( $_GET['id']))
         {
-            $this->view->msg = 'Keine Themen-ID angegeben!';
+            $this->view->msg = $this->_translate->_( 'Keine Themen-ID angegeben!');
         }
         $topicID = $_GET['id'];
         
@@ -620,15 +637,15 @@ class MasterController extends Zend_Controller_Action
         /* topics with spezified topicID are not available */
         if ( empty( $topicName)) 
         {
-            $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
+            $this->view->msg = $this->_translate->_( 'Kein Thema zum bearbeiten vorhanden!');
         }
         
         /* error-msg output */
         switch ( $_GET['msg'])
         {
-            case 1: $this->view->msg = 'Bitte alle Felder füllen!';
+            case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder füllen!');
                     break;
-            case 2: $this->view->msg = 'Ihre Eingabe entsprach keiner gültigen URL.';
+            case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL.');
                     break;
         }
         $this->view->topicName = $topicName;
@@ -638,7 +655,7 @@ class MasterController extends Zend_Controller_Action
         /* if there is no topic with the specified versionNumber */
         if ( empty( $topicRow))
         {
-            $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
+            $this->view->msg = $this->_translate->_( 'Angegebende Version existiert für dieses Thema nicht!');
         }
         
         /* topic type is text ( "0") */
@@ -694,7 +711,7 @@ class MasterController extends Zend_Controller_Action
         }
         else 
         {           
-            $this->view->error = 'Fehler bei der Versionserstellung.';
+            $this->view->error = $this->_translate->_( 'Fehler bei der Versionserstellung.');
         }
     }
 
@@ -850,7 +867,7 @@ class MasterController extends Zend_Controller_Action
                     catch (Exception $e)
                     {
                         //error message
-                        $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
+                        $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Speicher aufgetretten');
                         break;
                     }
         
@@ -870,7 +887,7 @@ class MasterController extends Zend_Controller_Action
                     }
                 }
                 //error message
-                $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
+                $this->view->error = $this->_translate->_( 'Sie haben vergessen eine E-Mail-Adresse anzugeben.');
             }
         }
         else

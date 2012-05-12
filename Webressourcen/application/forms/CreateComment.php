@@ -8,8 +8,8 @@ class Application_Form_CreateComment extends Zend_Form
         $this->setMethod( 'post');
         $this->setAttrib( 'action', 'validatecomment');
         $this->addElement( 'checkbox', 'anonymous', array( 'label' => 'Anonymous:' ));
-        $this->addElement( 'textarea', 'commentText', array( 'label' => 'Kommentar', 'rows' => '10', 'cols' => '50'));
-        $this->addElement( 'submit', 'senden');
+        $this->addElement( 'textarea', 'commentText', array( 'label' => $this->getView()->translate( 'Kommentar'), 'rows' => '10', 'cols' => '50'));
+        $this->addElement( 'submit', $this->getView()->translate( 'senden'));
     }
     
     public function setIDs( $topicID, $userID, $topicVersion)

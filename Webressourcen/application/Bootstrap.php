@@ -76,11 +76,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		
 		//path to the Controller
 		$frontController->setControllerDirectory('../application/controllers');
-		
-		
-		
-		
-		
+	}
+	
+    /* load Zend_Translate and the language files and pass them to the Zend_Registry */
+    protected function _initTranslate()
+    {
+        $translate = new Zend_Translate( 'gettext', APPLICATION_PATH . '/languages/', null, array( 'scan' => Zend_Translate::LOCALE_DIRECTORY));
+	    $registry = Zend_Registry::getInstance();
+	    $registry->set( 'Zend_Translate', $translate);
+	    $translate->setLocale( 'de');
 	}
  
 }

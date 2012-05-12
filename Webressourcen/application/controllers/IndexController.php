@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License(GPL)
@@ -9,10 +9,25 @@
  */
 class IndexController extends Zend_Controller_Action
 {
-
+    protected $_translate;
+    
     public function init()
     {
-        /* Initialize action controller here */
+        $languageNamespace = new Zend_Session_Namespace( 'language');
+        
+        if ( isset( $_GET['lang']))
+        {
+            $languageNamespace->lang = $_GET['lang'];
+        }
+        
+        $registry = Zend_Registry::getInstance();
+        $translate = $registry->get( 'Zend_Translate');
+        $this->_translate = $translate;
+        switch ( $languageNamespace->lang)
+        {
+            case 'de':  $translate->setLocale( 'en'); break;
+            default:    $translate->setLocale( 'de');
+        } 
     }
 
     /**
@@ -23,8 +38,8 @@ class IndexController extends Zend_Controller_Action
      */
     public function indexAction()
     {
-        $this->view->title = ' - Hauptseite';
-	$masterNamespace = new Zend_Session_Namespace('master');
+        $this->view->title = ' - ' . $this->_translate->_( 'Hauptseite');
+        $masterNamespace = new Zend_Session_Namespace('master');
         $this->view->masterOnline = $masterNamespace->masterOnline;
     }
 
@@ -59,7 +74,8 @@ class IndexController extends Zend_Controller_Action
                
             if (empty($usern) || empty($password))
             {
-                $this->_redirect('/');
+                //error if textfield is empty
+                $this->view->error = $this->_translate->_( 'Login fehlgeschlagen. Bitte füllen Sie alle Felder aus.');
             }
             else
             {      
@@ -75,8 +91,8 @@ class IndexController extends Zend_Controller_Action
                 }
                 else
                 {
-                    //error if it didn't work
-                    $this->view->error = "Login failed. Have you confirmed your account?";
+                    //error if login didn't work
+                    $this->view->error = $this->_translate->_( 'Login fehlgeschlagen. Haben Sie ihren Account bestätigt?');
                 }
             }
         }
@@ -141,28 +157,39 @@ class IndexController extends Zend_Controller_Action
             // checks username and password?
             if ($row->userName == $usern && $row->password == md5($password))
             {
-                //gets new user information from updateform
-                $newUsern = $this->_request->getPost('newUsern');
-                $newPassword = $this->_request->getPost('newPassword');
+                //gets new username from updateform
+                $newPassword1 = $this->_request->getPost('newPassword1');
+                $newPassword2 = $this->_request->getPost('newPassword2');
 
-                if (!empty($newUsern))			//update username
+                if ($newPassword1 == $newPassword2)
                 {
-                    $data = array('userName' => $newUsern);
-
-                    $n = $master->update($data, 'userID = 1');
+                    //gets new username from updateform
+                    $newUsern = $this->_request->getPost('newUsern');
+    
+                    if (!empty($newUsern))		//update username
+                    {
+                        $data = array('userName' => $newUsern);
+    
+                        $n = $master->update($data, 'userID = 1');
+                    }
+                    if(!empty($newPassword1))		//update password
+                    {
+                        $data = array('password' => md5($newPassword1));
+    
+                        $n = $master->update($data, 'userID = 1');
+                    }
+                    $this->_redirect('/');
                 }
-                if(!empty($newPassword))		//update password
+                else
                 {
-                    $data = array('password' => md5($newPassword));
-
-                    $n = $master->update($data, 'userID = 1');
+                    //error if new passwort check didn't work
+                    $this->view->error = $this->_translate->_( 'Update fehlgeschlagen. Haben Sie Ihr neues Passwort nicht bestätigt?');
                 }
-                $this->_redirect('/');
             }
             else
             {
-                //error if it didn't work
-                $this->view->error = "Update failed. Have you confirmed your account?";
+                //error if login didn't work
+                $this->view->error = $this->_translate->_( 'Update fehlgeschlagen. Haben Sie Ihren Account nicht bestätigt?');
             }
         }
         else  
@@ -173,16 +200,4 @@ class IndexController extends Zend_Controller_Action
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
+?>

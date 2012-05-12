@@ -23,15 +23,19 @@
 		<!-- in main_head is the project title-->
 		<div id = "main_Head">
 			<center><h1>Webressourcen<?php echo $this->escape($this->title); ?></h1></center>
+            <!-- change the language -->
+            <a href = "<?php echo $this->url() . '?lang=de';?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
+            <a href = "<?php echo $this->url() . '?lang=en';?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langEN.png'; ?>" alt = "english"></a>
+            
 			<?php 
 			if($this->masterOnline == 1)		//if logged in
 			{
 			?>
-				<a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>">Hauptseite</a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>">Masterseite</a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>">Thema erstellen</a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>">Themen anzeigen</a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>">Freunde anzeigen</a>
+				<a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>"><?php echo $this->translate( 'Hauptseite'); ?></a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>"><?php echo $this->translate( 'Masterseite'); ?></a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>"><?php echo $this->translate( 'Thema erstellen'); ?></a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>"><?php echo $this->translate( 'Themen anzeigen'); ?></a> -
+				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>"><?php echo $this->translate( 'Freunde anzeigen'); ?></a>
 			<?php 
 			}
 			?>

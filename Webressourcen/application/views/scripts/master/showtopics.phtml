@@ -1,7 +1,7 @@
 ﻿<script type = "text/javascript">
 function confirmation()
 {
-    answer = confirm( 'Sind Sie sicher, dass Sie dieses Thema entgültig löschen möchten?');
+    answer = confirm( <?php echo $this->translate( 'Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?'); ?>);
     if ( answer)
     {
         document.forms['closeTopicForm'].submit();
@@ -38,29 +38,29 @@ function confirmation()
             /* button to close the current topic */
             echo '<form id = "closeTopicForm" action = "closetopic" method = "post">';
                 echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
-                echo '<input type = "button" value = "Thema schließen" onclick = "confirmation()" /></form>';
+                echo '<input type = "button" value = "' . $this->translate( 'Thema schließen') . '" onclick = "confirmation()" /></form>';
         
             /* invitebutton, redirectes to the invite-page */
             echo '<form action = "invite" method = "post">';
                 echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
-                echo '<input type = "submit" value = "Einladungen versenden" />';
+                echo '<input type = "submit" value = "' . $this->translate( 'Einladungen versenden') . '" />';
             echo '</form>';
         
             /* button to edit and create a new topicVersion */
             echo '<form action = "edittopic" method = "get">';
                 echo '<input type = "hidden" name = "id" value = "' . $_GET['id'] . '" />';
                 echo '<input type = "hidden" name = "ver" value = "' . $_GET['ver'] . '" />';
-                echo '<input type = "submit" value = "Inhalt überarbeiten" />';
+                echo '<input type = "submit" value = "' . $this->translate( 'Inhalt überarbeiten') . '" />';
             echo '</form>';
             
             /* iframe */
             echo $this->topicContent;
             
-            echo '<p>Durchschnittliche Bewertung: <p><img src = "../_files/image/rating/stars/5Star_' . $this->topicRating . '.png" height = "50" alt = "' . $this->topicRating . '"';
+            echo '<p>' . $this->translate( 'Durchschnittliche Bewertung:') . ' <p><img src = "../_files/image/rating/stars/5Star_' . $this->topicRating . '.png" height = "50" alt = "' . $this->topicRating . '"';
                     
             if( $this->ratingPercent)
             {
-                echo ' ."Stars from 5 Stars"';
+                echo ' ."' . $this->translate( 'Sterne von 5 Sternen') . '"';
             }
             echo '>';
         }
@@ -81,13 +81,13 @@ function confirmation()
                     echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
                     echo '<input type = "hidden" name = "topicVersion" value = "' . $_GET['ver'] . '" />';
                     echo '<input type = "hidden" name = "commentID" value = "' . $commentRow['commentID'] . '" />';
-                    echo '<input type = "submit" value = "löschen" />';
+                    echo '<input type = "submit" value = "' . $this->translate( 'löschen') . '" />';
                 echo '</form></td></tr>';
             }
             echo '</table>';
             
             echo '<form action = "showcomments?id=' . $_GET['id'] . '&ver=' . $this->selectedTopicVersion . '&page=1" method = "post">';
-                echo '<input type = "submit" value = "zeige alle" />';
+                echo '<input type = "submit" value = "' . $this->translate( 'zeige alle') . '" />';
             echo '</form>';
         }
         echo '<p>' . $this->createCommentForm;
