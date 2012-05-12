@@ -1,5 +1,8 @@
 <!-- content for change the account details -->
 <!-- formular which navigates to leupdate after pressing the submit button -->
+<p><?php echo $this->translate( 'Hier können Sie Ihren Usernamen oder Ihr Password ändern.'); ?><br>
+   <?php echo $this->translate( 'Einfach entsprechendes eingeben. '); ?></p>
+<p><?php echo $this->translate( 'Sie müssen sich mit Ihren alten Daten authentifizieren.'); ?></p>
 <form action="update" method="post">
 	<fieldset>
 		<legend>UpDate</legend>		<!-- head -->
@@ -10,7 +13,7 @@
 					<label for="usern">Username</label>
 				</td>
 				<td>
-					<input type="text" id="usern" name="usern" maxlength="50" value="" />
+					<input type="text" id="usern" name="usern" maxlength="30" value="" />
 				</td>
 			</tr>
 			<tr>			<!-- old password textfield -->
@@ -18,7 +21,7 @@
 					<label for="password"><?php echo $this->translate( 'Passwort'); ?></label>
 				</td>
 				<td>
-					<input type="password" id="password" name="password" maxlength="10" value="" />
+					<input type="password" id="password" name="password" maxlength="16" value="" />
 				</td>
 			</tr>
 			<tr>
@@ -36,15 +39,23 @@
 					<label for="newUsern"><?php echo $this->translate( 'Neuer Username'); ?></label>
 				</td>
 				<td>
-					<input type="text" id="newUsern" name="newUsern" maxlength="50" value="" />
+					<input type="text" id="newUsern" name="newUsern" maxlength="30" value="" />
 				</td>
 			</tr>
 			<tr>			<!-- new password textfield -->
 				<td>
-					<label for="newPassword"><?php echo $this->translate( 'Neues Passwort'); ?></label>
+					<label for="newPassword1"><?php echo $this->translate( 'Neues Passwort'); ?></label>
 				</td>
 				<td>
-					<input type="password" id="newPassword" name="newPassword" maxlength="10" value="" />
+					<input type="password" id="newPassword1" name="newPassword1" maxlength="16" value="" />
+				</td>
+			</tr>
+			<tr>			<!-- check password textfield -->
+				<td>
+					<label for="newPassword2"><?php echo $this->translate( 'Passwortkontrolle'); ?></label>
+				</td>
+				<td>
+					<input type="password" id="newPassword2" name="newPassword2" maxlength="16" value="" />
 				</td>
 			</tr>
 			<tr>
