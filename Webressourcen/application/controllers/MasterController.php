@@ -64,6 +64,7 @@ class MasterController extends Zend_Controller_Action
 
     /** This function shows a form where the master can insert topic-parameters like content or source.
       * If an error occurred in validateAction, this page will show an errormessage.
+      * @author Christoph Beger 
       */      
     public function importAction()
     {
@@ -102,7 +103,7 @@ class MasterController extends Zend_Controller_Action
 		$topicSource = $_POST['topicSource'];
 		
         /* if the form-textfields are not filled */
-		if ( (empty( $topicName)) || (empty( $topicContent)))
+		if ( (empty( $topicName)) || (empty( $topicContent)) || (empty( $topicType)))
 		{	
             $this->_redirect('master/import?error=2');
         }
@@ -241,10 +242,15 @@ class MasterController extends Zend_Controller_Action
         switch ( $_GET['msg'])
         {
             case 1: $this->view->msg = $this->_translate->_( 'Bitte füllen Sie das Feld Kommentar!');
-            break;
+                    break;
+                    
             case 2: $this->view->msg = $this->_translate->_( 'Es wurde erfolgreich eine neue Version erstellt.');
-            break;
+                    break;
+                    
             case 3: $this->view->msg = $this->_translate->_( 'Einladungen erfolgreich versendet.');
+                    break;
+                    
+            case 4: $this->view->msg = $this->_translate->_( 'Ihr Kommentar konnte leider nicht erstellt werden!');
             break;
         }
         
@@ -426,6 +432,10 @@ class MasterController extends Zend_Controller_Action
       */
     public function closetopicAction()
     {
+        if ( !isset( $_POST['topicID']))
+        {
+            $this->_redirect( '/master/showtopics');
+        }
         //load model
         $topicModel = new TopicModel();
         //delete topic, topicAdditives, comments and userTopics
@@ -705,7 +715,7 @@ class MasterController extends Zend_Controller_Action
         $topicSource = $_POST['topicSource'];
         $topicType = $_POST['topicType'];
         
-        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)))
+        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicType)))
         {
             $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
@@ -746,7 +756,7 @@ class MasterController extends Zend_Controller_Action
         $topicVersion = $_POST['topicVersion'];
         $anonymous = $_POST['anonymous'];
         
-        if ( (empty( $userID)) || (empty( $topicID)) || (empty( $topicVersion)))
+        if ( (empty( $userID)) || (empty( $topicID)) || (empty( $topicVersion)) || (empty( $anonymous)))
         {
             $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
         }
@@ -763,7 +773,7 @@ class MasterController extends Zend_Controller_Action
         }
         catch (Exception $e)
         {
-            //.........................................
+            $this->_redirect( 'master/showtopics?id=' .topicID . '&ver=' . $topicVersion . '&msg=4');
         }
         
         $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
@@ -777,7 +787,10 @@ class MasterController extends Zend_Controller_Action
     {
         $this->_helper->layout()->disableLayout();
         
-        //validation ...............
+        if ( (empty( $_GET['id'])) || (empty( $_GET['ver'])))
+        {
+            $this->_redirect( 'master/showtopics');
+        }
         
         $topicModel = new TopicModel();
         
@@ -794,10 +807,19 @@ class MasterController extends Zend_Controller_Action
       */
     public function showcommentsAction()
     {
-        //.....session, ausnahmen.............
         $topicID = $_GET['id'];
         $topicVersion = $_GET['ver'];
         $page = $_GET['page'];
+        
+        if ( (empty($topicID)) || (empty($topicVersion)))
+        {
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
+        }
+        
+        if ( empty( $page))
+        {
+            $page = 1;
+        }
         
         $commentModel = new CommentModel();
         
@@ -818,6 +840,10 @@ class MasterController extends Zend_Controller_Action
                 /* send the rowSet with user-comments and names to the view */
                 $this->view->commentRowSet = $commentRowSet;
             }
+        }
+        else 
+        {
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
         }
     }
     
@@ -957,6 +983,10 @@ class MasterController extends Zend_Controller_Action
      */
     public function searchAction()
     {
+        if ( empty( $_POST['search']))
+        {
+            $this->_redirect( 'master/index');
+        }
         //load models
         $topicModel = new Topicmodel();
         $userModel  = new UserModel();
