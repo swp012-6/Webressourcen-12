@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 class FriendController extends Zend_Controller_Action
 {
@@ -13,22 +13,66 @@ class FriendController extends Zend_Controller_Action
 		$request = $this->getRequest();	//operation with datatransfer (post,get
         
         //Init the Database 
-		$dbTopic = new TopicModel();
+		$dbUserTopic = new UserTopicModel();
+        $dbTopic = new TopicModel();
+        
+        //Init Session
+        $friendSession = new Zend_Session_Namespace('friendSession');
+        
+        
+        //language init
+        
+        $languageNamespace = new Zend_Session_Namespace( 'language');
+        
+        if ( isset( $_GET['lang']))
+        {
+            $languageNamespace->lang = $_GET['lang'];
+        }
+        
+        $registry = Zend_Registry::getInstance();
+        $translate = $registry->get( 'Zend_Translate');
+        $this->_translate = $translate;
+        switch ( $languageNamespace->lang)
+        {
+            case 'de':  $translate->setLocale( 'en'); break;
+            default:    $translate->setLocale( 'de');
+        }   
         
         //main_menue
         //title
-        $view->main_menue_title = "select Topic";
+        $view->main_menue_title = $this->_translate->_("Thema auswählen: ");
         
         //get the topics
-        $topics = $dbTopic->getTopicList();
+        $topicIDs = $dbUserTopic->getTopics($friendSession->userID);
+        
+        $topics;
+        $count = 1;
+        foreach($topicIDs as $tID)
+        {
+            $topics[$count]['topicID'] = $tID['topicID'];
+            $topics[$count]['topicName'] = $dbTopic->getTopicName($tID['topicID']);
+            
+            $count++;
+        }
         $view->main_menue_topics = $topics;
+        
         
         if(NULL != $request->getQuery("topic"))
         {
-            //save in the session the new TopicID
-            $friendSession = new Zend_Session_Namespace('friendSession');
+            //save in the session with new TopicID
+            
             $friendSession->topicID = $request->getQuery("topic");
+            
+            $option = array("topicID" => $request->getQuery("topic"), "number" =>1,"page" => 0);
+            $version = $dbTopic->getVersionNumbers($option);
+            foreach($version as $v)
+            {
+                $topicVersion = $v;
+            }
+            $friendSession->topicVersion = $topicVersion;
         }  
+        
+        
     }
 
     /**
@@ -57,8 +101,8 @@ class FriendController extends Zend_Controller_Action
         $usertopic = $dbUserTopic->registerHash($request->getQuery("hash"));
         $userID =$usertopic['userID'];
         $topicID =$usertopic['topicID'];
-
-        if(empty($userID) || empty($topicID))
+        
+        if(empty($userID) || empty($topicID)||(true == $usertopic['master']))
         {
             //if the userID ore the topicID empty, then go to IndexController
             $this->_redirect('/');          
@@ -116,26 +160,26 @@ class FriendController extends Zend_Controller_Action
         }
         
 		//head Title----------------------------
-		$view->headTitle("ADD Name");
+		$view->headTitle($this-> _translate-> _("Themen Name ändern"));
 		
 		//title -----------------
-		$view->friendTopicTitel = "ADD Name";
+		$view->friendTopicTitel = "Themen Name ändern";
         
 		//FORMULAR------------------------------------------------
 		// Name	
 		$form->addElement('text','name');
-		$form->name->setLabel('UserName : ');
+		$form->name->setLabel($this-> _translate-> _('Themen Name:  '));
 		$form->name->setRequired(true);
         
         
 		//$form->name->addValidator('stringLength', true, array(0, 20));
 		//exaption for name
 		$notEmpty = new Zend_Validate_NotEmpty();
-		$notEmpty->setMessage('Pleas write the UserName!');
+		$notEmpty->setMessage($this-> _translate-> _('Bitte schreiben sie ein Namen rein!'));
 		$form->name->addValidator($notEmpty);
 		
 		//submintbutten create with name 'send'
-		$form->addElement('submit','send');
+		$form->addElement('submit',$this-> _translate-> _('Ändern'));
          
 		//when comment is empty ore when its the first attempt, is send the form  to the viewer
 		if(!$request->isPost() || !$form->isValid($_POST))
@@ -189,46 +233,35 @@ class FriendController extends Zend_Controller_Action
             //if the userID ore the topicID empty, then go to IndexController
             $this->_redirect('/'); 
         }
-        $view->userID = $userID;
-
-        
-        
-        
-        
-        
+        $view->userID = $userID; 
 		
 		//head Title----------------------------
-		$view->headTitle("ADD Comment - ".$dbTopic->getTopicName($topicID));
-		
-        
-        
-        
+		$view->headTitle($this-> _translate-> _("Kommentar Hinzufügen - ").$dbTopic->getTopicName($topicID));
+		        
 		//title -----------------
-		$view->friendTopicTitel = "ADD Comment - ".$dbTopic->getTopicName($topicID);
-		
-		
-        
-        
-        
-        
+		$view->friendTopicTitel = ($this-> _translate-> _("Kommentar Hinzufügen - ").$dbTopic->getTopicName($topicID));
+	       
 		//FORMULAR------------------------------------------------
 		//Label-> Name
 		$form->addElement('checkbox','name');
-		$form->name->setLabel('Anonymous?');
+		$form->name->setLabel($this-> _translate-> _('Wollen Sie anonym bleiben?'));
 	   
 		//Comment area: 	-it's important information
 		//					-max 500 symbols
 		$form->addElement('textarea','comment');
-		$form->comment->setLabel('Comment');
+		$form->comment->setLabel($this-> _translate-> _('Kommentar :'));
 		$form->comment->setRequired(true);
 		$form->comment->addValidator('stringLength', true, array(0, 500));
 		//exaption for comment
 		$notEmpty = new Zend_Validate_NotEmpty();
-		$notEmpty->setMessage('Pleas write the Comment!');
+		$notEmpty->setMessage($this-> _translate-> _('Bitte geben Sie ein Kommentar ein!'));
 		$form->comment->addValidator($notEmpty);
 		
 		//submintbutten create with name 'send'
-		$form->addElement('submit','send');
+		$form->addElement('submit',$this-> _translate-> _('Hinzufügen'));
+        
+        //Backbutton
+        $view->Bachbutton = $this-> _translate-> _('Themen Übersicht') ; 
 
 		//when comment is empty ore when its the first attempt, is send the form  to the viewer
 		if(!$request->isPost() || !$form->isValid($_POST))
@@ -238,14 +271,14 @@ class FriendController extends Zend_Controller_Action
 		else// its the input correctly, then send the results to the database
 		{
 			$name = $form->getValue('name');
-			$comment = nl2br( $form->getValue('comment'));
+			$comment = $form->getValue('comment');
 			
 			//array for the database
 			$conntent = array("userID" => $userID,"topicID"=>$topicID,"topicVersion" => $topicVersion,"anonymous"=> $name,"commentText"=>$comment);
 			//save
 			$dbComment->addComment($conntent);
 			//user message
-			$view->message = 'Comment successfull send';
+			$view->message = $this-> _translate-> _('Kommentar wurder erfolgreich hinzugefügt');
 			
 		}   
     }
@@ -327,16 +360,16 @@ class FriendController extends Zend_Controller_Action
 		}
 		
         //head Title----------------------------
-		$view->headTitle($dbTopic->getTopicName($topicID));
+		$view->headTitle($this-> _translate-> _($dbTopic->getTopicName($topicID)));
 		
 		
 		//title-----------------
-		$view->friendTopicTitel = $dbTopic->getTopicName($topicID);
+		$view->friendTopicTitel = $this-> _translate-> _($dbTopic->getTopicName($topicID));
 		
 		
 		
 		//topic version select-------------------------------
-        $view->versionTitle = "Topic Version:  ";
+        $view->versionTitle = $this-> _translate-> _("Version:  ");
 		//compute currentPageNavigator
 		$currentPageNavigator = floor(($maxVersionPage-($page-1)) / $maxVersionPage);
         if(NULL != $request->getQuery("PageNavigator"))
@@ -358,15 +391,18 @@ class FriendController extends Zend_Controller_Action
 		
 		//topic view----------------------------------------
 		$topicAdditiveContent = $dbTopic->getTopic($topicID,$topicVersion);
-        $view->topicSource = "Source: ".$topicAdditiveContent['topicSource'];
+        $view->topicSource = $this-> _translate-> _("Quelle: ").$topicAdditiveContent['topicSource'];
         
         //Rating+++++++++++++++++++++++++++++++++++++++++++++++++
         
         //Friend Rating-------------------------------------
         
         //Friend Rating title
-        $view->ratingTitleFriend = "Your Rating: ";
+        $view->ratingTitleFriend = $this-> _translate-> _("Ihre Bewertung: ");
         
+        
+        //Rating button 
+        $view->RatingButton = $this-> _translate-> _('Wollen Sie das Thema Bewerten?');
         //have create a rating
         if(1 == $request->getPost("RatingCreate"))
         {
@@ -394,7 +430,7 @@ class FriendController extends Zend_Controller_Action
         
         //TopicRating-------------------------------------------
         //title of the Rating from all friends
-        $view->ratingTitleAll = "Topic rating: ";
+        $view->ratingTitleAll = $this-> _translate-> _("Wertung des Themas: ");
         
         //is the topic rating from owne Version
         $ratingpercent = $dbRating->getRating($topicID,$topicVersion);
@@ -403,7 +439,7 @@ class FriendController extends Zend_Controller_Action
         //if the rating == 0, then have not rated
         if($ratingpercent == 0)
         {
-            $view->topicrating = "not rated";
+            $view->topicrating = $this-> _translate-> _("gibt keine Bewertungen");
         }
         else
         {
@@ -424,6 +460,15 @@ class FriendController extends Zend_Controller_Action
        
 		$commentOption = array("topicID" => $topicID,"topicVersion"=>$topicVersion, "orderup"=>false,"number" => 3,"page" => 1);
 		$view->friendComment = $dbComment->getComment($commentOption);
+        
+        //Buttons : ALL Comment, Add Comment and Update Name, Delete
+        $view->ButtonAllComment = $this-> _translate-> _('Alle Kommentare');
+        $view->ButtonAddComment = $this-> _translate-> _('Kommenter hinzufügen');
+        $view->ButtonUpdateName = $this-> _translate-> _('Themen Namen ändern');
+        $view->ButtonDelete = $this-> _translate-> _('Löschen');
+        
+        //User Name anonym
+        $view->NameAnonymous = $this-> _translate-> _('Anonym');
 			
     }
 	/** Controller of the page which contains the topicContent.
@@ -502,11 +547,11 @@ class FriendController extends Zend_Controller_Action
 		}
 		
         //head Title----------------------------
-		$view->headTitle("All Comment - ".$dbTopic->getTopicName($topicID));
+		$view->headTitle($this-> _translate-> _("Alle Kommentare - ").$dbTopic->getTopicName($topicID));
 		
 		
 		//title -----------------
-		$view->friendTopicTitel = "All Comment - ".$dbTopic->getTopicName($topicID);
+		$view->friendTopicTitel = $this-> _translate-> _("Alle Kommentare - ").$dbTopic->getTopicName($topicID);
 		
 		//topic view----------------------------------------
 
@@ -548,6 +593,13 @@ class FriendController extends Zend_Controller_Action
 		{
 			$view->pageNavigatornumberButton = $maxPageNavigator;
 		}
+        
+        
+        //Buttons : ALL Comment, Add Comment and Update Name, Delete
+        $view->ButtonShowTopic = $this-> _translate-> _('Zurück');
+        $view->ButtonAddComment = $this-> _translate-> _('Kommenter hinzufügen');
+        $view->ButtonUpdateName = $this-> _translate-> _('Themen Namen ändern');
+        $view->ButtonDelete = $this-> _translate-> _('Löschen');
 		
     }
 }
