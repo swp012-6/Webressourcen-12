@@ -78,8 +78,10 @@ class MasterController extends Zend_Controller_Action
                 
                 case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder füllen!');
                         break;
+                        
                 case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL!');
                         break;
+                        
                 default: 
             }
         }

@@ -125,7 +125,11 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         $row = $this->fetchRow('userID = "'.$userID.'"
         AND topicID = "'.$topicID.'"');
         // delete userTopic
-        $row->delete();  	
+        $row->delete();
+        
+        $topicRatingModel = new TopicRatingModel;
+        
+        $topicRatingModel->delete( 'userID = "' . $userID . '" AND topicID = "' . $topicID .'"');
     }
 }
 ?>
