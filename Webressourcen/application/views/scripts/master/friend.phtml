@@ -66,7 +66,7 @@ foreach ($this->friends as $a)		//for each friend
 			<form 	action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" 
 				method="post">
 				<input type = "hidden" name = "userID" value = "<?php echo $this->escape($a->userID) ?>" />
-				<input type="submit" name="button_delete_friend" value=" X " onclick = "confirmation( this.form)" />
+				<input type="button" name="button_delete_friend" value=" X " onclick = "confirmation( this.form)" />
 			</form>
 		</td>
 	</tr>

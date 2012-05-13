@@ -86,9 +86,9 @@ else
 ?>
 
 <!-- delete button  -->
-<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" method="post">
+<form name = "deleteFriend" action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" method="post">
 	<input type = "hidden" name = "userID" value = "<?php echo $this->userID ?>" />
-	<input id = "deleteFriend" type="submit" name="button_delete_friend" value="<?php echo $this->translate( 'Freund entfernen'); ?>" onclick = "confirmation()" />
+	<input type="button" name="button_delete_friend" value="<?php echo $this->translate( 'Freund entfernen'); ?>" onclick = "confirmation()" />
 </form>
 <!-- return button  -->
 <form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true) ?>" method="post">

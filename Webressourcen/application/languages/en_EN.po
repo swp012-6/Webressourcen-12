@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Webressourcen 2012\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-13 15:17+0100\n"
-"PO-Revision-Date: 2012-05-13 15:41+0100\n"
+"POT-Creation-Date: 2012-05-13 16:01+0100\n"
+"PO-Revision-Date: 2012-05-13 16:10+0100\n"
 "Last-Translator: Kotnascher <kot@kotig.com>\n"
 "Language-Team: swp6-12\n"
 "MIME-Version: 1.0\n"
@@ -146,7 +146,7 @@ msgid "Themen-Name bereits vergeben!"
 msgstr "Topic-name already exists!"
 
 #: controllers/MasterController.php:78
-#: controllers/MasterController.php:657
+#: controllers/MasterController.php:654
 msgid "Bitte alle Felder füllen!"
 msgstr "Please fill all fields!"
 
@@ -195,54 +195,54 @@ msgstr "There is no topic available!"
 msgid "Fehler beim Löschen der Verbindung zwischen Freund und Thema"
 msgstr "An error occurred while deleting the connection between friend and topic."
 
-#: controllers/MasterController.php:418
+#: controllers/MasterController.php:415
 msgid "Fehler beim Löschen des Freundes"
 msgstr "An error occurred while dleting the friend."
 
-#: controllers/MasterController.php:439
+#: controllers/MasterController.php:436
 msgid "Es ist ein Fehler beim Löschen aufgetretten."
 msgstr "An error occurred while the deleting process."
 
-#: controllers/MasterController.php:565
-#: controllers/MasterController.php:598
+#: controllers/MasterController.php:562
+#: controllers/MasterController.php:595
 msgid "Es ist ein Fehler beim Senden aufgetretten."
 msgstr "Sending failed, an error occurred."
 
-#: controllers/MasterController.php:566
-#: controllers/MasterController.php:599
+#: controllers/MasterController.php:563
+#: controllers/MasterController.php:596
 msgid "Wahrscheinlich ist eine der E-Mail-Adressen falsch."
 msgstr "Maybe one of the e-mail adresses are wrong?"
 
-#: controllers/MasterController.php:567
-#: controllers/MasterController.php:600
+#: controllers/MasterController.php:564
+#: controllers/MasterController.php:597
 msgid "Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt."
 msgstr "Friends with correct e-mail adresses got notified."
 
-#: controllers/MasterController.php:649
+#: controllers/MasterController.php:646
 msgid "Kein Thema zum bearbeiten vorhanden!"
 msgstr "There is no topic to edit!"
 
-#: controllers/MasterController.php:659
+#: controllers/MasterController.php:656
 msgid "Ihre Eingabe entsprach keiner gültigen URL."
 msgstr "Your input did not match a valid URL."
 
-#: controllers/MasterController.php:669
+#: controllers/MasterController.php:666
 msgid "Angegebende Version existiert für dieses Thema nicht!"
 msgstr "The selected version do not exist for the spezified topic!"
 
-#: controllers/MasterController.php:693
+#: controllers/MasterController.php:690
 msgid "Keine Themen-ID angegeben!"
 msgstr "No topic-ID available!"
 
-#: controllers/MasterController.php:736
+#: controllers/MasterController.php:733
 msgid "Fehler bei der Versionserstellung."
 msgstr "An error occured while topic creation."
 
-#: controllers/MasterController.php:892
+#: controllers/MasterController.php:889
 msgid "Es ist ein Fehler beim Speicher aufgetretten"
 msgstr "An error occurred while saving."
 
-#: controllers/MasterController.php:912
+#: controllers/MasterController.php:909
 msgid "Sie haben vergessen eine E-Mail-Adresse anzugeben."
 msgstr "You forgot to quote an e-mail adresse."
 
@@ -492,7 +492,7 @@ msgstr "disconnect"
 
 #: views/scripts/master/showfriend.phtml:91
 msgid "Freund entfernen"
-msgstr "show friends"
+msgstr "delete friend"
 
 #: views/scripts/master/showtopics.phtml:9
 msgid "Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?"
