@@ -67,11 +67,11 @@ function changeVisibility()
             echo '</form></div>';
         
             /* button to edit and create a new topicVersion, contained in a left floating div */
-            echo '<div id = "left"><form action = "edittopic" method = "get">';
+            echo '<form action = "edittopic" method = "get">';
                 echo '<input type = "hidden" name = "id" value = "' . $_GET['id'] . '" />';
                 echo '<input type = "hidden" name = "ver" value = "' . $_GET['ver'] . '" />';
                 echo '<input type = "submit" value = "' . $this->translate( 'Inhalt überarbeiten') . '" />';
-            echo '</form></div>';
+            echo '</form>';
             
             /* iframe */
             echo $this->topicContent;
