@@ -952,16 +952,36 @@ class MasterController extends Zend_Controller_Action
         return $body;
     }
 	
-	/** This function is looking for a word
-	  * @author Enrico Kleemann
-	  */
-	public function searchAction()
-	{
-		$topicModel = new Topicmodel();
-		$resultFriend = $userModel->getSearchResult($_POST['search']);
-		$resultTopic = $topicModel->getSearchResult($_POST['search']);
-		$this->view->resultFriend = $resultFriend;
-		$this->view->resultTopic = $resultTopic;
+    /** This function is looking for a word
+     * @author Enrico Kleemann
+     */
+    public function searchAction()
+    {
+        //load models
+        $topicModel = new Topicmodel();
+        $userModel  = new UserModel();
+        //search
+        $resultFriend = $userModel->getSearchResult($_POST['search']);
+        $tempResultTopic = $topicModel->getSearchResult($_POST['search']);
+        if(count($tempResultTopic)!= NULL)
+        {
+            $i = 0;
+            foreach( $tempResultTopic as $b)
+            {
+                $resultTopic[$i]['topicID'] = $b['topicID'];
+                $resultTopic[$i]['topicName'] = $b['topicName'];
+                $version = $topicModel->getMaxTopicVersion( $b['topicID']);
+                $resultTopic[$i]['version'] = $version;
+                $i++;
+            }
+        }
+        else
+        {
+            $resultTopic = NULL;
+        }
+        //pass result
+        $this->view->resultFriend = $resultFriend;
+        $this->view->resultTopic = $resultTopic;
 	}
     
     /** This function deletes a comment by commentID

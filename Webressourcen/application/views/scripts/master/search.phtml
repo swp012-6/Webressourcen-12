@@ -1,5 +1,5 @@
 ﻿<?php
-	if($this->resultFriend['firstname']!=NULL)
+	if(count($this->resultFriend)!= 0)
 	{
 		if($this->resultFriend != "" && $this->resultFriend != " ")
 		{
@@ -11,6 +11,7 @@
 					<td><?php echo $this->translate( 'E-Mail-Adresse'); ?></td>
 					<td><?php echo $this->translate( 'Beruf'); ?></td>
 					<td><?php echo $this->translate( 'Adresse'); ?></td>
+					<td></td>
 				</tr>
 <?php
 				foreach( $this->resultFriend as $a)
@@ -32,34 +33,11 @@
 						<td> 
 							<?php echo $a['adresse']; ?>
 						</td>
-					</tr>
-<?php
-				}
-?>
-			</table>
-<?php
-		}
-		else
-			echo "<?php echo $this->translate( 'Kein Freund gefunden!'); ?>";
-	}
-?>
-<?php
-	if($this->resulttopic['topicName']!= NULL)
-	{
-		if($this->resultTopic != "" && $this->resultTopic != " ")
-		{
-?>
-			<table border = "1"> <!-- tablehead -->
-				<tr>
-					<td><?php echo $this->translate( 'Thema'); ?></td>
-				</tr>
-<?php
-				foreach( $this->resultTopic as $b)
-				{
-?>
-					<tr>									<!-- tablebody -->
 						<td>
-							<?php echo $b['topicName']; ?>
+							<form	action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>?id=<?php echo $this->escape($a->userID) ?>"
+								method="post">
+								<input type="submit" name="button_friend" value="<?php echo $this->translate( 'Details'); ?>" class="button" />
+							</form>
 						</td>
 					</tr>
 <?php
@@ -69,6 +47,40 @@
 <?php
 		}
 	}
-	if($this->resultFriend['firstname']==NULL && $this->resultTopic['topicName']==NULL)
+?>
+<?php
+	if(count($this->resultTopic)!= NULL)
+	{
+		if($this->resultTopic != "" && $this->resultTopic != " ")
+		{
+?>
+			<table border = "1"> <!-- tablehead -->
+				<tr>
+					<td><?php echo $this->translate( 'Thema'); ?></td>
+					<td></td>
+				</tr>
+<?php
+				foreach( $this->resultTopic as $b)
+				{
+?>
+					<tr>									<!-- tablebody -->
+						<td>
+							<?php echo $b['topicName']; ?>
+						</td>
+						<td>
+							<form	action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true) ?>?id=<?php echo $b['topicID'] ?>&ver=<?php echo $b['version'] ?>"
+								method="post">
+								<input type="submit" name="button_topic" value="<?php echo $this->translate( 'zum Thema'); ?>" class="button" />
+							</form>
+						</td>
+					</tr>
+<?php
+				}
+?>
+			</table>
+<?php
+		}
+	}
+	if(count($this->resultFriend)==NULL && count($this->resultTopic)==NULL)
 		echo "Nichts gefunden!";
 ?>
