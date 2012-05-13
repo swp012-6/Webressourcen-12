@@ -445,7 +445,7 @@ class MasterController extends Zend_Controller_Action
         //check result
         if( !$success)
         {						//error message
-            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Löschen aufgetretten.');
+            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Löschen aufgetreten.');
         }
         else
         {
