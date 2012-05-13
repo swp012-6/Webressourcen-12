@@ -309,7 +309,7 @@ class MasterController extends Zend_Controller_Action
                 
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicName;
-                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>' . $this->_translate->_( 'Quelle:') . $topicSource;                
+                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>' . $this->_translate->_( 'Quelle: ') . $topicSource;                
 
                 $this->view->topicContent = $topicContent;
                 $this->view->topicTest = 1;
