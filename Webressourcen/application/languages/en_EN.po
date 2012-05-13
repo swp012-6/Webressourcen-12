@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Webressourcen 2012\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-13 16:01+0100\n"
-"PO-Revision-Date: 2012-05-13 16:10+0100\n"
+"POT-Creation-Date: 2012-05-13 18:09+0100\n"
+"PO-Revision-Date: 2012-05-13 18:10+0100\n"
 "Last-Translator: Kotnascher <kot@kotig.com>\n"
 "Language-Team: swp6-12\n"
 "MIME-Version: 1.0\n"
@@ -16,108 +16,112 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: controllers/FriendController.php:43
+#: controllers/FriendController.php:51
 msgid "Thema auswählen: "
 msgstr "Select a topic:"
 
-#: controllers/FriendController.php:163
+#: controllers/FriendController.php:179
 msgid "Themen Name ändern"
 msgstr "Change topic name:"
 
-#: controllers/FriendController.php:171
+#: controllers/FriendController.php:187
 msgid "Themen Name:  "
 msgstr "Topic name:"
 
-#: controllers/FriendController.php:178
+#: controllers/FriendController.php:194
 msgid "Bitte schreiben sie ein Namen rein!"
 msgstr "Please insert a name!"
 
-#: controllers/FriendController.php:182
+#: controllers/FriendController.php:198
 msgid "Ändern"
 msgstr "Change"
 
-#: controllers/FriendController.php:239
-#: controllers/FriendController.php:242
+#: controllers/FriendController.php:255
+#: controllers/FriendController.php:258
 msgid "Kommentar Hinzufügen - "
 msgstr "Add a comment -"
 
-#: controllers/FriendController.php:247
+#: controllers/FriendController.php:263
 msgid "Wollen Sie anonym bleiben?"
 msgstr "Do you want to remain anonym?"
 
-#: controllers/FriendController.php:252
+#: controllers/FriendController.php:268
 msgid "Kommentar :"
 msgstr "Comment :"
 
-#: controllers/FriendController.php:257
+#: controllers/FriendController.php:273
 msgid "Bitte geben Sie ein Kommentar ein!"
 msgstr "Please insert a comment in the textbox!"
 
-#: controllers/FriendController.php:261
+#: controllers/FriendController.php:277
 msgid "Hinzufügen"
 msgstr "Adding"
 
-#: controllers/FriendController.php:264
+#: controllers/FriendController.php:280
 msgid "Themen Übersicht"
 msgstr "Topic overview"
 
-#: controllers/FriendController.php:281
+#: controllers/FriendController.php:299
 msgid "Kommentar wurder erfolgreich hinzugefügt"
 msgstr "The Comment was created successuflly"
 
-#: controllers/FriendController.php:372
+#: controllers/FriendController.php:303
+msgid "Kommentar wurder nicht erfolgreich hinzugefügt"
+msgstr "The Comment was created successuflly"
+
+#: controllers/FriendController.php:395
 msgid "Version:  "
 msgstr "Version:"
 
-#: controllers/FriendController.php:394
+#: controllers/FriendController.php:417
 msgid "Quelle: "
 msgstr "Source:"
 
-#: controllers/FriendController.php:401
+#: controllers/FriendController.php:424
 msgid "Ihre Bewertung: "
 msgstr "Your rating:"
 
-#: controllers/FriendController.php:405
+#: controllers/FriendController.php:428
 msgid "Wollen Sie das Thema Bewerten?"
 msgstr "Do you want to rate this topic?"
 
-#: controllers/FriendController.php:433
+#: controllers/FriendController.php:456
 msgid "Wertung des Themas: "
 msgstr "Topic-Rating:"
 
-#: controllers/FriendController.php:442
+#: controllers/FriendController.php:465
 msgid "gibt keine Bewertungen"
 msgstr "not rated yet"
 
-#: controllers/FriendController.php:465
+#: controllers/FriendController.php:488
 msgid "Alle Kommentare"
 msgstr "All comments"
 
-#: controllers/FriendController.php:466
-#: controllers/FriendController.php:600
+#: controllers/FriendController.php:489
+#: controllers/FriendController.php:623
 msgid "Kommenter hinzufügen"
 msgstr "Add a comment"
 
-#: controllers/FriendController.php:467
-#: controllers/FriendController.php:601
+#: controllers/FriendController.php:490
+#: controllers/FriendController.php:624
 msgid "Themen Namen ändern"
 msgstr "Change topic name"
 
-#: controllers/FriendController.php:468
-#: controllers/FriendController.php:602
+#: controllers/FriendController.php:491
+#: controllers/FriendController.php:625
 msgid "Löschen"
 msgstr "Delete"
 
-#: controllers/FriendController.php:471
+#: controllers/FriendController.php:494
 msgid "Anonym"
 msgstr "Anonym"
 
-#: controllers/FriendController.php:550
-#: controllers/FriendController.php:554
+#: controllers/FriendController.php:573
+#: controllers/FriendController.php:577
 msgid "Alle Kommentare - "
 msgstr "All comments -"
 
-#: controllers/FriendController.php:599
+#: controllers/FriendController.php:622
 msgid "Zurück"
 msgstr "Back"
 
@@ -141,108 +145,112 @@ msgstr "Update failed. Have you confirmed your new password?"
 msgid "Update fehlgeschlagen. Haben Sie Ihren Account nicht bestätigt?"
 msgstr "Update failed. Have you confirmed your Account?"
 
-#: controllers/MasterController.php:75
+#: controllers/MasterController.php:76
 msgid "Themen-Name bereits vergeben!"
 msgstr "Topic-name already exists!"
 
-#: controllers/MasterController.php:78
-#: controllers/MasterController.php:654
+#: controllers/MasterController.php:79
+#: controllers/MasterController.php:666
 msgid "Bitte alle Felder füllen!"
 msgstr "Please fill all fields!"
 
-#: controllers/MasterController.php:80
+#: controllers/MasterController.php:82
 msgid "Ihre Eingabe entsprach keiner gültigen URL!"
 msgstr "Your entry did not match a valid URL!"
 
-#: controllers/MasterController.php:185
+#: controllers/MasterController.php:188
 msgid "Herr/Frau"
 msgstr "Mr./Mrs."
 
-#: controllers/MasterController.php:194
+#: controllers/MasterController.php:197
 msgid "Unbekannt"
 msgstr "unknown"
 
-#: controllers/MasterController.php:243
+#: controllers/MasterController.php:246
 msgid "Bitte füllen Sie das Feld Kommentar!"
 msgstr "Please insert a comment in the textbox!"
 
-#: controllers/MasterController.php:245
+#: controllers/MasterController.php:249
 msgid "Es wurde erfolgreich eine neue Version erstellt."
 msgstr "The topic has been created successfully."
 
-#: controllers/MasterController.php:247
+#: controllers/MasterController.php:252
 msgid "Einladungen erfolgreich versendet."
 msgstr "send out invitations"
 
-#: controllers/MasterController.php:299
+#: controllers/MasterController.php:255
+msgid "Ihr Kommentar konnte leider nicht erstellt werden!"
+msgstr "Sorry, could not create your comment."
+
+#: controllers/MasterController.php:307
 msgid "nicht angegeben/bekannt"
 msgstr "not stated/unknown"
 
-#: controllers/MasterController.php:304
+#: controllers/MasterController.php:312
 #: forms/CreateTopic.php:20
 msgid "Quelle:"
 msgstr "Source:"
 
-#: controllers/MasterController.php:318
+#: controllers/MasterController.php:326
 msgid "noch nicht bewertet"
 msgstr "not rated yet"
 
-#: controllers/MasterController.php:361
+#: controllers/MasterController.php:369
 msgid "Kein Thema vorhanden!"
 msgstr "There is no topic available!"
 
-#: controllers/MasterController.php:385
+#: controllers/MasterController.php:393
 msgid "Fehler beim Löschen der Verbindung zwischen Freund und Thema"
 msgstr "An error occurred while deleting the connection between friend and topic."
 
-#: controllers/MasterController.php:415
+#: controllers/MasterController.php:423
 msgid "Fehler beim Löschen des Freundes"
 msgstr "An error occurred while dleting the friend."
 
-#: controllers/MasterController.php:436
+#: controllers/MasterController.php:448
 msgid "Es ist ein Fehler beim Löschen aufgetretten."
 msgstr "An error occurred while the deleting process."
 
-#: controllers/MasterController.php:562
-#: controllers/MasterController.php:595
+#: controllers/MasterController.php:574
+#: controllers/MasterController.php:607
 msgid "Es ist ein Fehler beim Senden aufgetretten."
 msgstr "Sending failed, an error occurred."
 
-#: controllers/MasterController.php:563
-#: controllers/MasterController.php:596
+#: controllers/MasterController.php:575
+#: controllers/MasterController.php:608
 msgid "Wahrscheinlich ist eine der E-Mail-Adressen falsch."
 msgstr "Maybe one of the e-mail adresses are wrong?"
 
-#: controllers/MasterController.php:564
-#: controllers/MasterController.php:597
+#: controllers/MasterController.php:576
+#: controllers/MasterController.php:609
 msgid "Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt."
 msgstr "Friends with correct e-mail adresses got notified."
 
-#: controllers/MasterController.php:646
+#: controllers/MasterController.php:658
 msgid "Kein Thema zum bearbeiten vorhanden!"
 msgstr "There is no topic to edit!"
 
-#: controllers/MasterController.php:656
+#: controllers/MasterController.php:668
 msgid "Ihre Eingabe entsprach keiner gültigen URL."
 msgstr "Your input did not match a valid URL."
 
-#: controllers/MasterController.php:666
+#: controllers/MasterController.php:678
 msgid "Angegebende Version existiert für dieses Thema nicht!"
 msgstr "The selected version do not exist for the spezified topic!"
 
-#: controllers/MasterController.php:690
+#: controllers/MasterController.php:702
 msgid "Keine Themen-ID angegeben!"
 msgstr "No topic-ID available!"
 
-#: controllers/MasterController.php:733
+#: controllers/MasterController.php:745
 msgid "Fehler bei der Versionserstellung."
 msgstr "An error occured while topic creation."
 
-#: controllers/MasterController.php:889
+#: controllers/MasterController.php:917
 msgid "Es ist ein Fehler beim Speicher aufgetretten"
 msgstr "An error occurred while saving."
 
-#: controllers/MasterController.php:909
+#: controllers/MasterController.php:937
 msgid "Sie haben vergessen eine E-Mail-Adresse anzugeben."
 msgstr "You forgot to quote an e-mail adresse."
 
@@ -306,6 +314,10 @@ msgstr "Topic-name:"
 #: forms/CreateTopic.php:18
 msgid "Inhalt:"
 msgstr "Content:"
+
+#: models/UserTopicModel.php:30
+msgid "gelöschter Nutzer"
+msgstr "deleted user"
 
 #: layouts/main.phtml:35
 #: layouts/master.phtml:33

@@ -176,6 +176,8 @@ class TopicModel extends Zend_Db_Table_Abstract
         $userTopicModel = new UserTopicModel();
         $topicRatingModel = new TopicRatingModel();
         //delete topic, topicAdditives, comments and userTopics
+        /* begin of the transaction */
+        $topicAdditiveModel->getAdapter()->beginTransaction();
         try
         {
             $topicModel->delete( 'topicID = '. $topicID);
@@ -186,6 +188,7 @@ class TopicModel extends Zend_Db_Table_Abstract
 	}
         catch (Exception $e)
         {
+            $topicAdditiveModel->getAdapter()->rollBack();
             return 0;	//failed
         }
         return 1;	//successful
