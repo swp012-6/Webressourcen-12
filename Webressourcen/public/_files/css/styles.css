@@ -1,8 +1,8 @@
 
-	a.navlink:link {color:black; size:14px;}
-	a.navlink:visited {color:black; size:14px;}
-	a.navlink:active {color:black; size:14px;}
-	a.navlink:hover {color:grey; size:14px; text-decoration:underline;}
+	a.navlink:link {color:black; size:10px;}
+	a.navlink:visited {color:black; size:10px;}
+	a.navlink:active {color:black; size:10px;}
+	a.navlink:hover {color:grey; size:10px; text-decoration:underline;}
 			
 #main_Page
 {
@@ -27,6 +27,7 @@
 	border-bottom-color: white;
 	border-bottom-width: 4px;
 	border-right-color: white;
+	padding-bottom: 10px;
 }
 
 #main_Menue
@@ -49,7 +50,7 @@
 	margin-left: 175px;
 	min-height:570px;
 	padding-left: 30px;
-	padding-top: 30px
+	padding-top: 20px;
 	width: 825px;
 	font-family: Helvetica, arial;
 	
