@@ -105,7 +105,7 @@ class MasterController extends Zend_Controller_Action
 		$topicSource = $_POST['topicSource'];
 		
         /* if the form-textfields are not filled */
-		if ( (empty( $topicName)) || (empty( $topicContent)) || (empty( $topicType)))
+		if ( (empty( $topicName)) || (empty( $topicContent)))
 		{	
             $this->_redirect('master/import?error=2');
         }
@@ -717,7 +717,7 @@ class MasterController extends Zend_Controller_Action
         $topicSource = $_POST['topicSource'];
         $topicType = $_POST['topicType'];
         
-        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicType)))
+        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)))
         {
             $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
@@ -758,7 +758,7 @@ class MasterController extends Zend_Controller_Action
         $topicVersion = $_POST['topicVersion'];
         $anonymous = $_POST['anonymous'];
         
-        if ( (empty( $userID)) || (empty( $topicID)) || (empty( $topicVersion)) || (empty( $anonymous)))
+        if ( (empty( $userID)) || (empty( $topicID)) || (empty( $topicVersion)))
         {
             $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
         }

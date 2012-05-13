@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: Webressourcen 2012\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-05-13 18:09+0100\n"
-"PO-Revision-Date: 2012-05-13 18:10+0100\n"
-"Last-Translator: Kotnascher <kot@kotig.com>\n"
+"PO-Revision-Date: 2012-05-13 20:31+0100\n"
+"Last-Translator: Christoph Beger <chrib@hotmail.de>\n"
 "Language-Team: swp6-12\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -55,7 +55,7 @@ msgstr "Please insert a comment in the textbox!"
 
 #: controllers/FriendController.php:277
 msgid "Hinzufügen"
-msgstr "Adding"
+msgstr "Add"
 
 #: controllers/FriendController.php:280
 msgid "Themen Übersicht"
@@ -67,7 +67,7 @@ msgstr "The Comment was created successuflly"
 
 #: controllers/FriendController.php:303
 msgid "Kommentar wurder nicht erfolgreich hinzugefügt"
-msgstr "The Comment was created successuflly"
+msgstr "The Comment was not created successuflly"
 
 #: controllers/FriendController.php:395
 msgid "Version:  "
@@ -91,7 +91,7 @@ msgstr "Topic-Rating:"
 
 #: controllers/FriendController.php:465
 msgid "gibt keine Bewertungen"
-msgstr "not rated yet"
+msgstr "Not rated yet"
 
 #: controllers/FriendController.php:488
 msgid "Alle Kommentare"
@@ -152,7 +152,7 @@ msgstr "Topic-name already exists!"
 #: controllers/MasterController.php:79
 #: controllers/MasterController.php:666
 msgid "Bitte alle Felder füllen!"
-msgstr "Please fill all fields!"
+msgstr "Please complete all fields!"
 
 #: controllers/MasterController.php:82
 msgid "Ihre Eingabe entsprach keiner gültigen URL!"
@@ -176,7 +176,7 @@ msgstr "The topic has been created successfully."
 
 #: controllers/MasterController.php:252
 msgid "Einladungen erfolgreich versendet."
-msgstr "send out invitations"
+msgstr "Send out invitations"
 
 #: controllers/MasterController.php:255
 msgid "Ihr Kommentar konnte leider nicht erstellt werden!"
@@ -193,7 +193,7 @@ msgstr "Source:"
 
 #: controllers/MasterController.php:326
 msgid "noch nicht bewertet"
-msgstr "not rated yet"
+msgstr "Not rated yet"
 
 #: controllers/MasterController.php:369
 msgid "Kein Thema vorhanden!"
@@ -205,7 +205,7 @@ msgstr "An error occurred while deleting the connection between friend and topic
 
 #: controllers/MasterController.php:423
 msgid "Fehler beim Löschen des Freundes"
-msgstr "An error occurred while dleting the friend."
+msgstr "An error occurred while deleting the friend."
 
 #: controllers/MasterController.php:448
 msgid "Es ist ein Fehler beim Löschen aufgetretten."
@@ -260,7 +260,7 @@ msgstr "Comment"
 
 #: forms/CreateComment.php:12
 msgid "senden"
-msgstr "invite"
+msgstr "Send"
 
 #: forms/CreateFriend.php:15
 msgid "Vorname:"
@@ -327,21 +327,21 @@ msgstr "Masterpage"
 #: layouts/main.phtml:36
 #: layouts/master.phtml:34
 msgid "Thema erstellen"
-msgstr "create topic"
+msgstr "Create topic"
 
 #: layouts/main.phtml:37
 #: layouts/master.phtml:35
 msgid "Themen anzeigen"
-msgstr "show topics"
+msgstr "Show topics"
 
 #: layouts/main.phtml:38
 #: layouts/master.phtml:36
 msgid "Freunde anzeigen"
-msgstr "show friends"
+msgstr "Show friends"
 
 #: layouts/master.phtml:26
 msgid "Verwaltung"
-msgstr "administration"
+msgstr "Administration"
 
 #: layouts/master.phtml:44
 msgid "Suchen"
@@ -357,19 +357,19 @@ msgstr "You are successfully logged in as the master. Now, you have the followin
 
 #: views/scripts/index/index.phtml:9
 msgid "Neues Thema erstellen"
-msgstr "create a new topic"
+msgstr "Create a new topic"
 
 #: views/scripts/index/index.phtml:10
 msgid "Thema überarbeiten und eine aktuellere Version erzeugen"
-msgstr "rework a topic and create a new version"
+msgstr "Rework a topic and create a new version"
 
 #: views/scripts/index/index.phtml:11
 msgid "Freunde zu ihren Themen per Email einladen bzw. Einladungen widerrufen"
-msgstr "invite friends via email or abrogate an invitation"
+msgstr "Invite friends via email or abrogate an invitation"
 
 #: views/scripts/index/index.phtml:12
 msgid "Kommentare schreiben und löschen"
-msgstr "write a comments or delete one"
+msgstr "Write a comments or delete one"
 
 #: views/scripts/index/index.phtml:14
 msgid "Auf der linken Seite finden Sie ein Suchfeld, mit dessen Hilfe Sie leicht nach Freunden bzw. Themen suchen können."
@@ -418,7 +418,7 @@ msgstr "Password control"
 
 #: views/scripts/master/edittopic.phtml:36
 msgid "neue Version speichern"
-msgstr "save new version"
+msgstr "Save new version"
 
 #: views/scripts/master/friend.phtml:10
 #: views/scripts/master/showfriend.phtml:7
@@ -465,11 +465,11 @@ msgstr "Welcome to the mastersection"
 
 #: views/scripts/master/invite.phtml:18
 msgid "einladen"
-msgstr "invite"
+msgstr "Invite"
 
 #: views/scripts/master/invite.phtml:47
 msgid "ausgewählte Freunde informieren"
-msgstr "inform selected friends"
+msgstr "Inform selected friends"
 
 #: views/scripts/master/search.phtml:59
 #: views/scripts/master/showfriend.phtml:48
@@ -478,17 +478,17 @@ msgstr "Topic"
 
 #: views/scripts/master/search.phtml:73
 msgid "zum Thema"
-msgstr "switch to topic"
+msgstr "Switch to topic"
 
 #: views/scripts/master/showcomments.phtml:18
 #: views/scripts/master/showtopics.phtml:94
 msgid "löschen"
-msgstr "delete"
+msgstr "Delete"
 
 #: views/scripts/master/showcomments.phtml:37
 #: views/scripts/master/showfriend.phtml:95
 msgid "zurück"
-msgstr "back"
+msgstr "Back"
 
 #: views/scripts/master/showfriend.phtml:39
 msgid "Dieser Freund ist noch zu keinem Thema eingeladen"
@@ -496,15 +496,15 @@ msgstr "So far, this friend is not invited to any topic."
 
 #: views/scripts/master/showfriend.phtml:51
 msgid "sein Nick"
-msgstr "his nickname"
+msgstr "His nickname"
 
 #: views/scripts/master/showfriend.phtml:71
 msgid "Trennen"
-msgstr "disconnect"
+msgstr "Disconnect"
 
 #: views/scripts/master/showfriend.phtml:91
 msgid "Freund entfernen"
-msgstr "delete friend"
+msgstr "Delete friend"
 
 #: views/scripts/master/showtopics.phtml:9
 msgid "Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?"
@@ -512,19 +512,19 @@ msgstr "Are you sure, you want to proceed and finaly delete this topic?"
 
 #: views/scripts/master/showtopics.phtml:46
 msgid "Thema schließen"
-msgstr "close topic"
+msgstr "Close topic"
 
 #: views/scripts/master/showtopics.phtml:52
 msgid "Einladungen versenden"
-msgstr "send out invitations"
+msgstr "Send out invitations"
 
 #: views/scripts/master/showtopics.phtml:59
 msgid "Inhalt überarbeiten"
-msgstr "rework content"
+msgstr "Rework content"
 
 #: views/scripts/master/showtopics.phtml:65
 msgid "Durchschnittliche Bewertung:"
-msgstr "average rating:"
+msgstr "Average rating:"
 
 #: views/scripts/master/showtopics.phtml:69
 msgid "Sterne von 5 Sternen"
@@ -532,7 +532,7 @@ msgstr "stars of 5 stars"
 
 #: views/scripts/master/showtopics.phtml:100
 msgid "zeige alle"
-msgstr "show all"
+msgstr "Show all"
 
 #: views/scripts/master/validate.phtml:3
 msgid "Ihr Thema wurde erfolgreich erstellt."
@@ -540,7 +540,7 @@ msgstr "The topic has been created successfully."
 
 #: views/scripts/master/validate.phtml:9
 msgid "Zum Thema"
-msgstr "switch to topic"
+msgstr "Switch to topic"
 
 #~ msgid "Freund suchen"
 #~ msgstr "search friend"
