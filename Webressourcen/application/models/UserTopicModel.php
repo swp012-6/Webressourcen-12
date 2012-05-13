@@ -19,9 +19,9 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 */
 	public function getUserName($userTopic)
 	{
-        $registry = Zend_Registry::getInstance();
-        $translate = $registry->get( 'Zend_Translate');
-        
+        	$registry = Zend_Registry::getInstance();
+	        $translate = $registry->get( 'Zend_Translate');
+
 		$rowset = $this->fetchAll('userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
 		$row = $rowset->current();
         
@@ -125,13 +125,51 @@ class UserTopicModel extends Zend_Db_Table_Abstract
     public function delUserTopic($userID, $topicID)
     {
         // get userTopic
-        $row = $this->fetchRow( 'userID = "' . $userID . '"AND topicID = "' . $topicID . '"');
+        $row = $this->fetchRow('userID = "'.$userID.'"
+        AND topicID = "'.$topicID.'"');
         // delete userTopic
         $row->delete();
         
         $topicRatingModel = new TopicRatingModel;
         
-        $topicRatingModel->delete( 'userID = "' . $userID . '" AND topicID = "' . $topicID .'"');
+        $topicRatingModel->delete( 'userID = "' . $userID . '" AND topicID = "' . $topicID .'"');  	
     }
+
+	/**
+	 * gets topicIDs which are connected with $userID
+	 *
+	 * @param int $userID ID of desired user
+
+         * @return array $topics topicIDs and usernames
+	 */
+	public function notInvitedTopics($userID)
+	{
+		$topicModel = new TopicModel();
+		
+		$invTopics = $this ->fetchAll($this->select()
+				->where('userID = ?',$userID));
+        Zend_Debug::dump($invTopics->toArray());
+		$tempTopics = $topicModel ->fetchAll();
+        Zend_Debug::dump($tempTopics->toArray());
+		$topics = array();
+		$alreadyInvited = 0;
+		foreach( $tempTopics as $tTopic)
+		{
+			foreach( $invTopics as $iTopic)
+			{
+
+				if($tTopic["topicID"]==$iTopic["topicID"])
+					{
+						$alreadyInvited = 1;
+					}
+			}
+			if($alreadyInvited == 0)
+			{
+				$topics[]=$tTopic["topicID"];
+			}
+			$alreadyInvited = 0;
+		}
+		return $topics;
+	}
 }
 ?>

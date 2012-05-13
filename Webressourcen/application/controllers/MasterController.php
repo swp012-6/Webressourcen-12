@@ -78,10 +78,8 @@ class MasterController extends Zend_Controller_Action
                 
                 case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder füllen!');
                         break;
-                        
                 case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL!');
                         break;
-                        
                 default: 
             }
         }
@@ -200,7 +198,16 @@ class MasterController extends Zend_Controller_Action
             {
                 $this->view->last_name = $user['last_name'];
             }
-
+            //invite option
+            $invite = $userTopicModel->notInvitedTopics($userID);
+            $infoInviteID = array();
+            $infoInviteName = array();
+            for($i=0; $i<sizeof($invite); $i++)
+            {
+                $infoInviteID[]   = $invite[$i];
+                $infoInviteName[]   = $topicModel->getTopicName($invite[$i]);
+            }
+            //topics
             $topics = $userTopicModel->getTopics($userID);
             // prepare arrays
             $infoTopicIDs = array();
@@ -214,10 +221,13 @@ class MasterController extends Zend_Controller_Action
                 $infoUserNames[]  = $topics[$i]["userName"];
             }
             //pass all other important information to the view
+            $this->view->infoInviteID = $infoInviteID;
+            $this->view->infoInviteName = $infoInviteName;
             $this->view->infoTopicIDs = $infoTopicIDs;
             $this->view->infoTopicNames = $infoTopicNames;
             $this->view->infoUserNames = $infoUserNames;
-            $this->view->size = sizeof($infoTopicIDs);
+            $this->view->sizeInvite = sizeof($infoInviteID);
+            $this->view->sizeTopics = sizeof($infoTopicIDs);
             $this->view->userID = $userID;
             $this->view->email = $user['email'];
             $this->view->job = $user['job'];
@@ -430,6 +440,7 @@ class MasterController extends Zend_Controller_Action
     }
 
     /** This function is called, when an user wants to delete a topic.
+
       * @author Christoph Beger
       */
     public function closetopicAction()
@@ -616,7 +627,14 @@ class MasterController extends Zend_Controller_Action
             
             if($error!=1)
             {
-                $this->_redirect("/master/showtopics?id=$topicID&ver=".$topicModel->getMaxTopicVersion($topicID)."&msg=3");
+                if($_POST['toUser'])
+                {
+                    $this->_redirect("/master/showfriend?id=". $_POST['toUser']); 
+                }
+                else
+                {
+                   $this->_redirect("/master/showtopics?id=$topicID&ver=".$topicModel->getMaxTopicVersion($topicID)."&msg=3"); 
+                }
             }
         }
         else
@@ -1018,6 +1036,7 @@ class MasterController extends Zend_Controller_Action
     
     /** This function deletes a comment by commentID
       * @author Christoph Beger
+
       */
     public function deletecommentAction()
     {
