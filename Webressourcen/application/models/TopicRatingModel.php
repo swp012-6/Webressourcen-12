@@ -144,12 +144,12 @@ class TopicRatingModel extends Zend_Db_Table_Abstract
         @param topicID to identifikation thhe topic
         @param topicVersion to identifikation thhe Version
     */
-    public function deleteRating($topicID,$topicVersion)
+    public function deleteRating($topicID)
     {
-        $adapter = $this->getAdapter();
-		$sure1 = $adapter->quote($topicID);
-        $sure2 = $adapter->quote($topicVersion);
-		$where = "topicID = $sure1 AND topicVersion = $sure2";
+        $key = "topicID = $topicID";
+        
+        $where = $this->getAdapter()->quoteInto($key);
+    
 		if( empty($where))
 		{
 			throw new Exception('empty WHERE-clause transfer');
