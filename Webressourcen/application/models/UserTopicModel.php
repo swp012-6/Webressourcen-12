@@ -96,7 +96,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         $rowset = $this->fetchAll('hash = "'.$hash.'"');
 		$row = $rowset->current();
         
-        $output = array("userID"=>$row->userID,"topicID"=>$row->topicID);
+        $output = array("userID"=>$row->userID,"topicID"=>$row->topicID,"userName"=>$row->userName);
         return $output;
     }
     
