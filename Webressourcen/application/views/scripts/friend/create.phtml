@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 	//Title---------------------------------------------------
 	echo "<div id = \"Titel\" >";
@@ -11,7 +11,7 @@
 	echo $this->escape($this->message);
 	
 	echo 	"<form action =\"showtopic\" method = \"get\">
-							<input type=\"submit\" class=\"backbutton\" value = \"Back\" />
+							<input type=\"submit\" class=\"backbutton\" value = \"".($this->escape($this->Bachbutton))."\" />
 			</form>";
 
 ?>
