@@ -19,6 +19,11 @@ class FriendController extends Zend_Controller_Action
         //Init Session
         $friendSession = new Zend_Session_Namespace('friendSession');
         
+        if((empty($friendSession->userID) || empty($friendSession->topicID))&&(NULL == $request->getQuery("hash")))
+        {
+            //if the userID ore the topicID empty, then go to IndexController
+            $this->_redirect('/'); 
+        }
         
         //language init
         
@@ -38,40 +43,43 @@ class FriendController extends Zend_Controller_Action
             default:    $translate->setLocale( 'de');
         }   
         
-        //main_menue
-        //title
-        $view->main_menue_title = $this->_translate->_("Thema auswählen: ");
-        
-        //get the topics
-        $topicIDs = $dbUserTopic->getTopics($friendSession->userID);
-        
-        $topics;
-        $count = 1;
-        foreach($topicIDs as $tID)
+        if(NULL == $request->getQuery("hash"))
         {
-            $topics[$count]['topicID'] = $tID['topicID'];
-            $topics[$count]['topicName'] = $dbTopic->getTopicName($tID['topicID']);
             
-            $count++;
-        }
-        $view->main_menue_topics = $topics;
+            //main_menue
+            //title
+            $view->main_menue_title = $this->_translate->_("Thema auswählen: ");
         
+            //get the topics
+            $topicIDs = $dbUserTopic->getTopics($friendSession->userID);
         
-        if(NULL != $request->getQuery("topic"))
-        {
-            //save in the session with new TopicID
-            
-            $friendSession->topicID = $request->getQuery("topic");
-            
-            $option = array("topicID" => $request->getQuery("topic"), "number" =>1,"page" => 0);
-            $version = $dbTopic->getVersionNumbers($option);
-            foreach($version as $v)
+            $topics;
+            $count = 1;
+            foreach($topicIDs as $tID)
             {
-                $topicVersion = $v;
+                $topics[$count]['topicID'] = $tID['topicID'];
+                $topics[$count]['topicName'] = $dbTopic->getTopicName($tID['topicID']);
+            
+                $count++;
             }
-            $friendSession->topicVersion = $topicVersion;
-        }  
+            $view->main_menue_topics = $topics;
         
+        
+            if(NULL != $request->getQuery("topic"))
+            {
+                //save in the session with new TopicID
+            
+                $friendSession->topicID = $request->getQuery("topic");
+            
+                $option = array("topicID" => $request->getQuery("topic"), "number" =>1,"page" => 0);
+                $version = $dbTopic->getVersionNumbers($option);
+                foreach($version as $v)
+                {
+                    $topicVersion = $v;
+                }
+                $friendSession->topicVersion = $topicVersion;
+            }  
+        }
         
     }
 
@@ -89,12 +97,18 @@ class FriendController extends Zend_Controller_Action
 		$dbTopic = new TopicModel();
         $dbUserTopic = new UserTopicModel();
         
+        //Session init
+        $friendSession = new Zend_Session_Namespace('friendSession');
+        
         //read the hashcode
         if(NULL == $request->getQuery("hash"))
         {
+            $friendSession->userID = NULL;
+            $friendSession->topicID = NULL;
+            
             //if no hashcode in the URL, then go to IndexController
             $this->_redirect('/');
-            
+           
         }
     
         //get the userID an topicID about the hash
@@ -104,12 +118,14 @@ class FriendController extends Zend_Controller_Action
         
         if(empty($userID) || empty($topicID)||(true == $usertopic['master']))
         {
+            $friendSession->userID = NULL;
+            $friendSession->topicID = NULL;
             //if the userID ore the topicID empty, then go to IndexController
             $this->_redirect('/');          
         }
         
         //session init and pull userID and topicID inside
-        $friendSession = new Zend_Session_Namespace('friendSession');
+        
         $friendSession->userID = $userID;
         $friendSession->topicID = $topicID;
         
@@ -276,9 +292,16 @@ class FriendController extends Zend_Controller_Action
 			//array for the database
 			$conntent = array("userID" => $userID,"topicID"=>$topicID,"topicVersion" => $topicVersion,"anonymous"=> $name,"commentText"=>$comment);
 			//save
-			$dbComment->addComment($conntent);
+			$dbCommentsuccessfull = $dbComment->addComment($conntent);
 			//user message
-			$view->message = $this-> _translate-> _('Kommentar wurder erfolgreich hinzugefügt');
+            if($dbCommentsuccessfull == 1)
+            {
+                $view->message = $this-> _translate-> _('Kommentar wurder erfolgreich hinzugefügt');
+            }
+            else
+            {
+                $view->message = $this-> _translate-> _('Kommentar wurder nicht erfolgreich hinzugefügt');
+            }
 			
 		}   
     }
