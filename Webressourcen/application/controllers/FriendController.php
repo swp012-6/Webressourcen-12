@@ -402,11 +402,11 @@ class FriendController extends Zend_Controller_Action
 		}
 		
         //head Title----------------------------
-		$view->headTitle($this-> _translate-> _($dbTopic->getTopicName($topicID)));
+		$view->headTitle($dbTopic->getTopicName($topicID));
 		
 		
 		//title-----------------
-		$view->friendTopicTitel = $this-> _translate-> _($dbTopic->getTopicName($topicID));
+		$view->friendTopicTitel = $dbTopic->getTopicName($topicID);
 		
 		
 		
