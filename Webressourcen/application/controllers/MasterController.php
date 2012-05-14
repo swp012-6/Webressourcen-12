@@ -333,7 +333,7 @@ class MasterController extends Zend_Controller_Action
                 //if the topic is not rated yet
                 if( !$ratingPercent)
                 {
-                    $this->view->topicRating = $this->_translate->_( 'noch nicht bewertet');
+                    $this->view->topicRating = 'off';
                 }
                 else
                 {
