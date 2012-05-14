@@ -51,7 +51,7 @@ class TopicModel extends Zend_Db_Table_Abstract
 	public function getNumberVersion($topicID)
 	{
 		$topicAdditiveModel = new TopicAdditiveModel();
-        $topicVersionRowSet = $topicAdditiveModel->fetchAll();
+        $topicVersionRowSet = $topicAdditiveModel->fetchAll("topicID = $topicID");
 		return count($topicVersionRowSet);
 	}
     /**
