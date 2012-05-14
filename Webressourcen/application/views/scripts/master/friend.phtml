@@ -1,21 +1,35 @@
 ﻿<!-- content of the fiend overview and createfriend option -->
-
+﻿<script type = "text/javascript">
+/**
+ * asks the user if he really want to delete this friend
+ *
+ * @param form indicates which user-delete-form to submit
+ */
+function confirmation( form)
+{
+    var answer = confirm( '<?php echo $this->translate( 'Sind Sie sicher, dass Sie diesen Freund endgültig löschen möchten?'); ?>');
+    if ( answer)
+    {
+        form.submit();
+    }
+}
+</script>
 <table border = "1">
 	<tr>				<!--tablehead-->
 		<td>
-			Vorname
+			<?php echo $this->translate( 'Vorname'); ?>
 		</td>
 		<td>
-			Nachname
+			<?php echo $this->translate( 'Nachname'); ?>
 		</td>
 		<td>
-			E-Mail-Adresse
+			<?php echo $this->translate( 'E-Mail-Adresse'); ?>
 		</td>
 		<td>
-			Beruf
+			<?php echo $this->translate( 'Beruf'); ?>
 		</td>
 		<td>
-			Adresse
+			<?php echo $this->translate( 'Adresse'); ?>
 		</td>
 		<td>
 		</td>
@@ -43,14 +57,16 @@ foreach ($this->friends as $a)		//for each friend
 			<?php echo $this->escape($a->adresse) ?>
 		</td>
 		<td>
-			<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>?id=<?php echo $this->escape($a->userID) ?>" method="post">
-				<input type="submit" name="button_send" value="Details" class="button" />
+			<form	action="<?php echo $this->url(array('controller'=>'master', 'action'=>'showfriend'), null, true) ?>?id=<?php echo $this->escape($a->userID) ?>"
+				method="post">
+				<input type="submit" name="button_details" value="<?php echo $this->translate( 'Details'); ?>" class="button" />
 			</form>
 		</td>
 		<td>
-			<form action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" method="post">
-					<input type = "hidden" name = "userID" value = "<?php echo $this->escape($a->userID) ?>" />
-				<input type="submit" name="button_delete_friend" value=" X " class="button" />
+			<form 	action="<?php echo $this->url(array('controller'=>'master', 'action'=>'delfriend'), null, true) ?>" 
+				method="post">
+				<input type = "hidden" name = "userID" value = "<?php echo $this->escape($a->userID) ?>" />
+				<input type="button" name="button_delete_friend" value=" X " onclick = "confirmation( this.form)" />
 			</form>
 		</td>
 	</tr>

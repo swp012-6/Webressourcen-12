@@ -3,19 +3,19 @@
 	<table border = "1">
 		<tr>				<!--tablehead-->
 			<td>
-				Vorname
+				<?php echo $this->translate( 'Vorname'); ?>
 			</td>
 			<td>
-				Nachname
+				<?php echo $this->translate( 'Nachname'); ?>
 			</td>
 			<td>
-				E-Mail-Adresse
+				<?php echo $this->translate( 'E-Mail-Adresse'); ?>
 			</td>
 			<td>
-				Beruf
+				<?php echo $this->translate( 'Beruf'); ?>
 			</td>
 			<td>
-				einladen
+				<?php echo $this->translate( 'einladen'); ?>
 			</td>
 		</tr>
 	<?php
@@ -44,7 +44,7 @@
 	?>
 	</table>
 	<input type = "hidden" name = "topicID" value = "<?php echo $this->topicID; ?>" />
-	<input type="submit" name="button_send" value="ausgewählte Freunde informieren" class="button" />
+	<input type="submit" name="button_send" value="<?php echo $this->translate( 'ausgewählte Freunde informieren'); ?>" class="button" />
 </form>
 
 <?php 

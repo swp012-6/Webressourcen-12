@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /** This form is used to get data for creating a new friend.
   * First you have to create an instance of this class.
   * After this, use the function setTopicID() to add the topicID and the submitbutton
@@ -12,11 +12,11 @@ class Application_Form_CreateFriend extends Zend_Form
     {
         $this->setMethod( 'post');
         $this->setAttrib( 'action', 'createfriend');
-        $this->addElement( 'text', 'firstName', array( 'label' => 'Vorname:'));
-        $this->addElement( 'text', 'lastName', array( 'label' => 'Nachname:'));
-        $this->addElement( 'text', 'email', array( 'label' => 'Email-Adresse:'));
-        $this->addElement( 'text', 'job', array( 'label' => 'Beruf:'));
-        $this->addElement( 'text', 'adresse', array( 'label' => 'Adresse:'));
+        $this->addElement( 'text', 'firstName', array( 'label' => $this->getView()->translate( 'Vorname:')));
+        $this->addElement( 'text', 'lastName', array( 'label' => $this->getView()->translate( 'Nachname:')));
+        $this->addElement( 'text', 'email', array( 'label' => $this->getView()->translate( 'Email-Adresse:')));
+        $this->addElement( 'text', 'job', array( 'label' => $this->getView()->translate( 'Beruf:')));
+        $this->addElement( 'text', 'adresse', array( 'label' => $this->getView()->translate( 'Adresse:')));
     }
    
     /** 
@@ -26,7 +26,7 @@ class Application_Form_CreateFriend extends Zend_Form
     public function addSendButton($topicID)
     {
         $this->addElement( 'hidden', 'topicID', array('value' => $topicID));
-        $this->addElement( 'submit', 'neuen_Freund_einladen');
+        $this->addElement( 'submit', $this->getView()->translate( 'neuen_Freund_einladen'));
     }
    
     /** 
@@ -34,7 +34,7 @@ class Application_Form_CreateFriend extends Zend_Form
      */
     public function addButton()
     {
-        $this->addElement( 'submit', 'erstellen');
+        $this->addElement( 'submit', $this->getView()->translate( 'erstellen'));
     }
    
     /** 
@@ -44,7 +44,7 @@ class Application_Form_CreateFriend extends Zend_Form
     public function editButton($edit)
     {
         $this->addElement( 'hidden', 'edit', array('value' => $edit));
-        $this->addElement( 'submit', 'ändern');
+        $this->addElement( 'submit', $this->getView()->translate( 'ändern'));
     }
 
 }

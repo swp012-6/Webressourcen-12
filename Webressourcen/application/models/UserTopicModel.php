@@ -19,12 +19,15 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 	 */
 	public function getUserName($userTopic)
 	{
+        	$registry = Zend_Registry::getInstance();
+	        $translate = $registry->get( 'Zend_Translate');
+
 		$rowset = $this->fetchAll('userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
 		$row = $rowset->current();
         
         if ( empty( $row))
         {
-            return 'gelöschter Nutzer';
+            return $translate->_('gelöschter Nutzer');
         }
         
 		return $row->userName;
@@ -96,7 +99,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         $rowset = $this->fetchAll('hash = "'.$hash.'"');
 		$row = $rowset->current();
         
-        $output = array("userID"=>$row->userID,"topicID"=>$row->topicID);
+        $output = array("userID"=>$row->userID,"topicID"=>$row->topicID,"userName"=>$row->userName);
         return $output;
     }
     
@@ -125,7 +128,48 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         $row = $this->fetchRow('userID = "'.$userID.'"
         AND topicID = "'.$topicID.'"');
         // delete userTopic
-        $row->delete();  	
+        $row->delete();
+        
+        $topicRatingModel = new TopicRatingModel;
+        
+        $topicRatingModel->delete( 'userID = "' . $userID . '" AND topicID = "' . $topicID .'"');  	
     }
+
+	/**
+	 * gets topicIDs which are connected with $userID
+	 *
+	 * @param int $userID ID of desired user
+
+         * @return array $topics topicIDs and usernames
+	 */
+	public function notInvitedTopics($userID)
+	{
+		$topicModel = new TopicModel();
+		
+		$invTopics = $this ->fetchAll($this->select()
+				->where('userID = ?',$userID));
+        Zend_Debug::dump($invTopics->toArray());
+		$tempTopics = $topicModel ->fetchAll();
+        Zend_Debug::dump($tempTopics->toArray());
+		$topics = array();
+		$alreadyInvited = 0;
+		foreach( $tempTopics as $tTopic)
+		{
+			foreach( $invTopics as $iTopic)
+			{
+
+				if($tTopic["topicID"]==$iTopic["topicID"])
+					{
+						$alreadyInvited = 1;
+					}
+			}
+			if($alreadyInvited == 0)
+			{
+				$topics[]=$tTopic["topicID"];
+			}
+			$alreadyInvited = 0;
+		}
+		return $topics;
+	}
 }
 ?>

@@ -1,21 +1,26 @@
 <!-- content of the mainpage -->
-<h1>Willkommen</h1>
+<h1><?php echo $this->translate( 'Willkommen'); ?></h1>
 <?php 
 if($this->masterOnline == 1)		//if logged in
 {
 ?>
-	<p>Sie sind als Administrator eingeloggt</p>
-	<p>Momentan sind die Administratorfunktionen in Bearbeitung</p>
-	<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'updateform'), null, true); ?>">Update</a>
-	<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'logout'), null, true); ?>">Logout</a>
+	<?php echo $this->translate( 'Sie wurden als Master angemeldet und haben nun folgende Möglichkeiten:'); ?>
+	<ul>
+	    <li><?php echo $this->translate( 'Neues Thema erstellen'); ?></li>
+	    <li><?php echo $this->translate( 'Thema überarbeiten und eine aktuellere Version erzeugen'); ?></li>
+	    <li><?php echo $this->translate( 'Freunde zu ihren Themen per Email einladen bzw. Einladungen widerrufen'); ?></li>
+	    <li><?php echo $this->translate( 'Kommentare schreiben und löschen'); ?></li>
+	</ul>
+	<?php echo $this->translate( 'Auf der linken Seite finden Sie ein Suchfeld, mit dessen Hilfe Sie leicht nach Freunden bzw. Themen suchen können.'); ?>
 <?php 
 } 
 else					//if not logged in
 {
 ?>
-	<p>Diese Seite befindet sich im Aufbau</p>
-	<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'prelogin'), null, true); ?>">Adminlogin</a>
-	<?php 
+	<p><?php echo $this->translate( 'Auf dieser Seite können Sie verschiedene Themen mit ihren Freunden besprechen.'); ?></p>
+	<p><?php echo $this->translate( 'Bitte benutzen die einen Link um zu den Themen zu gelangen,'); ?><br> 
+           <?php echo $this->translate( 'oder wenn Sie der Administrator sind, melden Sie sich einfach an.'); ?></p>
+<?php 
 }
 ?>
 

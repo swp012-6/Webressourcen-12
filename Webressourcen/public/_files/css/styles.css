@@ -1,6 +1,9 @@
 
-
-
+	a.navlink:link {color:black; size:10px;}
+	a.navlink:visited {color:black; size:10px;}
+	a.navlink:active {color:black; size:10px;}
+	a.navlink:hover {color:grey; size:10px; text-decoration:underline;}
+			
 #main_Page
 {
 	font-family: Helvetica, arial;
@@ -9,7 +12,6 @@
 	margin: auto;
 	min-height: 300px;
 	background-color: FFEFD5;
-
 }
 
 #main_Head
@@ -25,24 +27,22 @@
 	border-bottom-color: white;
 	border-bottom-width: 4px;
 	border-right-color: white;
+	padding-bottom: 10px;
 }
-
-
 
 #main_Menue
 {
 	background-color: rgb(190,058,111);
 	font-family: Helvetica, arial;
 	width: 175px;
-	min-height: 570px;
 	float: left;
+	min-height: 570px;
 	padding-left:10px;
 	padding-top:20px;
 	border: 2px inset;
 	border-left-color: white;
 	border-top-color: white;
-	border-top-width: 0px; 
-	
+	border-top-width: 0px; 	
 }
 
 #main_Main
@@ -50,8 +50,8 @@
 	margin-left: 175px;
 	min-height:570px;
 	padding-left: 30px;
-	padding-top: 30px
-	width: 825px;
+	padding-top: 20px;
+	width: 791px;
 	font-family: Helvetica, arial;
 	
 }
@@ -60,3 +60,63 @@
 {
 	width:800px;
 }
+
+#Footer
+{
+	text-align: center;
+	background-color: rgb(190,058,111);
+	font-family: Heletica, arial;
+	min-height: 25px;
+	width: 1000px;
+	border: 2px inset;
+	border-left-color: white;
+	border-top-color: white;
+}
+
+#left
+{
+	float: left;
+}
+
+
+
+
+
+  ul#Navigation {
+    	margin: 0; 
+    	text-align: center;
+    	font-family: Helvetica, arial;
+    	padding-left: 10px;
+    	letter-spacing: 2px;
+    	background-color: rgb(176, 048, 096);
+    	width: 1000px;
+    	height: 20px;
+	border: outset;
+	border-bottom-color: white;
+	border-bottom-width: 4px;
+	border-right-color: white;
+	padding-bottom: 10px;
+  }
+  ul#Navigation li {
+	padding-top: 5px;
+    list-style: none;
+    display: inline;
+    margin: 5px; padding: 0;
+  }
+
+  ul#Navigation a, ul#Navigation span {
+    padding: 0.2em 1em;
+    text-decoration: none; font-weight: bold;
+    border: 1px solid black;
+    border-left-color: white; border-top-color: white;
+    color: black; background-color: rgb(176, 080, 50);
+  }
+  * html ul#Navigation a, * html ul#Navigation span {
+    width: 1em;    
+    w/idth: auto;  
+  }
+  ul#Navigation a:hover, ul#Navigation span {
+    border-color: white;
+    border-left-color: black; border-top-color: black;
+    color: white; background-color: rgb(100, 080, 096);
+  }

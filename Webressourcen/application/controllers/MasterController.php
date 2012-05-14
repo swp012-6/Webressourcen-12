@@ -19,7 +19,9 @@
  - topicviewAction()
  - showcommentsAction()
  - createfriendAction()
-
+ - httpRequest($url)
+ - searchAction()
+ - deletecommentAction()
  */
 
 /** This class is the controller for the section ../public/master .
@@ -28,21 +30,41 @@
   * @author Christoph Beger and Peter Kornowski
   */
 class MasterController extends Zend_Controller_Action
-{
-
+{ 
+    protected $_translate;
+    
     public function init()
     {
         Zend_Layout::getMvcInstance()->setLayout('master');
+        
+        $bootstrap = $this->getInvokeArg( 'bootstrap');
+        $this->config = $bootstrap->getOptions();
+        
+        $languageNamespace = new Zend_Session_Namespace( 'language');
+        
+        if ( isset( $_GET['lang']))
+        {
+            $languageNamespace->lang = $_GET['lang'];
+        }
+        
+        $registry = Zend_Registry::getInstance();
+        $translate = $registry->get( 'Zend_Translate');
+        $this->_translate = $translate;
+        switch ( $languageNamespace->lang)
+        {
+            case 'de':  $translate->setLocale( 'en'); break;
+            default:    $translate->setLocale( 'de');
+        }   
     }
 
     public function indexAction()
     {
         // action body
-        
     }
 
     /** This function shows a form where the master can insert topic-parameters like content or source.
       * If an error occurred in validateAction, this page will show an errormessage.
+      * @author Christoph Beger 
       */      
     public function importAction()
     {
@@ -51,18 +73,22 @@ class MasterController extends Zend_Controller_Action
         {
             switch ($_GET['error'])
             {
-                case 1: $this->view->errorMsg = 'Themen-Name bereits vergeben!'; 
+                case 1: $this->view->errorMsg = $this->_translate->_( 'Themen-Name bereits vergeben!'); 
                         break;
                 
-                case 2: $this->view->errorMsg = 'Bitte alle Felder füllen!';
+                case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder füllen!');
                         break;
-                case 3: $this->view->errorMsg = 'Ihre Eingabe entsprach keiner gültigen URL!';
+                case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL!');
                         break;
                 default: 
             }
         }
-        $topicForm = new Application_Form_CreateTopic();
-		$this->view->topicForm = $topicForm;
+        $topicForm = new Application_Form_CreateTopic(); 
+        $this->view->topicForm = $topicForm;
+        
+        /* set baseUrl for the view */
+        $list = explode( '/', $_SERVER['REQUEST_URI']);
+        $this->view->baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $list['1'];
     }
 
     /* This function inserts topic-parameters in the database */
@@ -105,8 +131,8 @@ class MasterController extends Zend_Controller_Action
             $this->_redirect( 'master/import?error=1');
         }
 	
-	$this->view->topicID = $result;
-        $this->view->version = $topicModel->getMaxTopicVersion($result);
+        $this->view->topicID = $result;
+        $this->view->version = $topicModel->getMaxTopicVersion( $result);
     }
 
     /**
@@ -149,10 +175,15 @@ class MasterController extends Zend_Controller_Action
             $userID = $_GET['id'];
             //load user
             $user = $userModel->getUser($userID);
+            //authentification
+            if(empty($user['email']))
+            {
+                $this->_redirect('/master/friend');
+            }
             //pass first name
             if(empty($user['first_name']))
             {
-                $this->view->first_name = 'Herr/Frau';
+                $this->view->first_name = $this->_translate->_( 'Herr/Frau');
             }
             else
             {
@@ -161,13 +192,22 @@ class MasterController extends Zend_Controller_Action
             //pass last name
             if(empty($user['last_name']))
             {
-                $this->view->last_name = 'Unbekannt';
+                $this->view->last_name = $this->_translate->_( 'Unbekannt');
             }
             else
             {
                 $this->view->last_name = $user['last_name'];
             }
-
+            //invite option
+            $invite = $userTopicModel->notInvitedTopics($userID);
+            $infoInviteID = array();
+            $infoInviteName = array();
+            for($i=0; $i<sizeof($invite); $i++)
+            {
+                $infoInviteID[]   = $invite[$i];
+                $infoInviteName[]   = $topicModel->getTopicName($invite[$i]);
+            }
+            //topics
             $topics = $userTopicModel->getTopics($userID);
             // prepare arrays
             $infoTopicIDs = array();
@@ -181,10 +221,13 @@ class MasterController extends Zend_Controller_Action
                 $infoUserNames[]  = $topics[$i]["userName"];
             }
             //pass all other important information to the view
+            $this->view->infoInviteID = $infoInviteID;
+            $this->view->infoInviteName = $infoInviteName;
             $this->view->infoTopicIDs = $infoTopicIDs;
             $this->view->infoTopicNames = $infoTopicNames;
             $this->view->infoUserNames = $infoUserNames;
-            $this->view->size = sizeof($infoTopicIDs);
+            $this->view->sizeInvite = sizeof($infoInviteID);
+            $this->view->sizeTopics = sizeof($infoTopicIDs);
             $this->view->userID = $userID;
             $this->view->email = $user['email'];
             $this->view->job = $user['job'];
@@ -210,9 +253,16 @@ class MasterController extends Zend_Controller_Action
         
         switch ( $_GET['msg'])
         {
-            case 1: $this->view->msg = 'Bitte füllen Sie das Feld Kommentar!';
-            break;
-            case 2: $this->view->msg = 'Es wurde erfolgreich eine neue Version erstellt.';
+            case 1: $this->view->msg = $this->_translate->_( 'Bitte füllen Sie das Feld Kommentar!');
+                    break;
+                    
+            case 2: $this->view->msg = $this->_translate->_( 'Es wurde erfolgreich eine neue Version erstellt.');
+                    break;
+                    
+            case 3: $this->view->msg = $this->_translate->_( 'Einladungen erfolgreich versendet.');
+                    break;
+                    
+            case 4: $this->view->msg = $this->_translate->_( 'Ihr Kommentar konnte leider nicht erstellt werden!');
             break;
         }
         
@@ -220,19 +270,22 @@ class MasterController extends Zend_Controller_Action
         /* get all topics as rowSet and sent it to the view */
 		$topicList = $topicModel->getTopicList();
 		
+        $navi = '';
         foreach( $topicList as $topic)
         {
-            $navi .= '<li><a href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
-            $navi .= $topic['topicName'].'</a></li>';
+            $navi .= '<a class="Navlink" href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
+            $navi .= $topic['topicName'].'</a><br>';
         }
+
         $this->view->placeholder( 'navi')->append( $navi);
         
         /* topic was already selectet to show */
         if ( isset( $_GET['id']))
         {
             $topicID = $_GET['id'];
+            
             /* set version to standard if not available */
-            if (!isset( $_GET['ver']))
+            if ( !isset( $_GET['ver']))
             {
                 $selectedTopicVersion = $topicModel->getMaxTopicVersion( $topicID);
             }
@@ -261,17 +314,40 @@ class MasterController extends Zend_Controller_Action
                 /* set the topicSource if empty */
                 if ( empty( $topicSource))
                 {
-                    $topicSource = 'nicht angegeben/bekannt';
+                    $topicSource = $this->_translate->_( 'nicht angegeben/bekannt');
                 }
                 
                 /* send topicName and content (includes the topicVersion, topicContent and topicSOurce) to the view */
                 $this->view->topicName = $topicName;
-                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>Quelle: ' . $topicSource;                
-                $topicContent .= '<p><a href = "http://localhost/Webressourcen/public/master/edittopic?id=' . $_GET['id'] . '&ver=' . $selectedTopicVersion . '">';
-                $topicContent .= 'Inhalt überarbeiten</a>';
+                $topicContent = '<iframe src = "topicview?id=' . $topicID . '&ver=' . $selectedTopicVersion . '" name = "topicview" width = "90%" height="600"></iframe><p>' . $this->_translate->_( 'Quelle: ') . $topicSource;                
+
                 $this->view->topicContent = $topicContent;
+                $this->view->topicTest = 1;
                 
+                //----------------topic rating-------------------------
+                $topicRatingModel = new TopicRatingModel();
                 
+                $ratingPercent = $topicRatingModel->getRating( $topicID, $selectedTopicVersion);
+                $this->view->ratingPercent = $ratingPercent;
+        
+                //if the topic is not rated yet
+                if( !$ratingPercent)
+                {
+                    $this->view->topicRating = 'off';
+                }
+                else
+                {
+                    $ratingStars = ceil( (( $ratingPercent * 100) - 20) / (16) );
+                    if( $ratingStars <= 0)
+                    {
+                        $ratingStars = 1;
+                    }
+                    elseif( 5 < $ratingStars)
+                    {
+                        $ratingStars = 5;
+                    }
+                    $this->view->topicRating = $ratingStars;
+                }
                 
                 
                 //-----------------show comments-----------------------
@@ -287,10 +363,10 @@ class MasterController extends Zend_Controller_Action
                 if ( !empty( $commentRowSet))
                 {
                     /* send the rowSet with user-comments and names to the view */
-                    $this->view->CommentRowSet = $commentRowSet;
+                    $this->view->commentRowSet = $commentRowSet;
                 }
                 
-                $userID = 1; //test-purpose
+                $userID = 1; //test-purpose -------------------------------------------------------------------------------------------------------
                 /* send a generated comment-creation-form to the view */
                 $createCommentForm = new Application_Form_CreateComment();
                 $createCommentForm->setIDs( $topicID, $userID, $selectedTopicVersion);
@@ -299,7 +375,8 @@ class MasterController extends Zend_Controller_Action
             }
             else // no topic for the specified topicID + topicVersion
             {
-                $this->view->topicContent = '<h1>Kein Thema vorhanden!</h1>';
+                $this->view->topicTest = 0;
+                $this->view->topicContent = '<h1>' . $this->_translate->_( 'Kein Thema vorhanden!') . '</h1>';
             }
         }
     }
@@ -323,7 +400,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch (Exception $e)
             {
-                $this->view->error = "Fehler beim Löschen der Verbindung zwischen Freund und Thema";
+                $this->view->error = $this->_translate->_( 'Fehler beim Löschen der Verbindung zwischen Freund und Thema');
             }
         }
         else
@@ -353,7 +430,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch (Exception $e)
             {
-                $this->view->error = "Fehler beim Löschen des Freundes";
+                $this->view->error = $this->_translate->_( 'Fehler beim Löschen des Freundes');
             }
         }
         else
@@ -363,18 +440,23 @@ class MasterController extends Zend_Controller_Action
     }
 
     /** This function is called, when an user wants to delete a topic.
+
       * @author Christoph Beger
       */
     public function closetopicAction()
     {
+        if ( !isset( $_POST['topicID']))
+        {
+            $this->_redirect( '/master/showtopics');
+        }
         //load model
         $topicModel = new TopicModel();
         //delete topic, topicAdditives, comments and userTopics
-        $success = $topicModel->delTopic($_POST['topicID']);
+        $success = $topicModel->delTopic( $_POST['topicID']);
         //check result
-        if($success == 0)
+        if( !$success)
         {						//error message
-            $this->view->error = 'Es ist ein Fehler beim Löschen aufgetretten.';
+            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Löschen aufgetreten.');
         }
         else
         {
@@ -413,6 +495,8 @@ class MasterController extends Zend_Controller_Action
             }
             //pass userIDs
             $this->view->infoUserIDs = $infoUserIDs;
+            //pass topicID
+            $this->view->topicID = $_POST['topicID'];
 
             //create createFriendForm
             $createFriendForm = new Application_Form_CreateFriend();
@@ -436,33 +520,42 @@ class MasterController extends Zend_Controller_Action
         //load master session
         $masterNamespace = new Zend_Session_Namespace('master');
 
-        if ($masterNamespace->currentTopic > 0)	//avoids direct access without having topicID
+        if ($masterNamespace->currentTopic > 0 || $this->getRequest()->isPost())	//avoids direct access without having topicID
         {
             //load models
             $userTopicModel = new UserTopicModel;
-            $userModel = new UserModel();
-            $topicModel = new TopicModel();
+            $userModel      = new UserModel();
+            $topicModel     = new TopicModel();
 
             //transfer information
-            $topicID = $masterNamespace->currentTopic;
+            if ($this->getRequest()->isPost())
+            {
+                $topicID = $_POST['topicID'];
+            }
+            else
+            {
+                $topicID = $masterNamespace->currentTopic;
+                $userID  = $masterNamespace->userID;
+                $email   = $masterNamespace->email;
+                //and set IDs in the master session to 0
+                $masterNamespace->currentTopic = 0;
+                $masterNamespace->userID       = 0;
+                $masterNamespace->email        = 0;
+            }
             $topicName = $topicModel->getTopicName( $topicID );
             $max = $userModel->getMaxUserID();
-            $userID = $masterNamespace->userID;
-            //and set IDs in the master session to 0
-            $masterNamespace->currentTopic = 0;
-            $masterNamespace->userID = 0;
 
             //login mail-server
-            $config = array('auth' => 'login',
-                'username' => 'swp12-6@gmx.de',
-                'password' => 'BKLRswp12');
-            $transport = new Zend_Mail_Transport_Smtp('smtp.gmx.net', $config);
+            $emailConfig = array('auth' => $this->config['email']['auth'],
+                             'username' => $this->config['email']['username'],
+                             'password' => $this->config['email']['password']);
+            $transport = new Zend_Mail_Transport_Smtp( $this->config['email']['host'], $emailConfig);
             //prepare mail
             $mail = new Zend_Mail();
-            $mail->setBodyText('Einladung zu '. $topicName);
-            $mail->setFrom('swp12-6@gmx.de', 'Webressourcen');
             $mail->setSubject('Einladung zu '. $topicName);
+            $mail->setFrom($this->config['email']['username'], 'Webressourcen');
 
+//----access directly from invite----
             if ($this->getRequest()->isPost())
             {
                 for($i=1; $i<=$max; $i++)		//send to all 
@@ -476,46 +569,71 @@ class MasterController extends Zend_Controller_Action
                                            'topicID' => $topicID,
                                            'hash'    => $hash);
                         $userTopicModel->addUserTopic($userTopic);
+                        //mail message
+                        $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
+                                          ."Mit diesem Link koennen Sie das Thema erreichen: "
+                                          ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
+                                          ."/Webressourcen/public/friend?hash=".$hash);
+
+                        try	//finilly try to send the mail
+                        {
+                            $mail->send($transport);
+                        }
+                        catch (Exception $e)
+                        {
+                            //error message
+                            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Senden aufgetretten.') . '<br>'
+                                                . $this->_translate->_( 'Wahrscheinlich ist eine der E-Mail-Adressen falsch.') . '<br>'
+                                                . $this->_translate->_( 'Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.');
+                            $error = 1;
+                            //delete new userTopic
+                            $userTopicModel->delUserTopic($i,$topicID);
+                        }
                     }
                 }
             }
-            else				//access from create friend
+//----access from create friend----
+            else				
             {
-                $mail->addTo($masterNamespace->email);
+                $mail->addTo($email);
             // --- also save the connection in userTopic ---
                 $hash = md5($userID .microtime(). $topicID); //the hashcode
                 $userTopic = array('userID'  => $userID,
                                    'topicID' => $topicID,
                                    'hash'    => $hash);
                 $userTopicModel->addUserTopic($userTopic);
-            }
+                //mail message
+                $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
+                                  ."Mit diesem Link erreichen Sie das Thema: "
+                                  ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
+                                  ."/Webressourcen/public/friend?hash=".$hash);
 
-            //unset informarion of the friend in master session
-            $masterNamespace->email  = 0;
-
-            try	//finilly try to send the mail
-            {
-                $mail->send($transport);
-                $this->_redirect("/master/showtopics?id=$topicID&ver=".$topicModel->getMaxTopicVersion($topicID));
-            }
-            catch (Exception $e)
-            {
-                //error message
-                $this->view->error = "Es ist ein Fehler beim Senden aufgetretten.<br>Wahrscheinlich ist eine E-Mail-Adresse falsch.";
-                //delete all new userTopics
-                if ($this->getRequest()->isPost())	//user from the table
+                try	//finilly try to send the mail
                 {
-                    for($i=1; $i<=$max; $i++)
-                    {
-                        if(isset($_POST[$i]))
-                        {
-                            $userTopicModel->delUserTopic($i,$topicID);
-                        }
-                    }
+                    $mail->send($transport);
                 }
-                else					//new created user
+                catch (Exception $e)
                 {
+                    //error message
+                    $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Senden aufgetretten.') . '<br>'
+                                        . $this->_translate->_( 'Wahrscheinlich ist eine der E-Mail-Adressen falsch.') . '<br>'
+                                        . $this->_translate->_( 'Die Freunde mit korrekten E-Mail-Adressen wurden benachrichtigt.');
+                    $error = 1;
+                    //delete new userTopic
                     $userTopicModel->delUserTopic($userID,$topicID);
+                }
+            }
+
+            
+            if($error!=1)
+            {
+                if($_POST['toUser'])
+                {
+                    $this->_redirect("/master/showfriend?id=". $_POST['toUser']); 
+                }
+                else
+                {
+                   $this->_redirect("/master/showtopics?id=$topicID&ver=".$topicModel->getMaxTopicVersion($topicID)."&msg=3"); 
                 }
             }
         }
@@ -532,61 +650,76 @@ class MasterController extends Zend_Controller_Action
     {        
         //session_start(); ..........
         
-        if ( !isset( $_GET['id']))
+        if ( isset( $_GET['id']))
         {
-            $this->view->msg = 'Keine Themen-ID angegeben!';
-        }
-        $topicID = $_GET['id'];
+            $topicID = $_GET['id'];
         
-        $topicModel = new TopicModel();    
+            $topicModel = new TopicModel();    
         
-        /* set topicVersion to maximum if necessary and send it to the view */
-        if ( !isset( $_GET['ver']))
-        {
-            $topicVersion = $topicModel->getMaxTopicVersion( $topicID);
-        }
-        else $topicVersion = $_GET['ver'];
-        $this->view->topicVersion = $topicVersion;
+            /* set topicVersion to maximum if necessary and send it to the view */
+            if ( !isset( $_GET['ver']))
+            {
+                $topicVersion = $topicModel->getMaxTopicVersion( $topicID);
+            }
+            else $topicVersion = $_GET['ver'];
+            $this->view->topicVersion = $topicVersion;
             
-        $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
-            
-        /* topics with spezified topicID are not available */
-        if ( empty( $topicName)) 
-        {
-            $this->view->msg = 'Kein Thema zum bearbeiten vorhanden!';
-        }
+            $topicName = $topicModel->getTopicName( $topicID);    //get topicName if available
         
-        /* error-msg output */
-        switch ( $_GET['msg'])
-        {
-            case 1: $this->view->msg = 'Bitte alle Felder füllen!';
-                    break;
-            case 2: $this->view->msg = 'Ihre Eingabe entsprach keiner gültigen URL.';
-                    break;
-        }
-        $this->view->topicName = $topicName;
+            /* set baseUrl for the view */
+            $list = explode( '/', $_SERVER['REQUEST_URI']);
+            $this->view->baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $list['1'];
+        
+            /* topics with spezified topicID are not available */
+            if ( empty( $topicName)) 
+            {
+                $this->view->msg = '<h1>' . $this->_translate->_( 'Kein Thema zum bearbeiten vorhanden!') . '</h1>';
+                $this->view->topicTest = 0;
+            }
+            else 
+            {
+                /* error-msg output */
+                switch ( $_GET['msg'])
+                {
+                    case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder füllen!');
+                            break;
+                    case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL.');
+                            break;
+                }
+                $this->view->topicName = $topicName;
                 
-        $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
+                $topicRow = $topicModel->getTopic( $topicID, $topicVersion);
                 
-        /* if there is no topic with the specified versionNumber */
-        if ( empty( $topicRow))
-        {
-            $this->view->msg = 'Angegebende Version existiert für dieses Thema nicht!';
-        }
+                /* if there is no topic with the specified versionNumber */
+                if ( empty( $topicRow))
+                {
+                    $this->view->msg = '<h1>' . $this->_translate->_( 'Angegebende Version existiert für dieses Thema nicht!') . '</h1>';
+                    $this->view->topicTest = 0;
+                }
+                else 
+                {
+                    /* topic type is text ( "0") */
+                    if ( !$topicRow['topicType'])
+                    {
+                        $this->view->topicType = 0;
+                        $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+                    }
+                    else //if topic type is link ( "1"), just show the URL
+                    {
+                        $this->view->topicType = 1;
+                        $this->view->topicContent = $topicRow['topicSource'];
+                    }
         
-        /* topic type is text ( "0") */
-        if ( !$topicRow['topicType'])
-        {
-            $this->view->topicType = 0;
-            $this->view->topicContent = str_replace("<br />", "", $topicRow['topicContent']);
+                    $this->view->topicSource = $topicRow['topicSource'];
+                    $this->view->topicTest = 1;
+                }
+            }
         }
-        else //if topic type is link ( "1"), just show the URL
+        else 
         {
-            $this->view->topicType = 1;
-            $this->view->topicContent = $topicRow['topicSource'];
+            $this->view->msg = '<h1>' . $this->_translate->_( 'Keine Themen-ID angegeben!') . '</h1>';
+            $this->view->topicTest = 0;
         }
-        
-        $this->view->topicSource = $topicRow['topicSource']; 
     }
 
     /** This function creates a new topicVersion with the posted topicContent and topicSource. 
@@ -602,7 +735,7 @@ class MasterController extends Zend_Controller_Action
         $topicSource = $_POST['topicSource'];
         $topicType = $_POST['topicType'];
         
-        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)) || (empty( $topicSource)))
+        if ( (empty( $topicID)) || (empty( $topicVersion)) || (empty( $topicContent)))
         {
             $this->_redirect( 'master/edittopic?id=' . $topicID . '&ver=' . $topicVersion . '&msg=1');
         }
@@ -627,7 +760,7 @@ class MasterController extends Zend_Controller_Action
         }
         else 
         {           
-            $this->view->error = 'Fehler bei der Versionserstellung.';
+            $this->view->error = $this->_translate->_( 'Fehler bei der Versionserstellung.');
         }
     }
 
@@ -637,7 +770,7 @@ class MasterController extends Zend_Controller_Action
     public function validatecommentAction()
     {
         /* save posts in variables */
-        $commentText = $_POST['commentText'];
+        $commentText = nl2br(strip_tags($_POST['commentText'], '<p><br>'));
         $userID = $_POST['userID'];
         $topicID = $_POST['topicID'];
         $topicVersion = $_POST['topicVersion'];
@@ -660,7 +793,7 @@ class MasterController extends Zend_Controller_Action
         }
         catch (Exception $e)
         {
-            //.........................................
+            $this->_redirect( 'master/showtopics?id=' .topicID . '&ver=' . $topicVersion . '&msg=4');
         }
         
         $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
@@ -674,16 +807,18 @@ class MasterController extends Zend_Controller_Action
     {
         $this->_helper->layout()->disableLayout();
         
-        //validation ...............
+        if ( (empty( $_GET['id'])) || (empty( $_GET['ver'])))
+        {
+            $this->_redirect( 'master/showtopics');
+        }
         
         $topicModel = new TopicModel();
         
         $topicRow = $topicModel->getTopic( $_GET['id'], $_GET['ver']);
                 
-        /* if link specified version is available for this topic */
         if ( !empty( $topicRow))
         {
-            $this->view->topicContent = $topicRow['topicContent'];
+            $this->view->topicContent = str_replace('<br />', '', $topicRow['topicContent']);
         }
     }
 
@@ -692,10 +827,19 @@ class MasterController extends Zend_Controller_Action
       */
     public function showcommentsAction()
     {
-        //.....session, ausnahmen.............
         $topicID = $_GET['id'];
         $topicVersion = $_GET['ver'];
         $page = $_GET['page'];
+        
+        if ( (empty($topicID)) || (empty($topicVersion)))
+        {
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
+        }
+        
+        if ( empty( $page))
+        {
+            $page = 1;
+        }
         
         $commentModel = new CommentModel();
         
@@ -714,8 +858,12 @@ class MasterController extends Zend_Controller_Action
             if ( !empty( $commentRowSet))
             {    
                 /* send the rowSet with user-comments and names to the view */
-                $this->view->CommentRowSet = $commentRowSet;
+                $this->view->commentRowSet = $commentRowSet;
             }
+        }
+        else 
+        {
+            $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
         }
     }
     
@@ -784,7 +932,7 @@ class MasterController extends Zend_Controller_Action
                     catch (Exception $e)
                     {
                         //error message
-                        $this->view->error = "Es ist ein Fehler beim Speicher aufgetretten";
+                        $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Speicher aufgetretten');
                         break;
                     }
         
@@ -804,7 +952,7 @@ class MasterController extends Zend_Controller_Action
                     }
                 }
                 //error message
-                $this->view->error = "Sie haben vergessen eine E-Mail-Adresse anzugeben.";
+                $this->view->error = $this->_translate->_( 'Sie haben vergessen eine E-Mail-Adresse anzugeben.');
             }
         }
         else
@@ -826,15 +974,15 @@ class MasterController extends Zend_Controller_Action
         switch ($urlArray['host'])
         {
             case 'de.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaDe();
-                                        $response = $plugin->getResponse( $url);
+                                        $response = $plugin->getResponse( $url, $this->config['wikipedia']);
                                         break;
                                             
             case 'en.wikipedia.org':    $plugin = new Plugin_Authentication_WikipediaEn();
-                                        $response = $plugin->getResponse( $url);
+                                        $response = $plugin->getResponse( $url, $this->config['wikipedia']);
                                         break;
                                            
             case 't3n.de':              $plugin = new Plugin_Authentication_T3nDE();
-                                        $response = $plugin->getResponse( $url);
+                                        $response = $plugin->getResponse( $url, $this->config['t3n']);
                                         break;
                                            
             default:                    $client = new Zend_Http_Client( $url);
@@ -848,6 +996,66 @@ class MasterController extends Zend_Controller_Action
         $body = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $body); //removes <script> tags
             
         return $body;
+    }
+	
+    /** This function is looking for a word
+     * @author Enrico Kleemann
+     */
+    public function searchAction()
+    {
+        if ( empty( $_POST['search']))
+        {
+            $this->_redirect( 'master/index');
+        }
+        //load models
+        $topicModel = new Topicmodel();
+        $userModel  = new UserModel();
+        //search
+        $resultFriend = $userModel->getSearchResult($_POST['search']);
+        $tempResultTopic = $topicModel->getSearchResult($_POST['search']);
+        if(count($tempResultTopic)!= NULL)
+        {
+            $i = 0;
+            foreach( $tempResultTopic as $b)
+            {
+                $resultTopic[$i]['topicID'] = $b['topicID'];
+                $resultTopic[$i]['topicName'] = $b['topicName'];
+                $version = $topicModel->getMaxTopicVersion( $b['topicID']);
+                $resultTopic[$i]['version'] = $version;
+                $i++;
+            }
+        }
+        else
+        {
+            $resultTopic = NULL;
+        }
+        //pass result
+        $this->view->resultFriend = $resultFriend;
+        $this->view->resultTopic = $resultTopic;
+	}
+    
+    /** This function deletes a comment by commentID
+      * @author Christoph Beger
+
+      */
+    public function deletecommentAction()
+    {
+        /* no commentID got transmitted */
+        if ( (!isset( $_POST['commentID'])) || (!isset( $_POST['topicID'])) || (!isset( $_POST['topicVersion'])))
+        {
+            $this->_redirect( 'master');
+        }
+        
+        $commentID = $_POST['commentID'];
+        $topicID = $_POST['topicID'];
+        $topicVersion = $_POST['topicVersion'];
+        
+        $commentModel = new CommentModel();
+        
+        $commentModel->deleteComment( $commentID);
+        
+        $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
+    
     }
 }
 ?>

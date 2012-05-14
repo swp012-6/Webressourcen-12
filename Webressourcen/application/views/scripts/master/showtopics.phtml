@@ -1,67 +1,123 @@
-﻿<script language = "javascript">
- function Abfrage()
- {
- return confirm('bla bla');
- }
- </script>
+﻿<script type = "text/javascript">
+/**
+ * asks the user if he really want to delete this friend
+ *
+ * @param form indicates whitch form to submit
+ */
+function confirmation( form)
+{
+    answer = confirm( '<?php echo $this->translate( 'Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?'); ?>');
+    if ( answer)
+    {
+        form.submit();
+    }
+}
+
+function changeVisibility()
+{
+    if ( document.getElementById('dynamicalDiv').style.visibility == "visible")
+    {
+        document.getElementById('dynamicalDiv').style.visibility = "hidden";
+        document.getElementById('visibilityChanger').value = "<?php echo $this->translate( 'kommentieren'); ?>";
+    }
+    else 
+    {
+        document.getElementById('dynamicalDiv').style.visibility = "visible";
+        document.getElementById('visibilityChanger').value = "<?php echo $this->translate( 'ausblenden'); ?>";
+    }
+}
+</script>
 <?php
     if ( !empty( $this->topicContent))
     {
         echo '<div id = "content">';
+        
         echo $this->msg;  //errormessage
         echo '<center><h1>' . $this->topicName . '</h1></center>';
         
-        /* dropbox with available topicVersion */
-        echo 'Version: '; 
-        echo '<form action="showtopics" method="get"><select name="ver">';
-    
-        foreach( $this->topicVersionArray as $topicVersion)
+        if ( $this->topicTest)
         {
-            if ( $this->selectedTopicVersion == $topicVersion)
+            /* dropbox with available topicVersion */
+            echo '<div id = "left"><form name = "versionSelectForm">';
+            echo 'Version: <select name="versionSelect" onChange = "window.location=document.versionSelectForm.versionSelect.options[document.versionSelectForm.versionSelect.selectedIndex].value">';
+    
+            foreach( $this->topicVersionArray as $topicVersion)
             {
-                echo '<option value = "' . $topicVersion . '" selected = "selected">' . $topicVersion;
-            }
-            else
+                if ( $this->selectedTopicVersion == $topicVersion)
+                {
+                    echo '<option selected = "selected" value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
+                }
+                else
+                {
+                    echo '<option value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
+                }
+            }        
+            echo '</select></form></div>';
+            
+            /* button to close the current topic, contained in a left floating div */
+            echo '<div id = "left"><form id = "closeTopicForm" action = "closetopic" method = "post">';
+                echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
+                echo '<input type = "button" value = "' . $this->translate( 'Thema schließen') . '" onclick = "confirmation( this.form)" />';
+            echo '</form></div>';
+            
+            /* invitebutton, redirectes to the invite-page, contained in a left floating div */
+            echo '<div id = "left"><form action = "invite" method = "post">';
+                echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
+                echo '<input type = "submit" value = "' . $this->translate( 'Einladungen versenden') . '" />';
+            echo '</form></div>';
+        
+            /* button to edit and create a new topicVersion, contained in a left floating div */
+            echo '<form action = "edittopic" method = "get">';
+                echo '<input type = "hidden" name = "id" value = "' . $_GET['id'] . '" />';
+                echo '<input type = "hidden" name = "ver" value = "' . $_GET['ver'] . '" />';
+                echo '<input type = "submit" value = "' . $this->translate( 'Inhalt überarbeiten') . '" />';
+            echo '</form>';
+            
+            /* iframe */
+            echo $this->topicContent;
+            
+            echo '<p><table border = "0"><tr><td>' . $this->translate( 'Durchschnittliche Bewertung:')
+                . '</td><td></div><img src = "../_files/image/rating/stars/5Star_' . $this->topicRating
+                . '.png" height = "50" alt = "' . $this->topicRating . '"';
+                    
+            if( $this->ratingPercent)
             {
-                echo '<option value = "' . $topicVersion . '">' . $topicVersion;
+                echo ' ."' . $this->translate( 'Sterne von 5 Sternen') . '"';
             }
-        }        
-        echo '</select><input type = "hidden" name = "id" value = "' . $_GET['id'] . '"><input type=submit value="go"></form>';
-        
-        /* button to close the current topic */
-        echo '<form action = "closetopic" method = "post">';
-            echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
-            echo '<input type = "submit" value = "schließen" onsubmit = "return confirm("Text")"></form>';
-        
-        /* invitebutton, redirectes to the invite-page */
-        echo '<form action = "invite" method = "post">';
-            echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
-            echo '<input type = "submit" value = "Einladungen versenden" />';
-        echo '</form>';
-        
-        /* iframe */
-        echo $this->topicContent;
+            echo '></td></tr></table>';
+        }
+        else 
+        {
+            echo $this->topicContent;
+        }
         echo '</div>';
         
         /* --- commentpart --- */
         echo '<div id = "comment">';
         
-        if ( !empty( $this->CommentRowSet))
+        if ( !empty( $this->commentRowSet))
         {
             echo '<table border = "1">';
-            foreach( $this->CommentRowSet as $CommentRow)
+            foreach( $this->commentRowSet as $commentRow)
             {
-                echo '<tr><td>' . $CommentRow['commentDate'] . '</td>';
-                echo '<td>' . $CommentRow['userName'] . '</td>';
-                echo '<td>' . $CommentRow['commentText'] . '</td></tr>';
+                echo '<tr><td>' . $commentRow['commentDate'] . '</td>';
+                echo '<td>' . $commentRow['userName'] . '</td>';
+                echo '<td>' . $commentRow['commentText'] . '</td>';
+                echo '<td><form action = "deletecomment" method = "post">';
+                    echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
+                    echo '<input type = "hidden" name = "topicVersion" value = "' . $_GET['ver'] . '" />';
+                    echo '<input type = "hidden" name = "commentID" value = "' . $commentRow['commentID'] . '" />';
+                    echo '<input type = "submit" value = "' . $this->translate( 'löschen') . '" />';
+                echo '</form></td></tr>';
             }
             echo '</table>';
             
             echo '<form action = "showcomments?id=' . $_GET['id'] . '&ver=' . $this->selectedTopicVersion . '&page=1" method = "post">';
-                echo '<input type = "submit" value = "zeige alle" />';
+                echo '<input type = "submit" value = "' . $this->translate( 'zeige alle') . '" />';
             echo '</form>';
         }
-        echo '<p>' . $this->createCommentForm;
-        echo '</div>';
+        echo '<input type = "button" id = "visibilityChanger" onclick = "changeVisibility()" value = "' . $this->translate( 'kommentieren') . '" ></button>'; 
+        echo '<p><div id = "dynamicalDiv" style = "visibility:hidden">' . $this->createCommentForm;
+        echo '</div></div>';
     }
 ?>
