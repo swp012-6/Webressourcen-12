@@ -99,6 +99,7 @@ class TopicModel extends Zend_Db_Table_Abstract
     public function createTopic( $topicName, $topicContent, $topicSource, $topicType) 
     {
         $topicAdditiveModel = new TopicAdditiveModel();
+        $userTopicModel = new UserTopicModel();
         
         /* begin of the transaction */
         $topicAdditiveModel->getAdapter()->beginTransaction();
@@ -110,8 +111,18 @@ class TopicModel extends Zend_Db_Table_Abstract
             /* get auto-created topicID and insert topicData + topicID in table topic */
             $topicIDRow = $this->fetchRow( $this->select()->where( 'topicName = ?' , $topicName));
             $topicID = $topicIDRow['topicID'];
-            $topicAdditiveModel->insert( array( 'topicID' => $topicID, 'topicContent' => $topicContent, 'topicSource' => $topicSource, 'topicType' => $topicType));
+            $topicAdditiveModel->insert( array( 'topicID'       => $topicID, 
+                                                'topicContent'  => $topicContent, 
+                                                'topicSource'   => $topicSource, 
+                                                'topicType'     => $topicType));
  
+            /* add connection between the topic and the master to usertopic-db */
+            $userTopicModel->insert( array( 'userID'    => 1,
+                                            'topicID'   => $topicID,
+                                            'userName'  => 'Master', 
+                                            'master'    => 1,
+                                            'hash'      => md5( rand(1, 1000) . microtime(). $topicID)));
+            
             /* commit transaction */
             $query = $topicAdditiveModel->getAdapter()->commit();
         }
