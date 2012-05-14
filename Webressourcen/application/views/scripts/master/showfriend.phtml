@@ -53,6 +53,11 @@ else
 			<td>
 			</td>
 		</tr>
+	<?php
+	//Invite
+	if($this->sizeInvite != 0)
+	{
+	?>
 		<tr>				<!--invite-->
 			<td>
 				<form name = "invitation" action="<?php echo $this->url(array('controller'=>'master', 'action'=>'send'), null, true) ?>" method="post">
@@ -76,10 +81,12 @@ else
 			</td>
 		</tr>
 	<?php
-	for($i=0; $i<$this->sizeTopics; $i++)		//for each topic
+	}
+	//Topics
+	for($i=0; $i<$this->sizeTopics; $i++)
 	{
 	?>
-		<tr>
+		<tr>				<!--topics-->
 			<td>
 				<?php echo $this->infoTopicNames[$i] ?>
 			</td>
