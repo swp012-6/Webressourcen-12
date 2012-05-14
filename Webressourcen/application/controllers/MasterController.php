@@ -801,6 +801,37 @@ class MasterController extends Zend_Controller_Action
         
         $commentModel = new CommentModel();
         
+        //the comment was filtered. words there are to long, are cuted
+            
+        $maxWordLength = 100;
+        $words_before = explode(' ', $commentText);
+        $words_after;
+        $wordcount = 0;
+            
+        foreach( $words_before as $word)
+        {
+            if( $maxWordLength < strlen( $word))
+            {
+                for( $i = 0; $i < ((strlen( $word)) / $maxWordLength); $i++)
+                {
+                    $words_after[$wordcount] = substr( $word, ( $i * $maxWordLength), $maxWordLength);
+                   if ( $i < (((strlen( $word)) / $maxWordLength) - 1))
+                    {
+                        $words_after[$wordcount] .= '- ';
+                    }
+                    $wordcount++;
+                }
+            }
+            else
+            {
+                $words_after[$wordcount] = $word;
+            
+                $wordcount++;
+            }
+        }
+            
+        $commentText = implode( ' ', $words_after);
+        
         try
         {
             $commentModel->insert( array( 'commentText' => $commentText, 'userID' => $userID, 'topicID' => $topicID, 'topicVersion' => $topicVersion, 'anonymous' => $anonymous));
