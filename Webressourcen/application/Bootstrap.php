@@ -27,7 +27,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$view = $layout->getView();
 		
 		//-- is the doctype and there are the text type ----
-		$view->doctype('XHTML1_STRICT');
+		$view->doctype('HTML4_STRICT');
 		$view->headMeta()->appendHttpEquiv('Content-Type','text/html;charset=utf-8');
 		$view->headMeta()->appendName('keywords','Webressourcen');
 		

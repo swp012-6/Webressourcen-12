@@ -73,15 +73,50 @@
 	border-top-color: white;
 }
 
-
-
-#Nav
-{
-
-}
-
-
 #left
 {
 	float: left;
 }
+
+
+
+
+
+  ul#Navigation {
+    	margin: 0; 
+    	text-align: center;
+    	font-family: Helvetica, arial;
+    	padding-left: 10px;
+    	letter-spacing: 2px;
+    	background-color: rgb(176, 048, 096);
+    	width: 1000px;
+    	height: 20px;
+	border: outset;
+	border-bottom-color: white;
+	border-bottom-width: 4px;
+	border-right-color: white;
+	padding-bottom: 10px;
+  }
+  ul#Navigation li {
+	padding-top: 5px;
+    list-style: none;
+    display: inline;
+    margin: 5px; padding: 0;
+  }
+
+  ul#Navigation a, ul#Navigation span {
+    padding: 0.2em 1em;
+    text-decoration: none; font-weight: bold;
+    border: 1px solid black;
+    border-left-color: white; border-top-color: white;
+    color: black; background-color: rgb(176, 080, 50);
+  }
+  * html ul#Navigation a, * html ul#Navigation span {
+    width: 1em;    
+    w/idth: auto;  
+  }
+  ul#Navigation a:hover, ul#Navigation span {
+    border-color: white;
+    border-left-color: black; border-top-color: black;
+    color: white; background-color: rgb(100, 080, 096);
+  }

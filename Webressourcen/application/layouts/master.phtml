@@ -3,7 +3,7 @@
 	echo $this->doctype(); 
 ?>
  
-<html xmlns="http://www.w3.org/1999/xhtml" lang="de" xml:lang="de">
+<html xmlns="http://www.w3.org/TR/html4/strict.dtd" lang="de" xml:lang="de">
 <head>
  
 <?php
@@ -18,6 +18,7 @@
 </head>
 <body>
 
+    
 	<!-- in main_page are all pressentation components how main_head, main_menue and main_main-->
 	<div id = "main_Page">
 		
@@ -27,14 +28,19 @@
             <!-- change the language -->
             <a href = "<?php echo $this->url() . '?lang=de&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
             <a href = "<?php echo $this->url() . '?lang=en&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langEN.png'; ?>" alt = "english"></a>
-            
+        </div>
+        
             <!-- navigation -->
-            <a class="Navlink" href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>"><?php echo $this->translate( 'Hauptseite'); ?></a>  
-            <a class="Navlink" href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>"><?php echo $this->translate( 'Masterseite'); ?></a>  
-            <a class="Navlink" href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>"><?php echo $this->translate( 'Thema erstellen'); ?></a>  
-            <a class="Navlink" href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>"><?php echo $this->translate( 'Themen anzeigen'); ?></a>  
-            <a class="Navlink" href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>"><?php echo $this->translate( 'Freunde anzeigen'); ?></a>
-		</div>
+        <ul id = "Navigation">
+            <li><a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>"><?php echo $this->translate( 'Hauptseite'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>"><?php echo $this->translate( 'Masterseite'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>"><?php echo $this->translate( 'Thema erstellen'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>"><?php echo $this->translate( 'Themen anzeigen'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>"><?php echo $this->translate( 'Freunde anzeigen'); ?></a></li>
+        </ul>
+        
+            
+        
 		  
 		<div id = "main_Menue">
 			<div id = "main_TopicNav">
