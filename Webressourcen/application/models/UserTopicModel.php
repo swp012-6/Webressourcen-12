@@ -148,9 +148,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 		
 		$invTopics = $this ->fetchAll($this->select()
 				->where('userID = ?',$userID));
-        Zend_Debug::dump($invTopics->toArray());
 		$tempTopics = $topicModel ->fetchAll();
-        Zend_Debug::dump($tempTopics->toArray());
 		$topics = array();
 		$alreadyInvited = 0;
 		foreach( $tempTopics as $tTopic)
