@@ -78,8 +78,13 @@ class MasterController extends Zend_Controller_Action
                 
                 case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder füllen!');
                         break;
+                
                 case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL!');
                         break;
+                
+                case 4: $this->view->errorMsg = $this->_translate->_( 'Fehler beim erstellen des Themas!');
+                        break;
+                        
                 default: 
             }
         }
@@ -122,13 +127,22 @@ class MasterController extends Zend_Controller_Action
             
             $topicContent = $this->httpRequest( $topicContent);
         }
-            
+        
+        
         $topicModel = new topicModel();
+        
+        /* check if topicName already exists */
+        if ( $topicModel->topicNameExists( $topicName) == 1)
+        {
+            $this->_redirect( 'master/import?error=1');
+        }
+        
+        /* insert topic-data in the db */
         $result = $topicModel->createTopic( $topicName, $topicContent, $topicSource, $topicType);
             
         if ( !$result)
         {
-            $this->_redirect( 'master/import?error=1');
+            $this->_redirect( 'master/import?error=4');
         }
 	
         $this->view->topicID = $result;

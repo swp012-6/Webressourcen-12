@@ -216,5 +216,20 @@ class TopicModel extends Zend_Db_Table_Abstract
 			$result = $searchTopic;
 		return $result;
 	}
+    
+    /** This function returns 1 if the topicName already exists.
+      * @param $topicName is the name of a topic
+      * @return returns 0 if topicName do not exists, else 1
+      */
+    public function topicNameExists( $topicName)
+    {
+        $result = $this->fetchRow( $this->select()->where('topicName = ?', $topicName));
+        
+        if ( empty( $result))
+        {
+            return 0;
+        }
+        return 1;
+    }
 }
 ?>
