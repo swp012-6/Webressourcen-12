@@ -25,6 +25,16 @@ class FriendController extends Zend_Controller_Action
             $this->_redirect('/'); 
         }
         
+        // if the hash invalid than kicked out
+        $userTopicHash = $dbUserTopic->registerHash($friendSession->hash);
+        
+        if((empty($userTopicHash["userID"])||empty($userTopicHash["topicID"]))&&(NULL == $request->getQuery("hash")))
+        {
+            //if the userID ore the topicID empty, then go to IndexController
+            $this->_redirect('/'); 
+           
+        }
+        
         //language init
         
         $languageNamespace = new Zend_Session_Namespace( 'language');
@@ -80,7 +90,6 @@ class FriendController extends Zend_Controller_Action
                 $friendSession->topicVersion = $topicVersion;
             }  
         }
-        
     }
 
     /**
@@ -116,7 +125,7 @@ class FriendController extends Zend_Controller_Action
         $userID =$usertopic['userID'];
         $topicID =$usertopic['topicID'];
         
-        if(empty($userID) || empty($topicID)||(true == $usertopic['master']))
+        if(empty($userID) || empty($topicID)||(true == $usertopic['master']))//no friend can not log in as Master
         {
             $friendSession->userID = NULL;
             $friendSession->topicID = NULL;
@@ -128,9 +137,10 @@ class FriendController extends Zend_Controller_Action
         
         $friendSession->userID = $userID;
         $friendSession->topicID = $topicID;
+        $friendSession->hash = $request->getQuery("hash");
+      
         
-        //no friend can not log in as Master
-        //if($usertopic[] == true)
+        //have not the user a userName, then update his name 
         if($usertopic['userName'] == NULL)
         {
             //jump to createName
@@ -321,6 +331,7 @@ class FriendController extends Zend_Controller_Action
 		$dbTopic = new TopicModel();
 		$dbComment = new CommentModel();
 		$dbRating = new TopicRatingModel();
+        $dbUserTopic = new UserTopicModel();
         
 		//Topic select--------------------
         //look to the global session.
@@ -338,6 +349,14 @@ class FriendController extends Zend_Controller_Action
         }
         $view->userID = $userID;
         $view->topicID = $topicID;
+        
+        //have not the user a userName, then update his name 
+        $userTopicoption = array( "userID"=> $userID, "topicID" => $topicID);
+        if(($dbUserTopic->getUserName($userTopicoption)) == NULL)
+        {
+            //jump to createName
+            $this->_redirect('/Friend/createname');
+        }
         
 		//version
 		//if the latest version
@@ -394,7 +413,8 @@ class FriendController extends Zend_Controller_Action
 		//topic version select-------------------------------
         $view->versionTitle = $this-> _translate-> _("Version:  ");
 		//compute currentPageNavigator
-		$currentPageNavigator = floor(($maxVersionPage-($page-1)) / $maxVersionPage);
+		$currentPageNavigator = floor((($dbTopic->getNumberVersion($topicID))-($page)) / $maxVersionPage);
+        
         if(NULL != $request->getQuery("PageNavigator"))
         {
             $currentPageNavigator = $request->getQuery("PageNavigator");
@@ -402,7 +422,7 @@ class FriendController extends Zend_Controller_Action
 		$view->currentPageNavigator = $currentPageNavigator;
 
 		//compute numberPageNavigator
-		$numberPageNavigator = floor($dbTopic->getNumberVersion($topicID) / $maxVersionPage);
+		$numberPageNavigator = ceil(($dbTopic->getNumberVersion($topicID) / $maxVersionPage)-1);
 		$view->numberPageNavigator = $numberPageNavigator;
 		
 		//get VersionsID 
@@ -462,7 +482,7 @@ class FriendController extends Zend_Controller_Action
         //if the rating == 0, then have not rated
         if($ratingpercent == 0)
         {
-            $view->topicrating = $this-> _translate-> _("gibt keine Bewertungen");
+            $view->topicrating = "off";
         }
         else
         {
