@@ -1,10 +1,29 @@
 ﻿<script type = "text/javascript">
-function confirmation()
+/**
+ * asks the user if he really want to delete this friend
+ *
+ * @param form indicates whitch form to submit
+ */
+function confirmation( form)
 {
-    answer = confirm( <?php echo $this->translate( 'Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?'); ?>);
+    answer = confirm( '<?php echo $this->translate( 'Sind Sie sicher, dass Sie dieses Thema endgültig löschen möchten?'); ?>');
     if ( answer)
     {
-        document.forms['closeTopicForm'].submit();
+        form.submit();
+    }
+}
+
+function changeVisibility()
+{
+    if ( document.getElementById('dynamicalDiv').style.visibility == "visible")
+    {
+        document.getElementById('dynamicalDiv').style.visibility = "hidden";
+        document.getElementById('visibilityChanger').value = "<?php echo $this->translate( 'kommentieren'); ?>";
+    }
+    else 
+    {
+        document.getElementById('dynamicalDiv').style.visibility = "visible";
+        document.getElementById('visibilityChanger').value = "<?php echo $this->translate( 'ausblenden'); ?>";
     }
 }
 </script>
@@ -16,10 +35,10 @@ function confirmation()
         echo $this->msg;  //errormessage
         echo '<center><h1>' . $this->topicName . '</h1></center>';
         
-        if ( !empty( $this->topicContent))
+        if ( $this->topicTest)
         {
             /* dropbox with available topicVersion */
-            echo '<form name = "versionSelectForm">';
+            echo '<div id = "left"><form name = "versionSelectForm">';
             echo 'Version: <select name="versionSelect" onChange = "window.location=document.versionSelectForm.versionSelect.options[document.versionSelectForm.versionSelect.selectedIndex].value">';
     
             foreach( $this->topicVersionArray as $topicVersion)
@@ -33,20 +52,21 @@ function confirmation()
                     echo '<option value = "showtopics?id=' . $_GET['id'] . '&ver=' . $topicVersion . '">' . $topicVersion . '</option>';
                 }
             }        
-            echo '</form>';
+            echo '</select></form></div>';
             
-            /* button to close the current topic */
-            echo '<form id = "closeTopicForm" action = "closetopic" method = "post">';
+            /* button to close the current topic, contained in a left floating div */
+            echo '<div id = "left"><form id = "closeTopicForm" action = "closetopic" method = "post">';
                 echo '<input type = "hidden" name = "topicID" value = "' .  $_GET['id'] . '" />';
-                echo '<input type = "button" value = "' . $this->translate( 'Thema schließen') . '" onclick = "confirmation()" /></form>';
-        
-            /* invitebutton, redirectes to the invite-page */
-            echo '<form action = "invite" method = "post">';
+                echo '<input type = "button" value = "' . $this->translate( 'Thema schließen') . '" onclick = "confirmation( this.form)" />';
+            echo '</form></div>';
+            
+            /* invitebutton, redirectes to the invite-page, contained in a left floating div */
+            echo '<div id = "left"><form action = "invite" method = "post">';
                 echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
                 echo '<input type = "submit" value = "' . $this->translate( 'Einladungen versenden') . '" />';
-            echo '</form>';
+            echo '</form></div>';
         
-            /* button to edit and create a new topicVersion */
+            /* button to edit and create a new topicVersion, contained in a left floating div */
             echo '<form action = "edittopic" method = "get">';
                 echo '<input type = "hidden" name = "id" value = "' . $_GET['id'] . '" />';
                 echo '<input type = "hidden" name = "ver" value = "' . $_GET['ver'] . '" />';
@@ -56,13 +76,19 @@ function confirmation()
             /* iframe */
             echo $this->topicContent;
             
-            echo '<p>' . $this->translate( 'Durchschnittliche Bewertung:') . ' <p><img src = "../_files/image/rating/stars/5Star_' . $this->topicRating . '.png" height = "50" alt = "' . $this->topicRating . '"';
+            echo '<p><center><table border = "0"><tr><td>' . $this->translate( 'Durchschnittliche Bewertung:')
+                . '</td><td></div><img src = "../_files/image/rating/stars/5Star_' . $this->topicRating
+                . '.png" height = "50" alt = "' . $this->topicRating . '"';
                     
             if( $this->ratingPercent)
             {
                 echo ' ."' . $this->translate( 'Sterne von 5 Sternen') . '"';
             }
-            echo '>';
+            echo '></td></tr></table></center>';
+        }
+        else 
+        {
+            echo $this->topicContent;
         }
         echo '</div>';
         
@@ -90,7 +116,8 @@ function confirmation()
                 echo '<input type = "submit" value = "' . $this->translate( 'zeige alle') . '" />';
             echo '</form>';
         }
-        echo '<p>' . $this->createCommentForm;
-        echo '</div>';
+        echo '<input type = "button" id = "visibilityChanger" onclick = "changeVisibility()" value = "' . $this->translate( 'kommentieren') . '" ></button>'; 
+        echo '<p><div id = "dynamicalDiv" style = "visibility:hidden">' . $this->createCommentForm;
+        echo '</div></div>';
     }
 ?>

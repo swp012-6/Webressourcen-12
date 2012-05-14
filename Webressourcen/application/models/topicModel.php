@@ -51,7 +51,7 @@ class TopicModel extends Zend_Db_Table_Abstract
 	public function getNumberVersion($topicID)
 	{
 		$topicAdditiveModel = new TopicAdditiveModel();
-        $topicVersionRowSet = $topicAdditiveModel->fetchAll();
+        $topicVersionRowSet = $topicAdditiveModel->fetchAll("topicID = $topicID");
 		return count($topicVersionRowSet);
 	}
     /**
@@ -155,7 +155,11 @@ class TopicModel extends Zend_Db_Table_Abstract
         
         $maxVersion = $topicAdditiveModel->fetchRow( $topicAdditiveModel->select()  ->from( $topicAdditiveModel, array(new Zend_Db_Expr('max(topicVersion) as maxVersion')))
                                                                                     ->where( 'topicID = ?', $topicID));
-        return $maxVersion['maxVersion'];
+        if ( !empty( $maxVersion['maxVersion']))
+        {
+            return $maxVersion['maxVersion'];
+        }
+        else return 0;
     }
     
     /** 
@@ -168,21 +172,38 @@ class TopicModel extends Zend_Db_Table_Abstract
         //load models
         $topicAdditiveModel = new TopicAdditiveModel();
         $topicModel = new TopicModel();
-        $commentModel = new commentModel();
+        $commentModel = new CommentModel();
         $userTopicModel = new UserTopicModel();
+        $topicRatingModel = new TopicRatingModel();
         //delete topic, topicAdditives, comments and userTopics
+        /* begin of the transaction */
+        $this->getAdapter()->beginTransaction();
         try
         {
             $topicModel->delete( 'topicID = '. $topicID);
             $topicAdditiveModel->delete( 'topicID = '. $topicID);
             $commentModel->delete( 'topicID = '. $topicID);
             $userTopicModel->delete( 'topicID = '. $topicID);
-	}
+            $topicRatingModel->delete( 'topicID = '. $topicID);
+            $query = $this->getAdapter()->commit();
+        }
         catch (Exception $e)
         {
+            $this->getAdapter()->rollBack();
             return 0;	//failed
         }
         return 1;	//successful
     }
+    
+    public function getSearchResult($searchTopic)
+	{
+		if($searchTopic != "" && $searchTopic != " ")
+		{
+			$result = $this->fetchAll( $this->select() ->from( $this)  ->where('topicName LIKE ?', $searchTopic.'%'));
+		}		
+		else
+			$result = $searchTopic;
+		return $result;
+	}
 }
 ?>

@@ -23,7 +23,14 @@
 		
 		<!-- in main_head are the project title-->
 		<div id = "main_Head">
-			<h1> Webressourcen </h1>
+			
+    
+            <center><h1>Webressourcen<?php echo $this->escape($this->title); ?></h1></center>
+            <!-- change the language -->
+            <a href = "<?php echo $this->url() . '?lang=de&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
+            <a href = "<?php echo $this->url() . '?lang=en&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langEN.png'; ?>" alt = "english"></a>
+            
+			 
 
 		</div>
         <!-- in main_menue are the topictitle to select-->

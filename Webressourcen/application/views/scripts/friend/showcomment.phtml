@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 	//Title---------------------------------------------------
 	echo "<div id = \"Titel\" >";
@@ -13,14 +13,14 @@
 		echo "<tr>";
 		echo "<th>";
 		echo	"<form action =\"showtopic\" method = \"get\">
-					<input type=\"submit\" class=\"FriendButtonTableHeadLink\" value = \"Back\" />
+					<input type=\"submit\" class=\"FriendButtonTableHeadLink\" value = \"".$this->escape($this->ButtonShowTopic)."\" />
 				</form>";
 				
 		echo	"<form action =\"create\" method = \"get\">
-					<input type=\"submit\" class=\"FriendButtonTableHeadCreate\" value = \"Add Comment\" />
+					<input type=\"submit\" class=\"FriendButtonTableHeadCreate\" value = \"".$this->escape($this->ButtonAddComment)."\" />
 				</form>";
         echo	"<form action =\"createname\" method = \"get\">
-					<input type=\"submit\" class=\"FriendButtonTableHeadCreateName\" value = \"Update Name\" />
+					<input type=\"submit\" class=\"FriendButtonTableHeadCreateName\" value = \"".$this->escape($this->ButtonUpdateName)."\" />
 				</form>";
 		echo "</th>";
 	echo "</tr>";
@@ -52,7 +52,7 @@
 					echo 	"<form action =\"showcomment\" method = \"post\">
 								<input type =\"hidden\" name = \"CommentID\" value = \"".$this->escape($row["commentID"])."\" />
 								<input type =\"hidden\" name = \"Page\" value = \"".$this->escape($this->friendTopicPage)."\" />
-								<input type=\"submit\" class=\"FriendButtonDelete\" value = \"Delete\" />
+								<input type=\"submit\" class=\"FriendButtonDelete\" value = \"".$this->escape($this->ButtonDelete)."\" />
 							</form>";
 				}
 			echo "</td>";

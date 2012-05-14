@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 13. Mai 2012 um 18:15
+-- Erstellungszeit: 13. Mai 2012 um 15:21
 -- Server Version: 5.5.16
 -- PHP-Version: 5.3.8
 
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
   `commentDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `commentText` varchar(500) NOT NULL,
   PRIMARY KEY (`commentID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=38 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=35 ;
 
 --
 -- Daten für Tabelle `comment`
@@ -54,9 +54,7 @@ INSERT INTO `comment` (`commentID`, `userID`, `topicID`, `topicVersion`, `anonym
 (30, 2, 1, 5, 0, '2012-05-11 17:22:37', 'ich bin stolz auf dich hase <3'),
 (32, 2, 1, 1, 1, '2012-05-13 12:23:47', 'jvgv'),
 (33, 2, 1, 1, 0, '2012-05-13 12:27:15', 'vzuvv'),
-(34, 2, 1, 1, 1, '2012-05-13 12:27:29', 'jhvjvhvjhvhjj'),
-(35, 6, 1, 6, 0, '2012-05-13 14:56:21', 'hallo'),
-(36, 6, 1, 6, 1, '2012-05-13 14:59:03', 'fdd');
+(34, 2, 1, 1, 1, '2012-05-13 12:27:29', 'jhvjvhvjhvhjj');
 
 -- --------------------------------------------------------
 
@@ -81,14 +79,15 @@ CREATE TABLE IF NOT EXISTS `topic` (
   `topicID` int(11) NOT NULL AUTO_INCREMENT,
   `topicName` varchar(30) NOT NULL,
   PRIMARY KEY (`topicID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Daten für Tabelle `topic`
 --
 
 INSERT INTO `topic` (`topicID`, `topicName`) VALUES
-(1, 'Thema1');
+(1, 'Thema1'),
+(2, 'Thema2');
 
 -- --------------------------------------------------------
 
@@ -101,7 +100,6 @@ CREATE TABLE IF NOT EXISTS `topicadditive` (
   `topicVersion` int(11) NOT NULL DEFAULT '1',
   `topicContent` longtext NOT NULL,
   `topicSource` varchar(100) NOT NULL,
-  `topicType` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`topicID`,`topicVersion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -109,13 +107,13 @@ CREATE TABLE IF NOT EXISTS `topicadditive` (
 -- Daten für Tabelle `topicadditive`
 --
 
-INSERT INTO `topicadditive` (`topicID`, `topicVersion`, `topicContent`, `topicSource`, `topicType`) VALUES
-(1, 1, 'was auch immer', 'ist mir egal', 0),
-(1, 2, 'neuer', 'acuh neu', 0),
-(1, 3, '', '', 0),
-(1, 4, '', '', 0),
-(1, 5, 'huzuzguguzg', 'ouuiuhiuhi', 0),
-(1, 6, 'njnjnk', 'hjbhjb', 0);
+INSERT INTO `topicadditive` (`topicID`, `topicVersion`, `topicContent`, `topicSource`) VALUES
+(1, 1, 'was auch immer', 'ist mir egal'),
+(1, 2, 'neuer', 'acuh neu'),
+(1, 3, '', ''),
+(1, 4, '', ''),
+(1, 5, 'huzuzguguzg', 'ouuiuhiuhi'),
+(1, 6, 'njnjnk', 'hjbhjb');
 
 -- --------------------------------------------------------
 
@@ -157,17 +155,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `email` varchar(30) NOT NULL,
   `job` varchar(30) NOT NULL,
   `adresse` varchar(50) NOT NULL,
-  PRIMARY KEY (`userID`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
-
---
--- Daten für Tabelle `user`
---
-
-INSERT INTO `user` (`userID`, `first_name`, `last_name`, `email`, `job`, `adresse`) VALUES
-(5, '', '', 'sfsfsa', '', ''),
-(6, 'Christoph', 'Beger', 'chrib@hotmail.de', 'Student', 'RussenstraÃŸe');
+  PRIMARY KEY (`userID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -183,6 +172,14 @@ CREATE TABLE IF NOT EXISTS `usertopic` (
   `hash` char(32) NOT NULL,
   PRIMARY KEY (`userID`,`topicID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Daten für Tabelle `usertopic`
+--
+
+INSERT INTO `usertopic` (`userID`, `topicID`, `userName`, `master`, `hash`) VALUES
+(1, 1, 'hallo', 0, 'blablabla'),
+(2, 1, 'hallo1', 0, 'asjdnoasndoasndo');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
