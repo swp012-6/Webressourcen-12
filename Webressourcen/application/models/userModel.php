@@ -51,14 +51,14 @@ class UserModel extends Zend_Db_Table_Abstract
 	{
 		if($searchFriend != "" && $searchFriend != " ")
 		{
-			if(strpos($searchFriend, " ") !== false)
+			if( strpos($searchFriend, " "))
 			{
-			$searchWordFirst = substr($searchFreind, 0, strpos($searchFriend, " "));
-			$searchWordLast = substr($searchFriend, strpos($searchFriend, " ")+1, strlen($searchFriend)-1);
-			$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ?', $searchWordFirst.'%' ) ->where('last_name LIKE ?', $searchWordLast.'%'));
+                $searchWordFirst = substr($searchFreind, 0, strpos($searchFriend, " "));
+                $searchWordLast = substr($searchFriend, strpos($searchFriend, " ")+1, strlen($searchFriend)-1);
+                $result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ?', '%'.$searchWordFirst.'%' ) ->where('last_name LIKE ?', '%',$searchWordLast.'%'));
 			}
 			else
-				$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ? OR last_name LIKE ?', $searchFriend.'%'));
+				$result = $this->fetchAll( $this->select() ->from( $this)  ->where('first_name LIKE ? OR last_name LIKE ?', '%'.$searchFriend.'%'));
 		}		
 		else
 			$result = $searchFriend;

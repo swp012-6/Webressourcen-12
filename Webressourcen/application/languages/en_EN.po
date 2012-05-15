@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Webressourcen 2012\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-14 19:44+0100\n"
-"PO-Revision-Date: 2012-05-14 19:44+0100\n"
+"POT-Creation-Date: 2012-05-15 14:50+0100\n"
+"PO-Revision-Date: 2012-05-15 14:53+0100\n"
 "Last-Translator: Christoph Beger <chrib@hotmail.de>\n"
 "Language-Team: swp6-12\n"
 "MIME-Version: 1.0\n"
@@ -21,15 +21,21 @@ msgid "Thema auswählen: "
 msgstr "Select a topic:"
 
 #: controllers/FriendController.php:189
-msgid "Themen Name ändern"
-msgstr "Change topic name:"
+#: controllers/FriendController.php:541
+#: controllers/FriendController.php:675
+msgid "Name ändern"
+msgstr "Change name:"
+
+#: controllers/FriendController.php:192
+msgid "Name ändern für das Thema:"
+msgstr "Change username for this topic:"
 
 #: controllers/FriendController.php:197
-msgid "Themen Name:  "
-msgstr "Topic name:"
+msgid "Name:  "
+msgstr "Name:"
 
 #: controllers/FriendController.php:204
-msgid "Bitte schreiben sie ein Namen rein!"
+msgid "Bitte schreiben sie einen Namen rein!"
 msgstr "Please insert a name!"
 
 #: controllers/FriendController.php:208
@@ -61,64 +67,59 @@ msgstr "Add"
 msgid "Themen Übersicht"
 msgstr "Topic overview"
 
-#: controllers/FriendController.php:309
+#: controllers/FriendController.php:340
 msgid "Kommentar wurder erfolgreich hinzugefügt"
 msgstr "The Comment was created successfully"
 
-#: controllers/FriendController.php:313
+#: controllers/FriendController.php:344
 msgid "Kommentar wurder nicht erfolgreich hinzugefügt"
 msgstr "The Comment was not created successfully"
 
-#: controllers/FriendController.php:414
+#: controllers/FriendController.php:445
 msgid "Version:  "
 msgstr "Version:"
 
-#: controllers/FriendController.php:437
+#: controllers/FriendController.php:468
 #: controllers/MasterController.php:336
 msgid "Quelle: "
 msgstr "Source:"
 
-#: controllers/FriendController.php:444
+#: controllers/FriendController.php:475
 msgid "Ihre Bewertung: "
 msgstr "Your rating:"
 
-#: controllers/FriendController.php:448
+#: controllers/FriendController.php:479
 msgid "Wollen Sie das Thema Bewerten?"
 msgstr "Do you want to rate this topic?"
 
-#: controllers/FriendController.php:476
+#: controllers/FriendController.php:507
 msgid "Wertung des Themas: "
 msgstr "Topic-Rating:"
 
-#: controllers/FriendController.php:508
+#: controllers/FriendController.php:539
 msgid "Alle Kommentare"
 msgstr "All comments"
 
-#: controllers/FriendController.php:509
-#: controllers/FriendController.php:643
-msgid "Kommenter hinzufügen"
+#: controllers/FriendController.php:540
+#: controllers/FriendController.php:674
+msgid "Kommentar hinzufügen"
 msgstr "Add a comment"
 
-#: controllers/FriendController.php:510
-#: controllers/FriendController.php:644
-msgid "Themen Namen ändern"
-msgstr "Change topic name"
-
-#: controllers/FriendController.php:511
-#: controllers/FriendController.php:645
+#: controllers/FriendController.php:542
+#: controllers/FriendController.php:676
 msgid "Löschen"
 msgstr "Delete"
 
-#: controllers/FriendController.php:514
+#: controllers/FriendController.php:545
 msgid "Anonym"
 msgstr "Anonym"
 
-#: controllers/FriendController.php:593
-#: controllers/FriendController.php:597
+#: controllers/FriendController.php:624
+#: controllers/FriendController.php:628
 msgid "Alle Kommentare - "
 msgstr "All comments -"
 
-#: controllers/FriendController.php:642
+#: controllers/FriendController.php:673
 msgid "Zurück"
 msgstr "Back"
 
@@ -238,13 +239,21 @@ msgstr "No topic-ID available!"
 msgid "Fehler bei der Versionserstellung."
 msgstr "An error occured while topic creation."
 
-#: controllers/MasterController.php:949
+#: controllers/MasterController.php:980
 msgid "Es ist ein Fehler beim Speicher aufgetretten"
 msgstr "An error occurred while saving."
 
-#: controllers/MasterController.php:969
+#: controllers/MasterController.php:1000
 msgid "Sie haben vergessen eine E-Mail-Adresse anzugeben."
 msgstr "You forgot to quote an e-mail adresse."
+
+#: controllers/MasterController.php:1082
+msgid "Nichts gefunden"
+msgstr "Nothing found"
+
+#: controllers/MasterController.php:1085
+msgid "Ihr Suchwort muss mindestens 3 Zeichen besitzen!"
+msgstr "Your search word should have at least 3 characters"
 
 #: forms/CreateComment.php:11
 msgid "Kommentar"
@@ -547,6 +556,9 @@ msgstr "The topic has been created successfully."
 #: views/scripts/master/validate.phtml:9
 msgid "Zum Thema"
 msgstr "Switch to topic"
+
+#~ msgid "Themen Namen ändern"
+#~ msgstr "Change topic name"
 
 #~ msgid "gibt keine Bewertungen"
 #~ msgstr "Not rated yet"

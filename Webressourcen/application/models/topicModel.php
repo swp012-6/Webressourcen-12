@@ -210,7 +210,7 @@ class TopicModel extends Zend_Db_Table_Abstract
 	{
 		if($searchTopic != "" && $searchTopic != " ")
 		{
-			$result = $this->fetchAll( $this->select() ->from( $this)  ->where('topicName LIKE ?', $searchTopic.'%'));
+			$result = $this->fetchAll( $this->select() ->from( $this)  ->where('topicName LIKE ?', '%'.$searchTopic.'%'));
 		}		
 		else
 			$result = $searchTopic;

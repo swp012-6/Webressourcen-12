@@ -1048,35 +1048,41 @@ class MasterController extends Zend_Controller_Action
      */
     public function searchAction()
     {
-        if ( empty( $_POST['search']))
+        $tempSearchString = str_replace( ' ', '', $_POST['search']);
+        if ( strlen( $tempSearchString) > 2)
         {
-            $this->_redirect( 'master/index');
-        }
-        //load models
-        $topicModel = new Topicmodel();
-        $userModel  = new UserModel();
-        //search
-        $resultFriend = $userModel->getSearchResult($_POST['search']);
-        $tempResultTopic = $topicModel->getSearchResult($_POST['search']);
-        if(count($tempResultTopic)!= NULL)
-        {
-            $i = 0;
-            foreach( $tempResultTopic as $b)
+            //load models
+            $topicModel = new Topicmodel();
+            $userModel  = new UserModel();
+            //search
+            $resultFriend = $userModel->getSearchResult( $_POST['search']);
+            $tempResultTopic = $topicModel->getSearchResult( $_POST['search']);
+            if(count($tempResultTopic)!= NULL)
             {
-                $resultTopic[$i]['topicID'] = $b['topicID'];
-                $resultTopic[$i]['topicName'] = $b['topicName'];
-                $version = $topicModel->getMaxTopicVersion( $b['topicID']);
-                $resultTopic[$i]['version'] = $version;
-                $i++;
+                $i = 0;
+                foreach( $tempResultTopic as $b)
+                {
+                    $resultTopic[$i]['topicID'] = $b['topicID'];
+                    $resultTopic[$i]['topicName'] = $b['topicName'];
+                    $version = $topicModel->getMaxTopicVersion( $b['topicID']);
+                    $resultTopic[$i]['version'] = $version;
+                    $i++;
+                }
+            }
+            else
+            {
+                $resultTopic = NULL;
+            }
+            //pass result
+            $this->view->resultFriend = $resultFriend;
+            $this->view->resultTopic = $resultTopic;
+            
+            if ( (!count($this->resultFriend)) && (!count( $this->resultTopic)))
+            {
+                $this->view->msg = '<b>' . $this->_translate->_( 'Nichts gefunden') . '</b>';
             }
         }
-        else
-        {
-            $resultTopic = NULL;
-        }
-        //pass result
-        $this->view->resultFriend = $resultFriend;
-        $this->view->resultTopic = $resultTopic;
+        else $this->view->msg = '<b>' . $this->_translate->_( 'Ihr Suchwort muss mindestens 3 Zeichen besitzen!') . '</b>';
 	}
     
     /** This function deletes a comment by commentID

@@ -189,7 +189,7 @@ class FriendController extends Zend_Controller_Action
 		$view->headTitle($this-> _translate-> _("Name ändern"));
 		
 		//title -----------------
-		$view->friendTopicTitel = $this-> _translate-> _("Name ändern für das Thema: \"").$dbTopic->getTopicName($topicID)."\"";
+		$view->friendTopicTitel = $this-> _translate-> _( 'Name ändern für das Thema:'). ' "'. $dbTopic->getTopicName($topicID). '"';
         
 		//FORMULAR------------------------------------------------
 		// Name	
