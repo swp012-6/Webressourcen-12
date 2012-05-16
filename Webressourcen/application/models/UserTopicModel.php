@@ -22,12 +22,12 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         	$registry = Zend_Registry::getInstance();
 	        $translate = $registry->get( 'Zend_Translate');
 
-		$rowset = $this->fetchAll('userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
+		$rowset = $this->fetchAll( 'userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
 		$row = $rowset->current();
         
         if ( empty( $row))
         {
-            return $translate->_('gelöschter Nutzer');
+            return $translate->_( 'gelöschter Nutzer');
         }
         
 		return $row->userName;
@@ -148,9 +148,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 		
 		$invTopics = $this ->fetchAll($this->select()
 				->where('userID = ?',$userID));
-        Zend_Debug::dump($invTopics->toArray());
 		$tempTopics = $topicModel ->fetchAll();
-        Zend_Debug::dump($tempTopics->toArray());
 		$topics = array();
 		$alreadyInvited = 0;
 		foreach( $tempTopics as $tTopic)

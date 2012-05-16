@@ -97,12 +97,12 @@ function changeVisibility()
         
         if ( !empty( $this->commentRowSet))
         {
-            echo '<table border = "1">';
+            echo '<table border = "1" width = "100%">';
             foreach( $this->commentRowSet as $commentRow)
             {
                 echo '<tr><td>' . $commentRow['commentDate'] . '</td>';
                 echo '<td>' . $commentRow['userName'] . '</td>';
-                echo '<td>' . $commentRow['commentText'] . '</td>';
+                echo '<td style = "max-width:500">' . $commentRow['commentText'] . '</td>';
                 echo '<td><form action = "deletecomment" method = "post">';
                     echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
                     echo '<input type = "hidden" name = "topicVersion" value = "' . $_GET['ver'] . '" />';
