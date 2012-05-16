@@ -269,8 +269,6 @@ class MasterController extends Zend_Controller_Action
             $this->view->job            = $user['job'];
             $this->view->adresse        = $user['adresse'];
 
-	//Es muss noch eine überarbeitung des Profils ermöglicht werden.------------------------------------------------------------------------------------
-
         }
         else
         {
