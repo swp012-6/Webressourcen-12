@@ -411,7 +411,7 @@ class MasterController extends Zend_Controller_Action
                     $this->view->commentRowSet = $commentRowSet;
                 }
                 
-                $userID = 1; //this is the master-userID ---------------------------------------------------------------------------------
+                $userID = 0; //this is the master-userID ---------------------------------------------------------------------------------
                 
                 /* send a generated comment-creation-form to the view */
                 $createCommentForm = new Application_Form_CreateComment();
@@ -632,7 +632,7 @@ class MasterController extends Zend_Controller_Action
                         
                         //mail message
                         $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
-                                          ."Mit diesem Link koennen Sie das Thema erreichen: "
+                                          ."Mit diesem Link erreichen Sie das Thema: "
                                           ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
                                           ."/Webressourcen/public/friend?hash=".$hash);
 
@@ -841,7 +841,7 @@ class MasterController extends Zend_Controller_Action
         $anonymous    = $_POST['anonymous'];
         
         /* if one of the posted values was empty */
-        if ( (empty( $userID)) || (empty( $topicID)) || (empty( $topicVersion)))
+        if ( (empty( $topicID)) || (empty( $topicVersion)))
         {
             $this->_redirect( 'master/showtopics?id=' . $topicID . '&ver=' . $topicVersion);
         }

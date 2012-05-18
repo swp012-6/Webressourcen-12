@@ -81,7 +81,7 @@ class IndexController extends Zend_Controller_Action
             {      
                 //loads master information
                 $master = new masterModel();
-                $row = $master->fetchRow('userID = 1');
+                $row = $master->fetchRow('userID = 0');
 
                 // checks username and password?
                 if ($row->userName == $usern && $row->password == md5($password))
@@ -152,7 +152,7 @@ class IndexController extends Zend_Controller_Action
 
             //loads master information
             $master = new masterModel();
-            $row = $master->fetchRow('userID = 1');
+            $row = $master->fetchRow('userID = 0');
 
             // checks username and password?
             if ($row->userName == $usern && $row->password == md5($password))
@@ -170,13 +170,17 @@ class IndexController extends Zend_Controller_Action
                     {
                         $data = array('userName' => $newUsern);
     
-                        $n = $master->update($data, 'userID = 1');
+                        $n = $master->update($data, 'userID = 0');
+
+                        //change userName in UserTopic
+                        $userTopicModel = new UserTopicModel();
+                        $m = $userTopicModel->update($data, 'userID = 0');
                     }
                     if(!empty($newPassword1))		//update password
                     {
                         $data = array('password' => md5($newPassword1));
     
-                        $n = $master->update($data, 'userID = 1');
+                        $n = $master->update($data, 'userID = 0');
                     }
                     $this->_redirect('/');
                 }
