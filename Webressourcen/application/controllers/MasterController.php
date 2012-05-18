@@ -316,7 +316,7 @@ class MasterController extends Zend_Controller_Action
         $navi = '';
         foreach( $topicList as $topic)
         {
-            $navi .= '<a class="Navlink" href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
+            $navi .= '<a class="Navlink" href="showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
             $navi .= $topic['topicName'].'</a><br>';
         }
         
