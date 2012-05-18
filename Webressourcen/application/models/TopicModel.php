@@ -100,9 +100,13 @@ class TopicModel extends Zend_Db_Table_Abstract
     {
         $topicAdditiveModel = new TopicAdditiveModel();
         $userTopicModel = new UserTopicModel();
+        $masterModel = new MasterModel();
         
         /* begin of the transaction */
         $topicAdditiveModel->getAdapter()->beginTransaction();
+        /* get userName from master */
+        $master = $masterModel->fetchRow('userID = 0');
+        $userName = $master['userName'];
         try
         {
             /* insert new topicName into table topicName */
@@ -117,9 +121,9 @@ class TopicModel extends Zend_Db_Table_Abstract
                                                 'topicType'     => $topicType));
  
             /* add connection between the topic and the master to usertopic-db */
-            $userTopicModel->insert( array( 'userID'    => 1,
+            $userTopicModel->insert( array( 'userID'    => 0,
                                             'topicID'   => $topicID,
-                                            'userName'  => 'Master', 
+                                            'userName'  => $userName, 
                                             'master'    => 1,
                                             'hash'      => md5( rand(1, 1000) . microtime(). $topicID)));
             
