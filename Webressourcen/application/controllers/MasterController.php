@@ -60,6 +60,13 @@ class MasterController extends Zend_Controller_Action
             case 'de':  $translate->setLocale( 'en'); break;
             default:    $translate->setLocale( 'de');
         }   
+        /* login check */
+        $masterNamespace = new Zend_Session_Namespace('master');
+
+        if ($masterNamespace->masterOnline == 0)
+        {
+            $this->_redirect('/');
+        }
     }
 
     public function indexAction()
