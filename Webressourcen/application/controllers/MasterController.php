@@ -632,9 +632,9 @@ class MasterController extends Zend_Controller_Action
                         
                         //mail message
                         $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
-                                          ."Mit diesem Link erreichen Sie das Thema: "
-                                          ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
-                                          ."/Webressourcen/public/friend?hash=".$hash);
+                                           ."Mit diesem Link erreichen Sie das Thema: "
+                                           ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
+                                           ."/Webressourcen/public/friend?hash=".$hash);
 
                         try	//finilly try to send the mail
                         {
