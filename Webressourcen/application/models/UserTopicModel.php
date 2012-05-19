@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License(GPL)
@@ -9,7 +9,7 @@
  */
 class UserTopicModel extends Zend_Db_Table_Abstract
 {
-    protected $_name = 'userTopic';
+    protected $_name = 'usertopic';
 	
 	/**
 	 * gets UserName with userID and topicID
@@ -27,7 +27,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         
         if ( empty( $row))
         {
-            return $translate->_( 'gelöschter Nutzer');
+            return $translate->_( 'gel�schter Nutzer');
         }
         
 		return $row->userName;

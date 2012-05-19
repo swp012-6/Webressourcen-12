@@ -1,4 +1,4 @@
-﻿<script type = "text/javascript">
+<script type = "text/javascript">
 /**
  * asks the user if he really want to delete this friend
  *
@@ -102,7 +102,7 @@ function changeVisibility()
             {
                 echo '<tr><td>' . $commentRow['commentDate'] . '</td>';
                 echo '<td>' . $commentRow['userName'] . '</td>';
-                echo '<td style = "max-width:500">' . $commentRow['commentText'] . '</td>';
+                echo '<td width = "80%" style="word-break:break-all;word-wrap:break-word">' . $commentRow['commentText'] . '</td>';
                 echo '<td><form action = "deletecomment" method = "post">';
                     echo '<input type = "hidden" name = "topicID" value = "' . $_GET['id'] . '" />';
                     echo '<input type = "hidden" name = "topicVersion" value = "' . $_GET['ver'] . '" />';
@@ -116,7 +116,10 @@ function changeVisibility()
                 echo '<input type = "submit" value = "' . $this->translate( 'zeige alle') . '" />';
             echo '</form>';
         }
-        echo '<input type = "button" id = "visibilityChanger" onclick = "changeVisibility()" value = "' . $this->translate( 'kommentieren') . '" ></button>'; 
+        if ( $this->topicTest)
+        {
+            echo '<input type = "button" id = "visibilityChanger" onclick = "changeVisibility()" value = "' . $this->translate( 'kommentieren') . '" ></button>'; 
+        }
         echo '<p><div id = "dynamicalDiv" style = "visibility:hidden">' . $this->createCommentForm;
         echo '</div></div>';
     }

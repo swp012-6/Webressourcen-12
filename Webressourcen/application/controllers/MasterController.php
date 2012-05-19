@@ -1,4 +1,4 @@
-ï»¿<?php
+<?php
 /* -- INDEX --
  
  - init()
@@ -88,10 +88,10 @@ class MasterController extends Zend_Controller_Action
                 case 1: $this->view->errorMsg = $this->_translate->_( 'Themen-Name bereits vergeben!'); 
                         break;
                 
-                case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder fÃ¼llen!');
+                case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder füllen!');
                         break;
                 
-                case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gÃ¼ltigen URL!');
+                case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL!');
                         break;
                 
                 case 4: $this->view->errorMsg = $this->_translate->_( 'Fehler beim erstellen des Themas!');
@@ -295,7 +295,7 @@ class MasterController extends Zend_Controller_Action
         /* if msg is set */
         switch ( $_GET['msg'])
         {
-            case 1: $this->view->msg = $this->_translate->_( 'Bitte fÃ¼llen Sie das Feld Kommentar!');
+            case 1: $this->view->msg = $this->_translate->_( 'Bitte füllen Sie das Feld Kommentar!');
                     break;
                     
             case 2: $this->view->msg = $this->_translate->_( 'Es wurde erfolgreich eine neue Version erstellt.');
@@ -316,7 +316,7 @@ class MasterController extends Zend_Controller_Action
         $navi = '';
         foreach( $topicList as $topic)
         {
-            $navi .= '<a class="Navlink" href="http://localhost/Webressourcen/public/master/showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
+            $navi .= '<a class="Navlink" href="showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
             $navi .= $topic['topicName'].'</a><br>';
         }
         
@@ -336,7 +336,7 @@ class MasterController extends Zend_Controller_Action
             else // use the postet version number 
             $selectedTopicVersion = $_GET['ver'];
             
-            /* sent the version number to the view */
+            /* send the version number to the view */
             $this->view->selectedTopicVersion = $selectedTopicVersion;
             
             /* use the topicID and selectedTopicVersion to get row with the content of the selected topic */
@@ -447,7 +447,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch (Exception $e)
             {
-                $this->view->error = $this->_translate->_( 'Fehler beim LÃ¶schen der Verbindung zwischen Freund und Thema');
+                $this->view->error = $this->_translate->_( 'Fehler beim Löschen der Verbindung zwischen Freund und Thema');
             }
         }
         else
@@ -478,7 +478,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch ( Exception $e)
             {
-                $this->view->error = $this->_translate->_( 'Fehler beim LÃ¶schen des Freundes');
+                $this->view->error = $this->_translate->_( 'Fehler beim Löschen des Freundes');
             }
         }
         else
@@ -506,7 +506,7 @@ class MasterController extends Zend_Controller_Action
         //check result
         if( !$success)
         {						//error message
-            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim LÃ¶schen aufgetreten.');
+            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Löschen aufgetreten.');
         }
         else
         {
@@ -606,7 +606,9 @@ class MasterController extends Zend_Controller_Action
             //login mail-server
             $emailConfig = array('auth'     => $this->config['email']['auth'],
                                  'username' => $this->config['email']['username'],
-                                 'password' => $this->config['email']['password']);
+                                 'password' => $this->config['email']['password'],
+                                 'ssl'       => 'tls',
+                                 'port'      => '587');
             
             $transport = new Zend_Mail_Transport_Smtp( $this->config['email']['host'], $emailConfig);
             //prepare mail
@@ -631,10 +633,16 @@ class MasterController extends Zend_Controller_Action
                         $userTopicModel->addUserTopic( $userTopic);
                         
                         //mail message
-                        $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
-                                          ."Mit diesem Link erreichen Sie das Thema: "
-                                          ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
-                                          ."/Webressourcen/public/friend?hash=".$hash);
+                        $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName .' erhalten.'
+                                         . 'Mit diesem Link erreichen Sie das Thema: '
+                                         . "http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
+                                         . BASE_URL . 'public/friend?hash='.$hash);
+                                          
+                        $mail->setBodyHtml('Sie haben eine Einladung zu dem Thema '. $topicName .' erhalten.<br />'
+                                         . 'Mit diesem <a href = "http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL 
+                                         . 'public/friend?hash='. $hash. '">Link</a> '
+                                         . 'erreichen Sie das Thema.<br /><br />Alternativ können Sie auch den Link direkt in Ihren Browser einfügen.<br />'
+                                         . 'http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL . 'public/friend?hash='.$hash);
 
                         try	//finilly try to send the mail
                         {
@@ -667,10 +675,16 @@ class MasterController extends Zend_Controller_Action
                 $userTopicModel->addUserTopic( $userTopic);
                 
                 //mail message
-                $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten.\n"
+                $mail->setBodyText('Sie haben eine Einladung zu dem Thema '. $topicName ." erhalten."
                                   ."Mit diesem Link erreichen Sie das Thema: "
                                   ."http://".Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST")
-                                  ."/Webressourcen/public/friend?hash=".$hash);
+                                  . BASE_URL . "public/friend?hash=".$hash);
+                                  
+                $mail->setBodyHtml('Sie haben eine Einladung zu dem Thema '. $topicName .' erhalten.<br />'
+                                 . 'Mit diesem <a href = "http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL 
+                                 . 'public/friend?hash='. $hash. '">Link</a> '
+                                 . 'erreichen Sie das Thema.<br /><br />Alternativ können Sie auch den Link direkt in Ihren Browser einfügen.<br />'
+                                 . 'http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL . 'public/friend?hash='.$hash);
 
                 try	//finilly try to send the mail
                 {
@@ -744,9 +758,9 @@ class MasterController extends Zend_Controller_Action
                 /* error-msg output */
                 switch ( $_GET['msg'])
                 {
-                    case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder fÃ¼llen!');
+                    case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder füllen!');
                             break;
-                    case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gÃ¼ltigen URL.');
+                    case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL.');
                             break;
                 }
                 $this->view->topicName = $topicName;
@@ -756,7 +770,7 @@ class MasterController extends Zend_Controller_Action
                 /* if there is no topic with the specified versionNumber */
                 if ( empty( $topicRow))
                 {
-                    $this->view->msg = '<h1>' . $this->_translate->_( 'Angegebende Version existiert fÃ¼r dieses Thema nicht!') . '</h1>';
+                    $this->view->msg = '<h1>' . $this->_translate->_( 'Angegebende Version existiert für dieses Thema nicht!') . '</h1>';
                     $this->view->topicTest = 0;
                 }
                 else 
@@ -918,7 +932,7 @@ class MasterController extends Zend_Controller_Action
                 
         if ( !empty( $topicRow))
         {
-            $this->view->topicContent = str_replace('<br />', '', $topicRow['topicContent']);
+            $this->view->topicContent = $topicRow['topicContent'];
         }
     }
 

@@ -31,19 +31,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$view->headMeta()->appendHttpEquiv('Content-Type','text/html;charset=utf-8');
 		$view->headMeta()->appendName('keywords','Webressourcen');
 		
-        define('ROOT_PATH', dirname(dirname(__FILE__)));
-        $projectDir = implode('/', array_intersect(explode('/', $_SERVER["REQUEST_URI"]), explode('/', str_replace('\\', '/', ROOT_PATH))));
-
-        if ($projectDir[strlen($projectDir)-1] != '/') 
-        {
-            $projectDir .= '/';
-        }
-
-        define('PROJECT_DIR', '/'.$projectDir);
-        define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . PROJECT_DIR);
-
+              $serverRequestUri = $_SERVER['REQUEST_URI'];
+	       $tempUriArray = explode( 'public', $serverRequestUri);
+	       define( 'BASE_URL', $tempUriArray[0]);
+	 
 		//-- are the style sheet------
-		$view->headLink()->appendStylesheet( PROJECT_DIR . 'public/_files/css/styles.css');
+		$view->headLink()->appendStylesheet( BASE_URL . 'public/_files/css/styles.css');
+
 
 		
 		//-- are the title name ----
