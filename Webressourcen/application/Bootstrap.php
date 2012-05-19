@@ -31,9 +31,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$view->headMeta()->appendHttpEquiv('Content-Type','text/html;charset=utf-8');
 		$view->headMeta()->appendName('keywords','Webressourcen');
 		
-              $serverRequestUri = $_SERVER['REQUEST_URI'];
-	       $tempUriArray = explode( 'public', $serverRequestUri);
-	       define( 'BASE_URL', $tempUriArray[0]);
+        /* define the golbal variable BASE_URL */ 
+        $serverRequestUri = $_SERVER['REQUEST_URI'];
+	    $tempUriArray = explode( 'public', $serverRequestUri);
+	    define( 'BASE_URL', $tempUriArray[0]);
+
 	 
 		//-- are the style sheet------
 		$view->headLink()->appendStylesheet( BASE_URL . 'public/_files/css/styles.css');

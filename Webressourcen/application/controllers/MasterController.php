@@ -644,6 +644,7 @@ class MasterController extends Zend_Controller_Action
                                          . 'erreichen Sie das Thema.<br /><br />Alternativ können Sie auch den Link direkt in Ihren Browser einfügen.<br />'
                                          . 'http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL . 'public/friend?hash='.$hash);
 
+
                         try	//finilly try to send the mail
                         {
                             $mail->send( $transport);
