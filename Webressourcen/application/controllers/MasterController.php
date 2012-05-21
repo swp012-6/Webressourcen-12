@@ -88,10 +88,10 @@ class MasterController extends Zend_Controller_Action
                 case 1: $this->view->errorMsg = $this->_translate->_( 'Themen-Name bereits vergeben!'); 
                         break;
                 
-                case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder füllen!');
+                case 2: $this->view->errorMsg = $this->_translate->_( 'Bitte alle Felder fï¿½llen!');
                         break;
                 
-                case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL!');
+                case 3: $this->view->errorMsg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gï¿½ltigen URL!');
                         break;
                 
                 case 4: $this->view->errorMsg = $this->_translate->_( 'Fehler beim erstellen des Themas!');
@@ -295,7 +295,7 @@ class MasterController extends Zend_Controller_Action
         /* if msg is set */
         switch ( $_GET['msg'])
         {
-            case 1: $this->view->msg = $this->_translate->_( 'Bitte füllen Sie das Feld Kommentar!');
+            case 1: $this->view->msg = $this->_translate->_( 'Bitte fï¿½llen Sie das Feld Kommentar!');
                     break;
                     
             case 2: $this->view->msg = $this->_translate->_( 'Es wurde erfolgreich eine neue Version erstellt.');
@@ -316,8 +316,8 @@ class MasterController extends Zend_Controller_Action
         $navi = '';
         foreach( $topicList as $topic)
         {
-            $navi .= '<a class="Navlink" href="showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
-            $navi .= $topic['topicName'].'</a><br>';
+            $navi .= '<center><p><a class="navlink" href="showtopics?id='.$topic['topicID'] . '&ver=' . $topicModel->getMaxTopicVersion( $topic['topicID']) . '">';
+            $navi .= $topic['topicName'].'</a><br></center></p>';
         }
         
         /* insert it in the view */
@@ -447,7 +447,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch (Exception $e)
             {
-                $this->view->error = $this->_translate->_( 'Fehler beim Löschen der Verbindung zwischen Freund und Thema');
+                $this->view->error = $this->_translate->_( 'Fehler beim Lï¿½schen der Verbindung zwischen Freund und Thema');
             }
         }
         else
@@ -478,7 +478,7 @@ class MasterController extends Zend_Controller_Action
             }
             catch ( Exception $e)
             {
-                $this->view->error = $this->_translate->_( 'Fehler beim Löschen des Freundes');
+                $this->view->error = $this->_translate->_( 'Fehler beim Lï¿½schen des Freundes');
             }
         }
         else
@@ -506,7 +506,7 @@ class MasterController extends Zend_Controller_Action
         //check result
         if( !$success)
         {						//error message
-            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Löschen aufgetreten.');
+            $this->view->error = $this->_translate->_( 'Es ist ein Fehler beim Lï¿½schen aufgetreten.');
         }
         else
         {
@@ -641,7 +641,7 @@ class MasterController extends Zend_Controller_Action
                         $mail->setBodyHtml('Sie haben eine Einladung zu dem Thema '. $topicName .' erhalten.<br />'
                                          . 'Mit diesem <a href = "http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL 
                                          . 'public/friend?hash='. $hash. '">Link</a> '
-                                         . 'erreichen Sie das Thema.<br /><br />Alternativ können Sie auch den Link direkt in Ihren Browser einfügen.<br />'
+                                         . 'erreichen Sie das Thema.<br /><br />Alternativ kï¿½nnen Sie auch den Link direkt in Ihren Browser einfï¿½gen.<br />'
                                          . 'http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL . 'public/friend?hash='.$hash);
 
 
@@ -684,7 +684,7 @@ class MasterController extends Zend_Controller_Action
                 $mail->setBodyHtml('Sie haben eine Einladung zu dem Thema '. $topicName .' erhalten.<br />'
                                  . 'Mit diesem <a href = "http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL 
                                  . 'public/friend?hash='. $hash. '">Link</a> '
-                                 . 'erreichen Sie das Thema.<br /><br />Alternativ können Sie auch den Link direkt in Ihren Browser einfügen.<br />'
+                                 . 'erreichen Sie das Thema.<br /><br />Alternativ kï¿½nnen Sie auch den Link direkt in Ihren Browser einfï¿½gen.<br />'
                                  . 'http://'. Zend_Controller_Front::getInstance()->getRequest()->getServer("HTTP_HOST"). BASE_URL . 'public/friend?hash='.$hash);
 
                 try	//finilly try to send the mail
@@ -759,9 +759,9 @@ class MasterController extends Zend_Controller_Action
                 /* error-msg output */
                 switch ( $_GET['msg'])
                 {
-                    case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder füllen!');
+                    case 1: $this->view->msg = $this->_translate->_( 'Bitte alle Felder fï¿½llen!');
                             break;
-                    case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gültigen URL.');
+                    case 2: $this->view->msg = $this->_translate->_( 'Ihre Eingabe entsprach keiner gï¿½ltigen URL.');
                             break;
                 }
                 $this->view->topicName = $topicName;
@@ -771,7 +771,7 @@ class MasterController extends Zend_Controller_Action
                 /* if there is no topic with the specified versionNumber */
                 if ( empty( $topicRow))
                 {
-                    $this->view->msg = '<h1>' . $this->_translate->_( 'Angegebende Version existiert für dieses Thema nicht!') . '</h1>';
+                    $this->view->msg = '<h1>' . $this->_translate->_( 'Angegebende Version existiert fï¿½r dieses Thema nicht!') . '</h1>';
                     $this->view->topicTest = 0;
                 }
                 else 
