@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @copyright Copyright (c) 2012, {@link http://aksw.org AKSW}
  * @license http://opensource.org/licenses/gpl-license.php GNU General Public License(GPL)
@@ -9,7 +9,7 @@
  */
 class UserTopicModel extends Zend_Db_Table_Abstract
 {
-    protected $_name = 'userTopic';
+    protected $_name = 'usertopic';
 	
 	/**
 	 * gets UserName with userID and topicID
@@ -22,12 +22,12 @@ class UserTopicModel extends Zend_Db_Table_Abstract
         	$registry = Zend_Registry::getInstance();
 	        $translate = $registry->get( 'Zend_Translate');
 
-		$rowset = $this->fetchAll('userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
+		$rowset = $this->fetchAll( 'userID = "'.$userTopic["userID"].'" AND topicID = "'.$userTopic["topicID"].'"');
 		$row = $rowset->current();
         
         if ( empty( $row))
         {
-            return $translate->_('gelöschter Nutzer');
+            return $translate->_( 'gel�schter Nutzer');
         }
         
 		return $row->userName;
@@ -148,9 +148,7 @@ class UserTopicModel extends Zend_Db_Table_Abstract
 		
 		$invTopics = $this ->fetchAll($this->select()
 				->where('userID = ?',$userID));
-        Zend_Debug::dump($invTopics->toArray());
 		$tempTopics = $topicModel ->fetchAll();
-        Zend_Debug::dump($tempTopics->toArray());
 		$topics = array();
 		$alreadyInvited = 0;
 		foreach( $tempTopics as $tTopic)

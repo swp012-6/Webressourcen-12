@@ -16,7 +16,7 @@
  
 </head>
 <body>
-
+	
 	<!-- in main_page are all presentation components how main_head, main_menue and main_main-->
 	<div id = "main_Page">
 		
@@ -24,22 +24,28 @@
 		<div id = "main_Head">
 			<center><h1>Webressourcen<?php echo $this->escape($this->title); ?></h1></center>
             <!-- change the language -->
-            <a href = "<?php echo $this->url() . '?lang=de&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
-            <a href = "<?php echo $this->url() . '?lang=en&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langEN.png'; ?>" alt = "english"></a>
+            <a href = "<?php echo $this->url() . '?lang=de&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo BASE_URL .'public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
+            <a href = "<?php echo $this->url() . '?lang=en&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo BASE_URL .'public/_files/image/langEN.png'; ?>" alt = "english"></a>
             
-			<?php 
-			if($this->masterOnline == 1)		//if logged in
-			{
-			?>
-				<a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>"><?php echo $this->translate( 'Hauptseite'); ?></a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>"><?php echo $this->translate( 'Masterseite'); ?></a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>"><?php echo $this->translate( 'Thema erstellen'); ?></a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>"><?php echo $this->translate( 'Themen anzeigen'); ?></a> -
-				<a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>"><?php echo $this->translate( 'Freunde anzeigen'); ?></a>
-			<?php 
-			}
-			?>
+
+			
+			
 		</div>
+        <?php 
+	if($this->masterOnline == 1)		//if logged in
+	{
+	?>
+            <!-- navigation -->
+        <ul id = "Navigation">
+            <li><a href="<?php echo $this->url(array('controller'=>'', 'action'=>''), null, true); ?>"><?php echo $this->translate( 'Hauptseite'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'index'), null, true); ?>"><?php echo $this->translate( 'Masterseite'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'import'), null, true); ?>"><?php echo $this->translate( 'Thema erstellen'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'showtopics'), null, true); ?>"><?php echo $this->translate( 'Themen anzeigen'); ?></a></li>  
+            <li><a href="<?php echo $this->url(array('controller'=>'master', 'action'=>'friend'), null, true); ?>"><?php echo $this->translate( 'Freunde anzeigen'); ?></a></li>
+        </ul>
+	<?php 
+	}
+	?>
 		
 		<!-- in main_menue are the topictitle to select-->
 		<div id = "main_Menue">
@@ -48,10 +54,10 @@
 			{
 			?>
 				<center><p>
-				<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'logout'), null, true); ?>">Logout</a>
+				<a class="navlink" href="<?php echo $this->url(array('controller'=>'index', 'action'=>'logout'), null, true); ?>">Logout</a>
 				</center></p>
 				<center><p>
-				<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'updateform'), null, true); ?>">Update</a>
+				<a class="navlink" href="<?php echo $this->url(array('controller'=>'index', 'action'=>'updateform'), null, true); ?>">Update</a>
 				</center></p>
 			<?php 
 			} 
@@ -59,7 +65,7 @@
 			{
 			?>
 				<center><p>
-				<a href="<?php echo $this->url(array('controller'=>'index', 'action'=>'prelogin'), null, true); ?>">Login</a>
+				<a class="navlink" href="<?php echo $this->url(array('controller'=>'index', 'action'=>'prelogin'), null, true); ?>">Login</a>
 				</center></p>
 			<?php 
 			}
@@ -73,7 +79,7 @@
 				echo $this->layout()->content;
 			?>
 		</div>
-		<div id = "footer">
+		<div id = "Footer">
             Webressourcen 2012
         </div>
 	</div>

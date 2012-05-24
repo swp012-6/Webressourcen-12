@@ -1,4 +1,3 @@
-
 	a.navlink:link {color:black; size:10px;}
 	a.navlink:visited {color:black; size:10px;}
 	a.navlink:active {color:black; size:10px;}
@@ -11,7 +10,7 @@
 	width: 1010px;
 	margin: auto;
 	min-height: 300px;
-	background-color: FFEFD5;
+	background-color: rgb(255, 239, 213);
 }
 
 #main_Head

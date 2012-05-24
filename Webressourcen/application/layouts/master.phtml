@@ -26,8 +26,12 @@
 		<div id = "main_Head">
 			<center><h1> Webressourcen - <?php echo $this->translate( 'Verwaltung'); ?> </h1></center>
             <!-- change the language -->
-            <a href = "<?php echo $this->url() . '?lang=de&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
-            <a href = "<?php echo $this->url() . '?lang=en&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo 'http://' . $_SERVER['HTTP_HOST'] . '/Webressourcen/public/_files/image/langEN.png'; ?>" alt = "english"></a>
+
+            <a href = "<?php echo $this->url() . '?lang=de&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo BASE_URL .'public/_files/image/langDE.png'; ?>" alt = "deutsch"></a>
+            <a href = "<?php echo $this->url() . '?lang=en&id=' . $_GET['id'] . '&ver=' . $_GET['ver'] . '&page=' . $_GET['page'];?>" ><img src = "<?php echo BASE_URL .'public/_files/image/langEN.png'; ?>" alt = "english"></a>
+            
+
+
         </div>
         
             <!-- navigation -->
@@ -61,7 +65,7 @@
 				echo $this->layout()->content;
 			?>
 		</div>
-        <div id = "footer">
+        <div id = "Footer">
             Webressourcen 2012
         </div>
 	</div>

@@ -166,7 +166,7 @@ class FriendController extends Zend_Controller_Action
 		
 		//Init the Database 
 		$dbUserTopic = new UserTopicModel();
-	
+        $dbTopic = new TopicModel();
             
         
 		//createName Option----------------
@@ -186,22 +186,22 @@ class FriendController extends Zend_Controller_Action
         }
         
 		//head Title----------------------------
-		$view->headTitle($this-> _translate-> _("Themen Name ändern"));
+		$view->headTitle($this-> _translate-> _("Name ändern"));
 		
 		//title -----------------
-		$view->friendTopicTitel = "Themen Name ändern";
+		$view->friendTopicTitel = $this-> _translate-> _( 'Name ändern für das Thema:'). ' "'. $dbTopic->getTopicName($topicID). '"';
         
 		//FORMULAR------------------------------------------------
 		// Name	
 		$form->addElement('text','name');
-		$form->name->setLabel($this-> _translate-> _('Themen Name:  '));
+		$form->name->setLabel($this-> _translate-> _('Name:  '));
 		$form->name->setRequired(true);
         
         
 		//$form->name->addValidator('stringLength', true, array(0, 20));
 		//exaption for name
 		$notEmpty = new Zend_Validate_NotEmpty();
-		$notEmpty->setMessage($this-> _translate-> _('Bitte schreiben sie ein Namen rein!'));
+		$notEmpty->setMessage($this-> _translate-> _('Bitte schreiben sie einen Namen rein!'));
 		$form->name->addValidator($notEmpty);
 		
 		//submintbutten create with name 'send'
@@ -299,6 +299,37 @@ class FriendController extends Zend_Controller_Action
 			$name = $form->getValue('name');
 			$comment = $form->getValue('comment');
 			
+            //the comment was filtered. words there are to long, are cuted
+            
+            $maxWordLength = 100;
+            $words_before = explode(" ", $comment);
+            $words_after;
+            $wordcount = 0;
+            
+            foreach($words_before as $word)
+            {
+                if($maxWordLength < strlen($word))
+                {
+                    for($i = 0; $i < ((strlen($word))/$maxWordLength); $i++)
+                    {
+                        $words_after[$wordcount] = substr($word,($i*$maxWordLength),$maxWordLength);
+                        if($i < (((strlen($word))/$maxWordLength)-1))
+                        {
+                            $words_after[$wordcount] .= "- ";
+                        }
+                        $wordcount++;
+                    }
+                }
+                else
+                {
+                    $words_after[$wordcount] = $word;
+                
+                    $wordcount++;
+                }
+            }
+            
+            $comment = implode(" ",$words_after);
+            
 			//array for the database
 			$conntent = array("userID" => $userID,"topicID"=>$topicID,"topicVersion" => $topicVersion,"anonymous"=> $name,"commentText"=>$comment);
 			//save
@@ -506,8 +537,8 @@ class FriendController extends Zend_Controller_Action
         
         //Buttons : ALL Comment, Add Comment and Update Name, Delete
         $view->ButtonAllComment = $this-> _translate-> _('Alle Kommentare');
-        $view->ButtonAddComment = $this-> _translate-> _('Kommenter hinzufügen');
-        $view->ButtonUpdateName = $this-> _translate-> _('Themen Namen ändern');
+        $view->ButtonAddComment = $this-> _translate-> _('Kommentar hinzufügen');
+        $view->ButtonUpdateName = $this-> _translate-> _('Name ändern');
         $view->ButtonDelete = $this-> _translate-> _('Löschen');
         
         //User Name anonym
@@ -596,7 +627,7 @@ class FriendController extends Zend_Controller_Action
 		//title -----------------
 		$view->friendTopicTitel = $this-> _translate-> _("Alle Kommentare - ").$dbTopic->getTopicName($topicID);
 		
-		//topic view----------------------------------------
+		//comment view----------------------------------------
 
 		$commentOption = array("topicID" => $topicID,"topicVersion"=>$topicVersion, "orderup"=>false, "number" => $maxComment,"page" => $page+1);
 		$view->friendComment = $dbComment->getComment($commentOption);
@@ -640,8 +671,8 @@ class FriendController extends Zend_Controller_Action
         
         //Buttons : ALL Comment, Add Comment and Update Name, Delete
         $view->ButtonShowTopic = $this-> _translate-> _('Zurück');
-        $view->ButtonAddComment = $this-> _translate-> _('Kommenter hinzufügen');
-        $view->ButtonUpdateName = $this-> _translate-> _('Themen Namen ändern');
+        $view->ButtonAddComment = $this-> _translate-> _('Kommentar hinzufügen');
+        $view->ButtonUpdateName = $this-> _translate-> _('Name ändern');
         $view->ButtonDelete = $this-> _translate-> _('Löschen');
 		
     }
